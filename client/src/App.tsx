@@ -4,10 +4,19 @@ const App: React.FC = () => {
   const [message, setMessage] = useState<string>('Loading...');
 
   useEffect(() => {
-    fetch('/api/hello') // Vite proxy를 통해 Express API로 전달됨
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message))
-      .catch(() => setMessage('API 요청 실패'));
+    fetch('/api/hello')   // vite proxy 설정을 통해 /api/hello로 요청
+      .then((res) => {
+        console.log('👉 응답 상태코드:', res.status);
+        return res.json();
+      })
+      .then((data) => {
+        console.log('👉 응답 데이터:', data);
+        setMessage(data.message);
+      })
+      .catch((err) => {
+        console.error('❌ API 호출 오류:', err);
+        setMessage('API 요청 실패');
+      });
   }, []);
 
   return (

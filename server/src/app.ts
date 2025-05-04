@@ -14,9 +14,9 @@ app.use(express.json());
 app.use('/api/hello', helloRouter);  // 👈 /api/hello 경로로 접근
 
 // ✅ 루트 요청 시 응답 (테스트용)
-app.get('/', (req, res) => {
-  res.send('🍎 Welcome to APPLE2NE1 Backend');
-});
+// app.get('/', (req, res) => {
+//   res.send('🍎 Welcome to APPLE2NE1 Backend');
+// });
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
