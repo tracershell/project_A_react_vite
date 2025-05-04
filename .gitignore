@@ -1,0 +1,49 @@
+# Node modules
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build output
+dist/
+client/dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Environment configuration
+.env
+.env.prod
+
+# Docker volumes/data
+mysql-data/
+redis-data/
+uploads-data/
+
+# IDE/editor config
+.vscode/
+*.swp
+
+# Vite and related cache
+.vite/
+.vitepress/
+*.local
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Lock files (optional: if using npm or yarn exclusively, include the other)
+package-lock.json
+yarn.lock
+
+# Output from Docker builds or others
+docker-compose.override.yml
+docker-compose.prod.yml
+docker-compose.yml
+Dockerfile.dev
+Dockerfile.prod
