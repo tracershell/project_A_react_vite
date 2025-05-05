@@ -1,12 +1,33 @@
-// src/pages/LoginPage.jsx
-import React from 'react';
-import styles from './LoginPage.module.css'; // ✅ 모듈 방식으로 불러오기
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const { username, password } = e.target.elements;
+
+    try {
+      const res = await axios.post('/api/auth/login', {
+        username: username.value,
+        password: password.value,
+      });
+
+      const { role } = res.data.user;
+      if (role === 'admin') navigate('/admin');
+      else navigate('/user');
+    } catch (err) {
+      alert('Login failed');
+    }
+  };
+
   return (
-    <div className={styles.container}>
-      <h2 className={styles.title}>🔐 로그인 페이지</h2>
-    </div>
+    <form onSubmit={handleLogin}>
+      <input name="username" placeholder="Username" />
+      <input name="password" type="password" placeholder="Password" />
+      <button type="submit">Login</button>
+    </form>
   );
 };
 

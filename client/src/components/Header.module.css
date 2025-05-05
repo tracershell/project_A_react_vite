@@ -1,0 +1,113 @@
+.topBar {
+  background-color: #001c48;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.topBar a {
+  color: #00aaff;
+  text-decoration: none;
+}
+
+.navbar {
+  display: flex;
+  position: relative;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo {
+  position: absolute;
+  left: 24px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #066da5;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.menu {
+  display: flex;
+  gap: 20px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  position: relative;
+}
+
+.menu a:hover {
+  background-color: #cae7bf;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.authButtons {
+  position: absolute;
+  right: 24px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btnSignin {
+  padding: 8px 16px;
+  background-color: white;
+  border: 1px solid #066da5;
+  color: #066da5;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.btnSignin:hover {
+  background-color: #e6f3fb;
+}
+
+.usernameBlue {
+  color: #00aaff;
+  font-weight: bold;
+}
+
+.btnWelcome {
+  font-size: 14px;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdownContent {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  min-width: 160px;
+  z-index: 1;
+}
+
+.dropdownContent a {
+  color: #333;
+  padding: 4px 10px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdownContent a:hover {
+  background-color: #9cbcf0;
+}
+
+.dropdown:hover .dropdownContent {
+  display: block;
+}

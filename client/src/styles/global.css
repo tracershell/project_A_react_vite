@@ -1,0 +1,47 @@
+/* Add this to your main CSS file (index.css or global.css) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+  }
+  
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* These styles ensure that your content takes full width */
+  .container, 
+  .row, 
+  .col {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Additional responsive styles */
+  @media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      height: auto;
+      padding: 10px;
+    }
+    
+    .logo, .authButtons {
+      position: static;
+      margin: 5px 0;
+    }
+    
+    .menu {
+      margin: 10px 0;
+    }
+  }

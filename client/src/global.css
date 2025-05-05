@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -24,10 +30,20 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding: 0;
+  width: 100%;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden; /* 가로 스크롤 방지 */
+  display: flex;
+  flex-direction: column; /* 수직 레이아웃을 위해 변경 */
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 h1 {
@@ -52,6 +68,32 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* 콘텐츠가 전체 너비를 차지하도록 보장 */
+.container, 
+.row, 
+.col {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+  }
+  
+  .logo, .authButtons {
+    position: static;
+    margin: 5px 0;
+  }
+  
+  .menu {
+    margin: 10px 0;
+  }
 }
 
 @media (prefers-color-scheme: light) {
