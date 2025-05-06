@@ -47,3 +47,6 @@ docker-compose.prod.yml
 docker-compose.yml
 Dockerfile.dev
 Dockerfile.prod
+
+# Protection
+/server/scripts/admin-seed.js

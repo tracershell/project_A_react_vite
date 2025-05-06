@@ -1,25 +1,66 @@
+require('dotenv').config();
+
 const express = require('express');
-const dotenv = require('dotenv');
+const session = require('express-session');
 const cors = require('cors');
+const path = require('path');
 
-// ✅ 라우터 가져오기
-const helloRouter = require('./routes/hello.js');         // /api/hello → 반드시 존재해야 함
-const loginRouter = require('./routes/auth/login.js');    // /api/auth/login → 반드시 존재해야 함
+// ✅ Redis v3 방식 (connect() 없음)
+const redis = require('redis');
+const connectRedis = require('connect-redis');
 
-dotenv.config();  // .env 파일 로드
+// ✅ RedisStore 생성자 정의
+const RedisStore = connectRedis(session);
+
+// ✅ Redis client 생성 (v3)
+const redisClient = redis.createClient(
+  parseInt(process.env.REDIS_PORT) || 6379,
+  process.env.REDIS_HOST || 'localhost'
+);
+
+redisClient.on('connect', () => {
+  console.log('✅ Redis connected');
+});
+
+redisClient.on('error', (err) => {
+  console.error('❌ Redis error:', err);
+});
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ 공통 미들웨어 등록
+// ✅ 미들웨어 설정
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// ✅ API 라우터 연결
-app.use('/api/hello', helloRouter);
-app.use('/api/auth', loginRouter);
+// ✅ 세션 설정
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient, prefix: 'sess:' }),
+    secret: process.env.SESSION_SECRET || 'my-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60, // 1시간
+    },
+  })
+);
+
+// ✅ 정적 파일 서비스
+app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+// ✅ API 라우터
+app.use('/api/auth', require('./routes/auth'));
+
+// ✅ SPA fallback 처리
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+});
 
 // ✅ 서버 실행
 app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`✅ Express server running at http://localhost:${PORT}`);
 });

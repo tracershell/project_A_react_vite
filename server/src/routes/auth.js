@@ -1,36 +1,32 @@
 const express = require('express');
 const router = express.Router();
+const session = require('express-session');
 const bcrypt = require('bcryptjs');
-const db = require('../models/userModel');
+const db = require('../lib/db'); // 예: mysql2 pool 사용
 
-// 로그인 처리
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const [[user]] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
 
-  if (!user || user.status !== 'active') {
-    return res.status(401).json({ error: 'Invalid user or inactive account' });
+  if (!user || !(await bcrypt.compare(password, user.password))) {
+    return res.status(401).json({ message: 'Invalid credentials' });
   }
 
-  const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) {
-    return res.status(401).json({ error: 'Invalid credentials' });
-  }
-
-  req.session.user = {
-    id: user.id,
-    username: user.username,
-    role: user.role,
-  };
-
-  res.json({ success: true, user: req.session.user });
+  req.session.user = { id: user.id, username: user.username, role: user.role };
+  res.json({ message: 'Login successful', user: req.session.user });
 });
 
-// 로그아웃
+router.get('/me', (req, res) => {
+  if (req.session.user) {
+    res.json({ user: req.session.user });
+  } else {
+    res.status(401).json({ user: null });
+  }
+});
+
 router.post('/logout', (req, res) => {
   req.session.destroy(() => {
-    res.clearCookie('connect.sid');
-    res.json({ success: true });
+    res.json({ message: 'Logged out' });
   });
 });
 
