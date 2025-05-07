@@ -54,6 +54,7 @@ app.use(express.static(path.join(__dirname, '../../client/dist')));
 
 // ✅ API 라우터
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/log', require('./routes/log'));  // ✅ log 라우터 추가
 
 // ✅ SPA fallback 처리
 app.get('*', (req, res) => {

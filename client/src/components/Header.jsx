@@ -1,9 +1,10 @@
 import React from 'react';
 import styles from './Header.module.css';
-import { useAuth } from '../context/AuthContext';  // ✅ AuthContext 사용
+import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
-  const { user, logout } = useAuth();  // ✅ 전역 사용자 정보 및 로그아웃 함수 가져오기
+  const { user, logout } = useAuth();
 
   return (
     <>
@@ -15,30 +16,14 @@ const Header = () => {
         <div className={styles.logo}>ARGUS US INC.</div>
 
         <div className={styles.menu}>
-          <a href="/">Home</a>
+          <Link to="/">Home</Link>
 
-          {/* ✅ 관리자 전용 메뉴: role이 'admin'일 때만 표시 */}
           {user?.role === 'admin' && (
-            <>
-              <div className={styles.dropdown}>
-                <a href="#">Account</a>
-                <div className={styles.dropdownContent}>
-                  <a href="#">Petty Ledger</a>
-                  <a href="#">PO</a>
-                  <a href="#">Pay</a>
-                </div>
-              </div>
+            <Link to="/admin">Admin Page</Link>
+          )}
 
-              <div className={styles.dropdown}>
-                <a href="#">General</a>
-                <div className={styles.dropdownContent}>
-                  <a href="#">Board</a>
-                  <a href="#">Schedule</a>
-                  <a href="#">doc. manager</a>
-                  <a href="#">Monthly Card Charge</a>
-                </div>
-              </div>
-            </>
+          {user?.role === 'user' && (
+            <Link to="/user">User Page</Link>
           )}
         </div>
 
@@ -53,8 +38,8 @@ const Header = () => {
             </>
           ) : (
             <>
-              <a href="/login" className={styles.btnSignin}>Log in</a>
-              <a href="/register" className={styles.btnSignin}>Register</a>
+              <Link to="/login" className={styles.btnSignin}>Log in</Link>
+              <Link to="/register" className={styles.btnSignin}>Register</Link>
             </>
           )}
         </div>

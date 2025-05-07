@@ -6,7 +6,6 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // 로그인 사용자 정보 불러오기
   useEffect(() => {
     axios.get('/api/auth/me')
       .then(res => setUser(res.data.user))
@@ -30,5 +29,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// 전역에서 사용
 export const useAuth = () => useContext(AuthContext);

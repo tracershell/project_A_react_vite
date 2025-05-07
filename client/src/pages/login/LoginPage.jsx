@@ -1,74 +1,32 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // ✅ AuthContext 사용
+import { useAuth } from '../../context/AuthContext';
 
 const LoginPage = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
-  const { login } = useAuth(); // ✅ 로그인 함수 가져오기
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-
     try {
-      const user = await login(username, password); // 로그인 요청
-      if (user?.role === 'admin') navigate('/admin');
-      else navigate('/user');
+      await login(username, password);
+      navigate('/');  // 홈으로 이동
     } catch (err) {
-      setError('로그인에 실패했습니다.');
+      setError('Invalid credentials');
     }
   };
 
   return (
-    <div style={{ maxWidth: '300px', margin: '60px auto', textAlign: 'center' }}>
-      <h2>Log in</h2>
-      <p style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-        If you haven't registered yet, you'll need to register first.
-      </p>
-
-      {error && (
-        <div style={{ backgroundColor: '#ffdddd', color: '#a94442', padding: '0.5rem', borderRadius: '5px', marginBottom: '1rem' }}>
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleLogin}>
-        <input
-          name="username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          placeholder="Username"
-          required
-          style={{ width: '100%', padding: '10px', marginBottom: '1rem' }}
-        />
-        <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-          style={{ width: '100%', padding: '10px', marginBottom: '1rem' }}
-        />
-        <button
-          type="submit"
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#3498db',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontSize: '0.95rem',
-            cursor: 'pointer'
-          }}
-        >
-          Continue
-        </button>
+    <div>
+      <h2>Login</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" />
+        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+        <button type="submit">Log in</button>
       </form>
     </div>
   );
