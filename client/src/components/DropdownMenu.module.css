@@ -1,0 +1,63 @@
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 10px;
+  /* 🔥 글씨 10px로 줄임 */
+  padding: 4px 8px;
+  /* 🔥 상하 간격 줄임 */
+  transition: color 0.3s ease;
+}
+
+.dropdownButton:hover {
+  color: #007bff;
+}
+
+.dropdownContent {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 120px;
+  /* 🔥 전체 너비도 조금 줄임 */
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownItem {
+  display: block;
+  padding: 4px 10px;
+  /* 🔥 상하 padding 줄임 */
+  font-size: 12px;
+  /* 🔥 글씨 크기 줄임 */
+  color: #333;
+  text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.dropdownItem:hover {
+  background-color: #e6f0ff;
+  /* 🔥 hover 색상 연한 파랑으로 조정 */
+  color: #007bff;
+}
