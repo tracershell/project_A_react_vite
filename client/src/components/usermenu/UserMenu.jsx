@@ -1,5 +1,5 @@
 import React from 'react';
-import DropdownMenu from './DropdownMenu';
+import DropdownMenu from '../DropdownMenu';
 
 const UserMenu = () => {
   const userItems = [

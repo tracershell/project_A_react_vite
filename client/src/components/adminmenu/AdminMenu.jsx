@@ -1,5 +1,5 @@
 import React from 'react';
-import DropdownMenu from './DropdownMenu';
+import DropdownMenu from '../DropdownMenu';
 
 const AdminMenu = () => {
   const adminItems = [
@@ -10,7 +10,7 @@ const AdminMenu = () => {
     { label: 'Logs', link: '/admin/logs' },
   ];
 
-  return <DropdownMenu title="Admin Page" items={adminItems} />;
+  return <DropdownMenu title="Admin" items={adminItems} />;
 };
 
 export default AdminMenu;

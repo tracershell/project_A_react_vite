@@ -2,8 +2,18 @@ import React from 'react';
 import styles from './Header.module.css';
 import { useAuth } from '../context/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
-import AdminMenu from './AdminMenu';
-import UserMenu from './UserMenu';
+// import AdminMenu
+import AdminMenu from './adminmenu/AdminMenu';
+import MainMenu from './adminmenu/MainMenu';
+import AccountMenu from './adminmenu/AccountMenu';
+import GeneralMenu from './adminmenu/GeneralMenu';
+import ImportMenu from './adminmenu/ImportMenu';
+import DomesticMenu from './adminmenu/DomesticMenu';
+import MailMenu from './adminmenu/MailMenu';
+import EmployeesMenu from './adminmenu/EmployeesMenu';
+import PersonalMenu from './adminmenu/PersonalMenu';
+// import UserMenu
+import UserMenu from './usermenu/UserMenu';
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -22,7 +32,19 @@ const Header = () => {
         <div className={styles.menu}>
           {/* ✅ 로그인 안 했을 때만 Home 표시 */}
           {!user && <Link to="/">Home</Link>}
-          {user?.role === 'admin' && <AdminMenu />}
+          {user?.role === 'admin' && (
+    <>
+      <AdminMenu />
+      <MainMenu />
+      <AccountMenu />
+      <GeneralMenu />
+      <ImportMenu />
+      <DomesticMenu />
+      <MailMenu />
+      <EmployeesMenu />
+      <PersonalMenu />
+    </>
+  )}
           {user?.role === 'user' && <UserMenu />}
         </div>
 
