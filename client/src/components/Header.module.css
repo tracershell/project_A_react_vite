@@ -40,12 +40,12 @@
 .menu a {
   text-decoration: none;
   color: #333;
-  font-size: 16px;
+  font-size: 18px;
   position: relative;
 }
 
 .menu a:hover {
-  background-color: #cae7bf;
+  background-color: #001c48;
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }
@@ -61,7 +61,7 @@
 .btnSignin {
   padding: 8px 16px;
   background-color: white;
-  border: 1px solid #066da5;
+  border: 1px solid #001c48;
   color: #066da5;
   border-radius: 4px;
   font-size: 14px;
@@ -97,11 +97,13 @@
   z-index: 1;
 }
 
+
 .dropdownContent a {
   color: #333;
-  padding: 4px 12px;
+  padding: 4px 8px;
   text-decoration: none;
   display: block;
+  font-size: 14px;
 }
 
 .dropdownContent a:hover {

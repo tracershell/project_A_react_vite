@@ -1,40 +1,91 @@
-.container {
-  max-width: 400px;
-  margin: 80px auto;
-  padding: 30px;
-  border: 1px solid #ccc;
+.container_login {
+  max-width: 300px;
+  margin: 60px auto 0 auto;
+  background: white;
+  padding: 1.5rem;
   border-radius: 8px;
-  background: #f9f9f9;
-  font-family: Arial, sans-serif;
-}
-
-.title {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   text-align: center;
-  margin-bottom: 20px;
-  color: #066da5;
 }
 
-.input {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
+.logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 1rem;
 }
 
-.button {
+h2 {
+  font-size: 1.3rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.loginDescription {
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.inputField {
   width: 100%;
   padding: 10px;
-  background-color: #066da5;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.btnPrimary {
+  width: 100%;
+  padding: 10px;
+  background-color: #3498db;
   color: white;
   border: none;
-  border-radius: 4px;
-  font-weight: bold;
+  border-radius: 6px;
+  font-size: 0.95rem;
   cursor: pointer;
 }
 
-.button:hover {
-  background-color: #05507a;
+.btnPrimary:hover {
+  background-color: #2980b9;
+}
+
+.loginDivider {
+  margin: 1.5rem 0;
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.btnSocial {
+  background-color: #ddd;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btnSocial a {
+  text-decoration: none;
+  color: #333;
+}
+
+.btnSocial:hover {
+  background-color: #ccc;
+}
+
+.loginError {
+  background-color: #ffdddd;
+  color: #a94442;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  font-size: 0.85rem;
+}
+
+.signupText {
+  font-size: 0.8rem;
+  margin-top: 1.5rem;
+  color: #888;
 }

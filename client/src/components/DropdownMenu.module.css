@@ -8,9 +8,9 @@
   border: none;
   cursor: pointer;
   font-weight: bold;
-  font-size: 10px;
+  font-size: 12px;
   /* 🔥 글씨 10px로 줄임 */
-  padding: 4px 8px;
+  padding: 2px 2px;
   /* 🔥 상하 간격 줄임 */
   transition: color 0.3s ease;
 }
@@ -47,9 +47,9 @@
 
 .dropdownItem {
   display: block;
-  padding: 4px 10px;
+  padding: 2px 4px;
   /* 🔥 상하 padding 줄임 */
-  font-size: 12px;
+  font-size: 10px;
   /* 🔥 글씨 크기 줄임 */
   color: #333;
   text-decoration: none;
@@ -59,5 +59,5 @@
 .dropdownItem:hover {
   background-color: #e6f0ff;
   /* 🔥 hover 색상 연한 파랑으로 조정 */
-  color: #007bff;
+  color: #fff200;
 }

@@ -1,0 +1,12 @@
+/* src/pages/user/UserPage.module.css */
+.container {
+    padding: 30px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .title {
+    font-size: 24px;
+    color: red; /* 🔥 Title을 빨간색으로 설정 */
+    margin-bottom: 10px;
+  }
+  

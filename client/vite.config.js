@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    base: '/', // 정적 파일 기준 경로
+    base: './', // ✅ 상대 경로로 수정 → React 빌드 후 Express, Nginx에서 문제 없이 작동
     server: {
       port: 5173,
       proxy: {

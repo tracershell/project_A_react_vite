@@ -49,14 +49,16 @@ app.use(
   })
 );
 
-// ✅ 정적 파일 서비스
+// ✅ 정적 파일 서비스 (React 빌드 폴더) 
 app.use(express.static(path.join(__dirname, '../../client/dist')));
 
-// ✅ API 라우터
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/log', require('./routes/log'));  // ✅ log 라우터 추가
+// ✅ API 라우터 연결
+app.use('/api/hello', require('./routes/hello'));                   // 🔥 /api/hello → auth/hello.js로 연결
+app.use('/api/auth', require('./routes/auth'));                     // 🔥 /api/auth → auth/index.js로 연결
+app.use('/api/auth/register', require('./routes/auth/register'));   // 🔥 /api/auth/register → register.js로 연결
+app.use('/api/log', require('./routes/log'));                       // ✅ log 라우터
 
-// ✅ SPA fallback 처리
+// ✅ SPA fallback 처리 (React 라우터 대응)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
