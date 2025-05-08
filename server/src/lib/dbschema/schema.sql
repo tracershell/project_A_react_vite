@@ -17,6 +17,63 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 
+CREATE TABLE IF NOT EXISTS employees (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  status VARCHAR(10),
+  eid VARCHAR(10),
+  name VARCHAR(60),
+  ss VARCHAR(20),
+  birth DATE,
+  email VARCHAR(60),
+  phone VARCHAR(60),
+  jcode VARCHAR(10),
+  jtitle VARCHAR(60),
+  sdate DATE,
+  edate DATE,
+  sick INT,
+  work1 VARCHAR(20),
+  address VARCHAR(100),
+  city VARCHAR(50),
+  state VARCHAR(50),
+  zip VARCHAR(20),
+  remark TEXT
+);
+
+
+
+CREATE TABLE IF NOT EXISTS employees_data (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  eid VARCHAR(10),               -- 직원 ID (employees.eid 참조)
+  filename VARCHAR(255),         -- 서버에 저장된 파일명
+  originalname VARCHAR(255),     -- 사용자가 올린 원래 파일명
+  comment TEXT,                  -- 업로드 설명
+  upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 업로드 일자
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 CREATE TABLE IF NOT EXISTS import_vendor (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -78,27 +135,6 @@ CREATE TABLE IF NOT EXISTS domestic_invoice (
   note TEXT                         
 );
 
-CREATE TABLE IF NOT EXISTS employees (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  status VARCHAR(10),
-  eid VARCHAR(10),
-  name VARCHAR(60),
-  ss VARCHAR(20),
-  birth DATE,
-  email VARCHAR(60),
-  phone VARCHAR(60),
-  jcode VARCHAR(10),
-  jtitle VARCHAR(60),
-  sdate DATE,
-  edate DATE,
-  sick INT,
-  work1 VARCHAR(20),
-  address VARCHAR(100),
-  city VARCHAR(50),
-  state VARCHAR(50),
-  zip VARCHAR(20),
-  remark TEXT
-);
 
 
 CREATE TABLE IF NOT EXISTS payroll_tax (

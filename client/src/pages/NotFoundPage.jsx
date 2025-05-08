@@ -1,10 +1,16 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';  // ✅ AuthContext에서 user 가져오기
 
 const NotFoundPage = () => {
   const location = useLocation();
+  const { user } = useAuth();  // ✅ 현재 로그인한 사용자 정보
 
-  // 서버로 404 로그 보내기 (예: /api/log/404)
+  // ✅ role 에 따라 이동 경로 결정
+  const returnLink = user?.role === 'admin' ? '/admin' :
+                     user?.role === 'user' ? '/user' : '/';
+
+  // 서버로 404 로그 보내기
   fetch('/api/log/404', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -23,7 +29,7 @@ const NotFoundPage = () => {
       <p style={{ marginBottom: '30px' }}>
         죄송합니다! <code>{location.pathname}</code> 페이지를 찾을 수 없습니다.
       </p>
-      <Link to="/" style={{
+      <Link to={returnLink} style={{
         display: 'inline-block',
         padding: '10px 20px',
         backgroundColor: '#007bff',
@@ -31,7 +37,7 @@ const NotFoundPage = () => {
         borderRadius: '5px',
         textDecoration: 'none',
       }}>
-        홈으로 돌아가기
+        {user ? '내 페이지로 돌아가기' : '홈으로 돌아가기'}
       </Link>
     </div>
   );

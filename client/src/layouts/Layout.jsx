@@ -10,9 +10,11 @@ const Layout = ({ message }) => {
       <Header />
       <main className={styles.layoutMain}>
         <Outlet />
+        {/* 
         <div className={styles.backendMessage}>
           백엔드 메시지: <strong>{message}</strong>
-        </div>
+        </div> 
+        */}
       </main>
       <Footer />
     </div>

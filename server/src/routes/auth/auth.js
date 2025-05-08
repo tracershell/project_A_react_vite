@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
-const db = require('../lib/db'); // 예: mysql2 pool 사용
+const db = require('../../lib/db'); // 예: mysql2 pool 사용
 
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;

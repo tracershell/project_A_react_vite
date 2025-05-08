@@ -53,8 +53,8 @@ app.use(
 app.use(express.static(path.join(__dirname, '../../client/dist')));
 
 // ✅ API 라우터 연결
-app.use('/api/hello', require('./routes/hello'));                   // 🔥 /api/hello → auth/hello.js로 연결
-app.use('/api/auth', require('./routes/auth'));                     // 🔥 /api/auth → auth/index.js로 연결
+// app.use('/api/hello', require('./routes/hello'));                   // 🔥 /api/hello → auth/hello.js로 연결
+app.use('/api/auth', require('./routes/auth/auth'));                     // 🔥 /api/auth → auth/index.js로 연결
 app.use('/api/auth/register', require('./routes/auth/register'));   // 🔥 /api/auth/register → register.js로 연결
 app.use('/api/log', require('./routes/log'));                       // ✅ log 라우터
 

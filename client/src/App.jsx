@@ -3,11 +3,21 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './layouts/Layout';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/login/LoginPage';
-import AdminPage from './pages/admin/AdminPage';
-import UserPage from './pages/user/UserPage';
+
+
 import NotFoundPage from './pages/NotFoundPage';
 import PrivateRoute from './routes/PrivateRoute';
 import { AuthProvider } from './context/AuthContext';
+
+// ✅ Admin Pages
+import AdminPage from './pages/admin/AdminPage';
+    // Admin Pages Dropdown menus
+import APage from './pages/admin/main/APage';
+
+// ✅ User Pages
+import UserPage from './pages/user/UserPage';
+    // User Pages Dropdown menus
+
 
 // ✅ RegisterPage import 추가 (경로 맞게 수정하세요!)
 import RegisterPage from './pages/register/RegisterPage';
@@ -15,12 +25,13 @@ import RegisterPage from './pages/register/RegisterPage';
 function App() {
   const [message, setMessage] = useState('Loading...');
 
-  useEffect(() => {
-    fetch('/api/hello')
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message))
-      .catch(() => setMessage('API 요청 실패'));
-  }, []);
+  // ✅ 백엔드 API 호출하여 메시지 가져오기 (routing ID : /api/hello)
+  // useEffect(() => {
+  //   fetch('/api/hello')
+  //     .then((res) => res.json())
+  //     .then((data) => setMessage(data.message))
+  //     .catch(() => setMessage('API 요청 실패'));
+  // }, []);
 
   return (
     <AuthProvider>
@@ -37,6 +48,16 @@ function App() {
               element={
                 <PrivateRoute role="admin">
                   <AdminPage />
+                </PrivateRoute>
+              }
+            />
+
+            {/* ✅ admin 전용 페이지 의 dropdown menu */}
+            <Route
+              path="admin/main/a"
+              element={
+                <PrivateRoute role="admin">
+                  <APage />
                 </PrivateRoute>
               }
             />

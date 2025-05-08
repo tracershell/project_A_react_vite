@@ -1,0 +1,35 @@
+.employee-page {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    font-size: 12px;
+  }
+  h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  button {
+    padding: 4px 12px;
+    font-size: 12px;
+    border: 1px solid #066da5;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th,
+  td {
+    border: 1px solid #ccc;
+    padding: 4px;
+    text-align: center;
+  }
+  .form input {
+    margin: 2px;
+    padding: 4px;
+  }
+  

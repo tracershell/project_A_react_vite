@@ -1,52 +1,84 @@
+# -------------------
 # Node modules
 node_modules/
 client/node_modules/
 server/node_modules/
 
+# -------------------
 # Build output
 dist/
 client/dist/
 
+# -------------------
 # Logs
 npm-debug.log*
+/npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+logs/
 
-# OS-specific
+# -------------------
+# OS-specific files
 .DS_Store
 Thumbs.db
 
+# -------------------
 # Environment configuration
 .env
 .env.prod
+.env.local
+.env.development
+.env.test
+.env.staging
 
+# -------------------
 # Docker volumes/data
 mysql-data/
 redis-data/
 uploads-data/
 
+# -------------------
 # IDE/editor config
 .vscode/
+.vscode/*
+.idea/
+*.sublime-workspace
+*.sublime-project
 *.swp
 
+# -------------------
 # Vite and related cache
 .vite/
+node_modules/.vite/
 .vitepress/
 *.local
 
+# -------------------
 # TypeScript cache
 *.tsbuildinfo
 
-# Lock files (optional: if using npm or yarn exclusively, include the other)
+# -------------------
+# Package manager lock files
 package-lock.json
 yarn.lock
 
-# Output from Docker builds or others
+# -------------------
+# Docker files and overrides
 docker-compose.override.yml
 docker-compose.prod.yml
 docker-compose.yml
+docker-compose*.bak
+docker-compose*.old
 Dockerfile.dev
 Dockerfile.prod
 
-# Protection
-/server/scripts/admin-seed.js
+# -------------------
+# Test coverage
+coverage/
+
+# -------------------
+# Special scripts or sensitive files
+server/scripts/
+
+# sql schema
+server/src/lib/dbschema/
