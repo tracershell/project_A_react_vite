@@ -4,8 +4,8 @@ import DropdownMenu from '../DropdownMenu';
 const MainMenu = () => {
   const adminItems = [
     { label: 'a', link: '/admin/main/a' },
-    { label: 'b', link: '/admin/users' },
-    { label: 'c', link: '/admin/reports' },
+    { label: 'b', link: '/admin/main/b' },
+    { label: 'c', link: '/admin/main/c' },
     { label: 'd', link: '/admin/settings' },
     { label: 'e', link: '/admin/logs' },
   ];

@@ -58,6 +58,10 @@ app.use('/api/auth', require('./routes/auth/auth'));                     // 🔥
 app.use('/api/auth/register', require('./routes/auth/register'));   // 🔥 /api/auth/register → register.js로 연결
 app.use('/api/log', require('./routes/log'));                       // ✅ log 라우터
 
+// ✅  Admin page - Main - Bpage
+app.use('/api/admin/main/bpage', require('./routes/admin/main/bpage'));   // 🔥  route IP : bpage.js location
+app.use('/api/admin/main/cpage', require('./routes/admin/main/cpage'));
+
 // ✅ SPA fallback 처리 (React 라우터 대응)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../../client/dist/index.html'));

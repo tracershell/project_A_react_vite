@@ -11,12 +11,14 @@ import { AuthProvider } from './context/AuthContext';
 
 // ✅ Admin Pages
 import AdminPage from './pages/admin/AdminPage';
-    // Admin Pages Dropdown menus
+// Admin Pages Dropdown menus
 import APage from './pages/admin/main/APage';
+import BPage from './pages/admin/main/BPage';
+import CPage from './pages/admin/main/CPage';
 
 // ✅ User Pages
 import UserPage from './pages/user/UserPage';
-    // User Pages Dropdown menus
+// User Pages Dropdown menus
 
 
 // ✅ RegisterPage import 추가 (경로 맞게 수정하세요!)
@@ -52,12 +54,32 @@ function App() {
               }
             />
 
-            {/* ✅ admin 전용 페이지 의 dropdown menu */}
+            {/* ✅ admin 전용 페이지 의 dropdown menu APage */}
             <Route
               path="admin/main/a"
               element={
                 <PrivateRoute role="admin">
                   <APage />
+                </PrivateRoute>
+              }
+            />
+
+            {/* ✅ admin 전용 페이지 의 dropdown menu BPage */}
+            <Route
+              path="admin/main/b"
+              element={
+                <PrivateRoute role="admin">
+                  <BPage />
+                </PrivateRoute>
+              }
+            />
+
+            {/* ✅ admin 전용 페이지 의 dropdown menu BPage */}
+            <Route
+              path="admin/main/c"
+              element={
+                <PrivateRoute role="admin">
+                  <CPage />
                 </PrivateRoute>
               }
             />
