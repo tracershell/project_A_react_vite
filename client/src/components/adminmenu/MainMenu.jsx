@@ -6,8 +6,8 @@ const MainMenu = () => {
     { label: 'a', link: '/admin/main/a' },
     { label: 'b', link: '/admin/main/b' },
     { label: 'c', link: '/admin/main/c' },
-    { label: 'd', link: '/admin/settings' },
-    { label: 'e', link: '/admin/logs' },
+    { label: 'd', link: '/admin/main/d' },
+    { label: 'e', link: '/admin/main/e' },
   ];
 
   return <DropdownMenu title="Main" items={adminItems} />;

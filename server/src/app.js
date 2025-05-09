@@ -62,6 +62,10 @@ app.use('/api/log', require('./routes/log'));                       // ✅ log �
 app.use('/api/admin/main/bpage', require('./routes/admin/main/bpage'));   // 🔥  route IP : bpage.js location
 app.use('/api/admin/main/cpage', require('./routes/admin/main/cpage'));
 
+// ✅  Admin page - Employees - EmployeesListPage
+app.use('/api/admin/employees/employeeslistpage', require('./routes/admin/employees/employeeslistpage'));
+
+
 // ✅ SPA fallback 처리 (React 라우터 대응)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../../client/dist/index.html'));

@@ -1,0 +1,21 @@
+.page {
+  padding: 1rem;
+  font-family: Arial, sans-serif;
+}
+.form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th, .table td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+}
+.table tr:hover {
+  background-color: #f0f8ff;
+  cursor: pointer;
+}
