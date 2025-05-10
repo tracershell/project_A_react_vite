@@ -1,21 +1,79 @@
 .page {
-  padding: 1rem;
+  margin: 0;
   font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  font-size: 12px;
 }
-.form {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
 }
-.table {
+
+button {
+  padding: 4px 12px;
+  font-size: 12px;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 12px;
 }
-.table th, .table td {
+
+th, td {
   border: 1px solid #ccc;
-  padding: 0.5rem;
+  padding: 4px;
+  text-align: center;
 }
-.table tr:hover {
+
+.topSection, .bottomSection {
+  padding: 10px;
+}
+
+input {
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 24px;
+}
+
+.tableHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.compactForm {
+  padding: 1rem;
+}
+
+.compactTable th {
   background-color: #f0f8ff;
-  cursor: pointer;
+  position: sticky;
+  top: 0;
+}
+
+.compactTable tbody tr:hover {
+  background-color: #e9f5ff;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
 }

@@ -1,3 +1,4 @@
+// server/app.js
 require('dotenv').config();
 
 const express = require('express');
@@ -5,73 +6,64 @@ const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
 
-// ✅ Redis v3 방식 (connect() 없음)
+// Redis v3 방식
 const redis = require('redis');
 const connectRedis = require('connect-redis');
-
-// ✅ RedisStore 생성자 정의
 const RedisStore = connectRedis(session);
-
-// ✅ Redis client 생성 (v3)
 const redisClient = redis.createClient(
-  parseInt(process.env.REDIS_PORT) || 6379,
+  parseInt(process.env.REDIS_PORT, 10) || 6379,
   process.env.REDIS_HOST || 'localhost'
 );
 
-redisClient.on('connect', () => {
-  console.log('✅ Redis connected');
-});
-
-redisClient.on('error', (err) => {
-  console.error('❌ Redis error:', err);
-});
+redisClient.on('connect', () => console.log('✅ Redis connected'));
+redisClient.on('error', err => console.error('❌ Redis error:', err));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ✅ 미들웨어 설정
-app.use(cors());
+// 1) CORS, body-parsing, session 설정
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session({
+  store: new RedisStore({ client: redisClient, prefix: 'sess:' }),
+  secret: process.env.SESSION_SECRET || 'my-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { httpOnly: true, secure: false, sameSite: 'lax', maxAge: 1000 * 60 * 60 }
+}));
 
-// ✅ 세션 설정
-app.use(
-  session({
-    store: new RedisStore({ client: redisClient, prefix: 'sess:' }),
-    secret: process.env.SESSION_SECRET || 'my-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: false,
-      maxAge: 1000 * 60 * 60, // 1시간
-    },
-  })
-);
+// 2) 정적 파일 서빙 (React 빌드 결과)
+const distPath = path.join(__dirname, '../../client/dist');
+app.use(express.static(distPath));
 
-// ✅ 정적 파일 서비스 (React 빌드 폴더) 
-app.use(express.static(path.join(__dirname, '../../client/dist')));
+// 3) 절대 경로 /assets/* 도 dist/assets 에서 바로 서빙
+app.use('/assets', express.static(path.join(distPath, 'assets')));
 
-// ✅ API 라우터 연결
-// app.use('/api/hello', require('./routes/hello'));                   // 🔥 /api/hello → auth/hello.js로 연결
-app.use('/api/auth', require('./routes/auth/auth'));                     // 🔥 /api/auth → auth/index.js로 연결
-app.use('/api/auth/register', require('./routes/auth/register'));   // 🔥 /api/auth/register → register.js로 연결
-app.use('/api/log', require('./routes/log'));                       // ✅ log 라우터
-
-// ✅  Admin page - Main - Bpage
-app.use('/api/admin/main/bpage', require('./routes/admin/main/bpage'));   // 🔥  route IP : bpage.js location
-app.use('/api/admin/main/cpage', require('./routes/admin/main/cpage'));
-
-// ✅  Admin page - Employees - EmployeesListPage
-app.use('/api/admin/employees/employeeslistpage', require('./routes/admin/employees/employeeslistpage'));
-
-
-// ✅ SPA fallback 처리 (React 라우터 대응)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+// 4) nested assets (예: /admin/.../assets/foo.js) 처리
+//    URL에 /assets/ 가 포함된 요청을 캐치해서 dist/assets/* 에서 제공
+app.get(/\/assets\/.+/, (req, res) => {
+  // '/admin/.../assets/index-abc.js' → 'index-abc.js'
+  const assetFile = req.path.split('/assets/')[1];
+  res.sendFile(path.join(distPath, 'assets', assetFile));
 });
 
-// ✅ 서버 실행
+// 5) API 라우터 연결
+app.use('/api/auth', require('./routes/auth/auth'));
+app.use('/api/auth/register', require('./routes/auth/register'));
+app.use('/api/log', require('./routes/log'));
+
+app.use('/api/admin/main/bpage', require('./routes/admin/main/bpage'));
+app.use('/api/admin/main/cpage', require('./routes/admin/main/cpage'));
+app.use('/api/admin/employees/employeeslistpage',
+  require('./routes/admin/employees/employeeslistpage'));
+
+// 6) SPA fallback: 그 외 (확장자 없는) 모든 요청에 index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
+});
+
+// 7) 서버 실행
 app.listen(PORT, () => {
   console.log(`✅ Express server running at http://localhost:${PORT}`);
 });

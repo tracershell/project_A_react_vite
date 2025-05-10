@@ -1,4 +1,3 @@
-// src/routes/adminMainRoutes.jsx
 import React from 'react';
 import { Route } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
@@ -6,13 +5,14 @@ import PrivateRoute from './PrivateRoute';
 import APage from '../pages/admin/main/APage';
 import BPage from '../pages/admin/main/BPage';
 import CPage from '../pages/admin/main/CPage';
+import DPage from '../pages/admin/main/DPage';
 import EPage from '../pages/admin/main/EPage';
 import EPage01 from '../pages/admin/main/epage/EPage-01';
 
 const adminMainRoutes = [
   <Route
     key="admin-main-a"
-    path="admin/main/a"
+    path="main/a"
     element={
       <PrivateRoute role="admin">
         <APage />
@@ -21,7 +21,7 @@ const adminMainRoutes = [
   />,
   <Route
     key="admin-main-b"
-    path="admin/main/b"
+    path="main/b"
     element={
       <PrivateRoute role="admin">
         <BPage />
@@ -30,7 +30,7 @@ const adminMainRoutes = [
   />,
   <Route
     key="admin-main-c"
-    path="admin/main/c"
+    path="main/c"
     element={
       <PrivateRoute role="admin">
         <CPage />
@@ -38,8 +38,17 @@ const adminMainRoutes = [
     }
   />,
   <Route
+    key="admin-main-d"
+    path="main/d"
+    element={
+      <PrivateRoute role="admin">
+        <DPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
     key="admin-main-e"
-    path="admin/main/e"
+    path="main/e"
     element={
       <PrivateRoute role="admin">
         <EPage />
@@ -48,7 +57,7 @@ const adminMainRoutes = [
   />,
   <Route
     key="admin-main-e-e01"
-    path="admin/main/e/e01"
+    path="main/e/e01"
     element={
       <PrivateRoute role="admin">
         <EPage01 />

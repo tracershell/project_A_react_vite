@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    base: './', // ✅ 상대 경로로 수정 → React 빌드 후 Express, Nginx에서 문제 없이 작동
+    base: './', //   ✅ 상대경로 유지 <==  절대 경로로 변경 : 선택 새로운 화면 이 랜더링 안되어서
     server: {
       port: 5173,
       proxy: {
