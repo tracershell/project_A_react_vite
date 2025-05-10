@@ -7,7 +7,10 @@ import BPage from '../pages/admin/main/BPage';
 import CPage from '../pages/admin/main/CPage';
 import DPage from '../pages/admin/main/DPage';
 import EPage from '../pages/admin/main/EPage';
+
 import EPage01 from '../pages/admin/main/epage/EPage-01';
+import FPage from '../pages/admin/main/FPage';
+import FPageView from '../pages/admin/main/FPageView';
 
 const adminMainRoutes = [
   <Route
@@ -61,6 +64,24 @@ const adminMainRoutes = [
     element={
       <PrivateRoute role="admin">
         <EPage01 />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="admin-main-f"
+    path="main/f"
+    element={
+      <PrivateRoute role="admin">
+        <FPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="admin-main-f"
+    path="admin/main/fpageview/:id"
+    element={
+      <PrivateRoute role="admin">
+        <FPageView />
       </PrivateRoute>
     }
   />

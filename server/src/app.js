@@ -58,6 +58,11 @@ app.use('/api/admin/main/cpage', require('./routes/admin/main/cpage'));
 app.use('/api/admin/employees/employeeslistpage',
   require('./routes/admin/employees/employeeslistpage'));
 
+app.use(
+  '/api/admin/main/fpageview',
+  require('./routes/admin/main/fpageview')
+);
+
 // 6) SPA fallback: 그 외 (확장자 없는) 모든 요청에 index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
