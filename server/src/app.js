@@ -6,7 +6,7 @@ const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
 
-// Redis v3 방식
+// Redis v3 방식 (connect() 없음)
 const redis = require('redis');
 const connectRedis = require('connect-redis');
 const RedisStore = connectRedis(session);
@@ -33,42 +33,40 @@ app.use(session({
   cookie: { httpOnly: true, secure: false, sameSite: 'lax', maxAge: 1000 * 60 * 60 }
 }));
 
-// 2) 정적 파일 서빙 (React 빌드 결과)
+// 2) React 빌드 결과물 정적 서빙
 const distPath = path.join(__dirname, '../../client/dist');
 app.use(express.static(distPath));
 
-// 3) 절대 경로 /assets/* 도 dist/assets 에서 바로 서빙
+// 3) 절대 경로 /assets/* → dist/assets
 app.use('/assets', express.static(path.join(distPath, 'assets')));
 
-// 4) nested assets (예: /admin/.../assets/foo.js) 처리
-//    URL에 /assets/ 가 포함된 요청을 캐치해서 dist/assets/* 에서 제공
-app.get(/\/assets\/.+/, (req, res) => {
-  // '/admin/.../assets/index-abc.js' → 'index-abc.js'
-  const assetFile = req.path.split('/assets/')[1];
-  res.sendFile(path.join(distPath, 'assets', assetFile));
+// 4) URL 중간에 /assets/ 포함된 nested asset 요청 처리
+app.get(/\/assets\/.+/, (req, res, next) => {
+  const [, assetPath] = req.path.split('/assets/');
+  if (!assetPath) return next();
+  res.sendFile(path.join(distPath, 'assets', assetPath));
 });
 
-// 5) API 라우터 연결
+// 5) API 라우터 연결 (static 서빙보다 위, SPA fallback보다 아래)
 app.use('/api/auth', require('./routes/auth/auth'));
 app.use('/api/auth/register', require('./routes/auth/register'));
 app.use('/api/log', require('./routes/log'));
 
 app.use('/api/admin/main/bpage', require('./routes/admin/main/bpage'));
 app.use('/api/admin/main/cpage', require('./routes/admin/main/cpage'));
-app.use('/api/admin/employees/employeeslistpage',
-  require('./routes/admin/employees/employeeslistpage'));
+app.use('/api/admin/main/fpage', require('./routes/admin/main/fpage'));
+app.use('/api/admin/employees/employeeslistpage', require('./routes/admin/employees/employeeslistpage'));
 
-app.use(
-  '/api/admin/main/fpageview',
-  require('./routes/admin/main/fpageview')
-);
+// ✔️ fpage 확인용
+console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');
 
-// 6) SPA fallback: 그 외 (확장자 없는) 모든 요청에 index.html
+
+// 6) SPA fallback: 확장자 없는 모든 요청에 index.html 반환
 app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
-// 7) 서버 실행
+// 7) 서버 시작
 app.listen(PORT, () => {
   console.log(`✅ Express server running at http://localhost:${PORT}`);
 });

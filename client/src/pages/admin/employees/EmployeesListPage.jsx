@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ 내부 이동을 위한 import
 import styles from './EmployeesListPage.module.css';
 import axios from 'axios';
 
@@ -7,6 +8,7 @@ const EmployeesListPage = () => {
   const [form, setForm] = useState({});
   const [selectedEid, setSelectedEid] = useState('');
   const [activeFilter, setActiveFilter] = useState('active');
+  const navigate = useNavigate(); // ✅ 훅 선언
 
   useEffect(() => {
     fetchEmployees();
@@ -128,8 +130,6 @@ const EmployeesListPage = () => {
     setSelectedEid('');
   };
 
-
-
   const filteredEmployees = employees.filter(emp => emp.status?.toLowerCase() === activeFilter);
 
   return (
@@ -174,15 +174,15 @@ const EmployeesListPage = () => {
           <button type="button" onClick={handleEdit}>✏️ 수정</button>
           <button type="button" onClick={handleDelete}>🗑️ 삭제</button>
 
+          {/* ✅ 내부 이동으로 변경된 버튼 */}
           <button
             type="button"
             disabled={!form.eid}
-            onClick={() =>
-              window.open(`${window.location.origin}/admin/employees/employeesprintpage/print/${form.eid}`, '_blank')
-            }
+            onClick={() => navigate(`/admin/employees/employeesprintpage/print/${form.eid}`)}
           >
             📋 선택 출력
           </button>
+
           <button
             type="button"
             onClick={() => window.open(`/api/admin/employees/employeeslistpage/pdf?status=${activeFilter}`, '_blank')}

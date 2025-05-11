@@ -3,7 +3,7 @@ import DropdownMenu from '../DropdownMenu';
 
 const GeneralMenu = () => {
   const adminItems = [
-    { label: 'a', link: '/admin/dashboard' },
+    { label: 'a', link: '/admin/general/a' },
     { label: 'b', link: '/admin/users' },
     { label: 'c', link: '/admin/reports' },
     { label: 'd', link: '/admin/settings' },

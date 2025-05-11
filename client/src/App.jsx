@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// import { HashRouter as Router, Routes, Route } from 'react-router-dom'; // HashRouter 사용
 import Layout from './layouts/Layout';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/login/LoginPage';
@@ -10,6 +11,8 @@ import { AuthProvider } from './context/AuthContext';
 // 중첩 라우트 컴포넌트
 import AdminRoutes from './routes/adminRoutes';
 import UserRoutes from './routes/userRoutes';
+
+console.log('✅ App.jsx loaded');
 
 function App() {
   const [message, setMessage] = useState('Loading...');

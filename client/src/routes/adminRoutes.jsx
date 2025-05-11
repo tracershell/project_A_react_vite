@@ -7,6 +7,8 @@ import adminMainRoutes from './adminMainRoutes';
 import adminEmployeesRoutes from './adminEmployeesRoutes';
 import adminGeneralRoutes from './adminGeneralRoutes';
 
+console.log('✅ adminMainRoutes import 확인'); // ← 이건 찍히는지 먼저 확인
+
 export default function AdminRoutes() {
   return (
     <Routes>
@@ -29,10 +31,14 @@ export default function AdminRoutes() {
       {/* /admin/general/... (비어 있어도 괜찮습니다) */}
       {adminGeneralRoutes}
 
-      {/* /admin/* 아닌 잘못된 URL → 404 */}
+      {/* catch-all */}
       <Route
         path="*"
-        element={<div>Admin Page Not Found</div>}
+        element={
+          <div style={{ padding: 20 }}>
+            <h2>Admin Page Not Found</h2>
+          </div>
+        }
       />
     </Routes>
   );

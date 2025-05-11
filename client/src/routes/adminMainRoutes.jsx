@@ -12,6 +12,8 @@ import EPage01 from '../pages/admin/main/epage/EPage-01';
 import FPage from '../pages/admin/main/FPage';
 import FPageView from '../pages/admin/main/FPageView';
 
+console.log('✅ adminMainRoutes loaded');
+
 const adminMainRoutes = [
   <Route
     key="admin-main-a"
@@ -76,9 +78,11 @@ const adminMainRoutes = [
       </PrivateRoute>
     }
   />,
+
+  // ✔️ 절대로 앞에 slash(‘/’)나 ‘admin/…’을 붙이지 마세요!
   <Route
-    key="admin-main-f"
-    path="admin/main/fpageview/:id"
+    key="admin-main-fpageview"
+    path="main/fpageview/:id"
     element={
       <PrivateRoute role="admin">
         <FPageView />

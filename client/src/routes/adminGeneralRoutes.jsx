@@ -2,13 +2,28 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 
-// 나중에 admin/general 아래에 페이지가 생기면 추가하세요.
+import APage from '../pages/admin/general/APage';
+import ANewPage from '../pages/admin/general/ANewPage';
+
 const adminGeneralRoutes = [
-  // <Route
-  //   key="admin-general-foo"
-  //   path="general/foo"
-  //   element={ <PrivateRoute role="admin"><FooPage/></PrivateRoute> }
-  // />,
+  <Route
+    key="admin-general-apage"
+    path="general/a"
+    element={
+      <PrivateRoute role="admin">
+        <APage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="admin-general-anewpage"
+    path="general/anew"
+    element={
+      <PrivateRoute role="admin">
+        <ANewPage />
+      </PrivateRoute>
+    }
+  />
 ];
 
 export default adminGeneralRoutes;
