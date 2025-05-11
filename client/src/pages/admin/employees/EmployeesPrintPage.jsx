@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const EmployeesPrintPage = () => {
   const { eid } = useParams();
+  const navigate = useNavigate(); // ✅ 추가
   const [employee, setEmployee] = useState(null);
 
   console.log('🟡 EmployeesPrintPage mounted');
-  console.log('eid from route:', eid);  // ← 이것도 안 뜨면 useParams()가 작동 안 한 것
+  console.log('eid from route:', eid);
 
   useEffect(() => {
     console.log('API 요청 시작:', `/api/admin/employees/employeeslistpage/print/${eid}`);
@@ -36,6 +37,11 @@ const EmployeesPrintPage = () => {
           <tr><th>Phone</th><td>{employee.phone}</td></tr>
         </tbody>
       </table>
+
+      {/* ✅ 위치 적절: 표 아래, 내용이 끝난 후 자연스럽게 */}
+      <button onClick={() => navigate(-1)} style={{ marginTop: '20px' }}>
+        ← 뒤로
+      </button>
     </div>
   );
 };
