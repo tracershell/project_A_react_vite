@@ -63,6 +63,7 @@ app.use('/api/admin/main/fpage', require('./routes/admin/main/fpage'));
 app.use('/api/admin/employees/employeeslistpage', require('./routes/admin/employees/employeeslistpage'));
 app.use('/api/admin/employees/employeesdata', require('./routes/admin/employees/employeesdatapage'));
 app.use('/api/admin/employees/employeesphotopage', require('./routes/admin/employees/employeesphotopage'));
+app.use('/api/admin/employees/employeesphotofetch', require('./routes/admin/employees/employeesphotofetch'));
 
 // ✔️ fpage 확인용
 console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');

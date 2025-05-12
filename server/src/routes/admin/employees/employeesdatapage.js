@@ -5,25 +5,25 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// upload folder
+// ✅ 업로드 폴더 경로 설정
 const uploadPath = path.join(__dirname, '../../../../public/uploads/e_uploads');
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
 
-// multer setup
+// ✅ multer 설정 - 파일명에 eid prefix 포함
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadPath),
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
-    const base = path.basename(file.originalname, ext);
     const timestamp = Date.now();
-    cb(null, `${base}_${timestamp}${ext}`);
+    const eid = req.body.eid || 'unknown';
+    cb(null, `${eid}_${timestamp}${ext}`); // ✅ prefix로 eid 포함
   },
 });
 const upload = multer({ storage });
 
-// GET list of employees + files
+// ✅ 직원 + 파일 목록 조회
 router.get('/', async (req, res) => {
   try {
     const [employees] = await db.query(
@@ -43,7 +43,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST upload
+// ✅ 파일 업로드 처리
 router.post('/upload', upload.single('file'), async (req, res) => {
   const { eid, comment } = req.body;
   const file = req.file;
@@ -64,7 +64,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-// DELETE file
+// ✅ 파일 삭제 처리
 router.delete('/delete/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -83,6 +83,25 @@ router.delete('/delete/:id', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: '삭제 오류' });
+  }
+});
+
+// ✅ 특정 직원(eid)의 문서 목록 조회 API
+router.get('/docs/:eid', async (req, res) => {
+  const { eid } = req.params;
+  try {
+    const [files] = await db.query(`
+      SELECT ed.id, ed.eid, ed.filename, ed.originalname, ed.comment,
+             ed.upload_date
+      FROM employees_data ed
+      WHERE ed.eid = ?
+      ORDER BY ed.upload_date DESC
+    `, [eid]);
+
+    res.json(files);
+  } catch (err) {
+    console.error('문서 조회 실패:', err);
+    res.status(500).json({ error: '문서 조회 실패' });
   }
 });
 

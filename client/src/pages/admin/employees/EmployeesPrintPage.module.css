@@ -1,0 +1,75 @@
+/* EmployeesListPage.module.css */
+
+.page {
+  margin: 0;
+  overflow-x: hidden;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  font-size: 12px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+button {
+  padding: 4px 12px;
+  font-size: 12px;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.backButton {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+img {
+  max-height: 80px;
+  border-radius: 6px;
+  object-fit: contain;
+  border: 1px solid #ccc;
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #ccc;
+  margin-top: 1rem;
+}
+
+.tableWrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  table-layout: fixed;
+}
+
+.tableWrapper th,
+.tableWrapper td {
+  border: 1px solid #ccc;
+  padding: 4px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tableWrapper th {
+  background-color: #f0f8ff;
+  position: sticky;
+  top: 0;
+}
+
+.photoSection {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  padding: 1rem 0;
+}
