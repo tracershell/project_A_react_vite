@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,       
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
               ON UPDATE CURRENT_TIMESTAMP                
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 
 CREATE TABLE IF NOT EXISTS employees (
@@ -38,22 +38,29 @@ CREATE TABLE IF NOT EXISTS employees (
   state VARCHAR(50),
   zip VARCHAR(20),
   remark TEXT
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 
 
 CREATE TABLE IF NOT EXISTS employees_data (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  eid VARCHAR(10),               -- 직원 ID (employees.eid 참조)
-  filename VARCHAR(255),         -- 서버에 저장된 파일명
-  originalname VARCHAR(255),     -- 사용자가 올린 원래 파일명
-  comment TEXT,                  -- 업로드 설명
-  upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 업로드 일자
-);
+  eid VARCHAR(50) NOT NULL,      
+  filename VARCHAR(255) NOT NULL, 
+  originalname VARCHAR(255),      
+  comment VARCHAR(255),            
+  upload_date DATETIME DEFAULT CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 
 
-
+CREATE TABLE IF NOT EXISTS employees_photo (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  eid VARCHAR(50) NOT NULL,
+  filename VARCHAR(255) NOT NULL,
+  originalname VARCHAR(255),
+  comment VARCHAR(255),
+  upload_date DATETIME DEFAULT CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
 
 

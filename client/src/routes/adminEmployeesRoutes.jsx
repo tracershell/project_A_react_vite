@@ -4,6 +4,8 @@ import PrivateRoute from './PrivateRoute';
 
 import EmployeesListPage from '../pages/admin/employees/EmployeesListPage';
 import EmployeesPrintPage from '../pages/admin/employees/EmployeesPrintPage';
+import EmployeesDataPage from '../pages/admin/employees/EmployeesDataPage';
+import EmployeesPhotoPage from '../pages/admin/employees/EmployeesPhotoPage';
 
 const adminEmployeesRoutes = [
   <Route
@@ -21,6 +23,24 @@ const adminEmployeesRoutes = [
     element={
       <PrivateRoute role="admin">
         <EmployeesPrintPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="admin-employees-data"
+    path="employees/employeesdata"
+    element={
+      <PrivateRoute role="admin">
+        <EmployeesDataPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="admin-employees-photo"
+    path="employees/employeesphoto"
+    element={
+      <PrivateRoute role="admin">
+        <EmployeesPhotoPage />
       </PrivateRoute>
     }
   />

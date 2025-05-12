@@ -47,6 +47,11 @@ app.get(/\/assets\/.+/, (req, res, next) => {
   res.sendFile(path.join(distPath, 'assets', assetPath));
 });
 
+//  employees data /e_uploads location 처리
+app.use('/e_uploads', express.static(path.join(__dirname, '../public/uploads/e_uploads'))
+);
+
+
 // 5) API 라우터 연결 (static 서빙보다 위, SPA fallback보다 아래)
 app.use('/api/auth', require('./routes/auth/auth'));
 app.use('/api/auth/register', require('./routes/auth/register'));
@@ -56,6 +61,8 @@ app.use('/api/admin/main/bpage', require('./routes/admin/main/bpage'));
 app.use('/api/admin/main/cpage', require('./routes/admin/main/cpage'));
 app.use('/api/admin/main/fpage', require('./routes/admin/main/fpage'));
 app.use('/api/admin/employees/employeeslistpage', require('./routes/admin/employees/employeeslistpage'));
+app.use('/api/admin/employees/employeesdata', require('./routes/admin/employees/employeesdatapage'));
+app.use('/api/admin/employees/employeesphotopage', require('./routes/admin/employees/employeesphotopage'));
 
 // ✔️ fpage 확인용
 console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');
