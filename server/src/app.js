@@ -65,6 +65,16 @@ app.use('/api/admin/employees/employeesdata', require('./routes/admin/employees/
 app.use('/api/admin/employees/employeesphotopage', require('./routes/admin/employees/employeesphotopage'));
 app.use('/api/admin/employees/employeesphotofetch', require('./routes/admin/employees/employeesphotofetch'));
 
+app.use('/api/admin/import/vendors', require('./routes/admin/import/importvendorspage'));
+app.use('/api/admin/import/po', require('./routes/admin/import/importpopage'));
+app.use('/api/admin/import/deposit', require('./routes/admin/import/importdepositpage'));
+app.use('/api/admin/import/balance', require('./routes/admin/import/importbalancepage'));
+app.use('/api/admin/import/pdf', require('./routes/admin/import/import_payments_pdf'));
+app.use('/api/admin/import/extra', require('./routes/admin/import/importextraitemspage'));
+//app.use('/api/admin/import/extra/pdf', require('./routes/admin/import/import_extra_pdf'));
+
+
+
 // ✔️ fpage 확인용
 console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');
 

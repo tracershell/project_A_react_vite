@@ -1,0 +1,76 @@
+.page {
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-size: 14px;
+}
+
+h2 {
+  margin: 0.5rem 0;
+}
+
+/* 한 줄(row) form 스타일 */
+.formRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.formRow input,
+.formRow select,
+.formRow button {
+  height: 2rem;
+  font-size: 14px;
+}
+
+.formRow input,
+.formRow select {
+  flex: 1 1 140px;
+  padding: 0 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.formRow button {
+  flex: 0 0 auto;
+  padding: 0 1rem;
+  border: 1px solid #066da5;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.formRow button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.list {
+  max-height: 700px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.selected {
+  background: #ffff99;
+}

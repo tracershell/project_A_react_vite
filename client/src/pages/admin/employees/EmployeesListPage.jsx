@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // ✅ 내부 이동을 위한 import
-import styles from './EmployeesListPage.module.css';
+import styles from './EmployeesListPage.module.css'; // ✅ CSS 모듈 import
 import axios from 'axios';
 
 const EmployeesListPage = () => {

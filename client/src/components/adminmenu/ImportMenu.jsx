@@ -3,11 +3,11 @@ import DropdownMenu from '../DropdownMenu';
 
 const ImportMenu = () => {
   const adminItems = [
-    { label: 'a', link: '/admin/dashboard' },
-    { label: 'b', link: '/admin/users' },
-    { label: 'c', link: '/admin/reports' },
-    { label: 'd', link: '/admin/settings' },
-    { label: 'e', link: '/admin/logs' },
+    { label: 'Import Vendor', link: '/admin/import/vendors' },
+    { label: 'Import PO', link: '/admin/import/po' },
+    { label: 'Deposit Payment', link: '/admin/import/deposit' },
+    { label: 'Balance Payment', link: '/admin/import/balance' },
+    { label: 'Extra Items', link: '/admin/import/extra' },
   ];
 
   return <DropdownMenu title="Import" items={adminItems} />;

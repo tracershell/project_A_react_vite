@@ -1,0 +1,47 @@
+.page {
+  padding: 1rem;
+  background-color: #f8f9fb;
+  font-size: 12px;
+}
+
+.controlBox {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.controlBox input {
+  padding: 4px;
+  font-size: 12px;
+  width: 140px;
+}
+
+button {
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid #007acc;
+  background-color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.totalBox {
+  margin-top: 1rem;
+  font-weight: bold;
+  font-size: 13px;
+  color: #333;
+}

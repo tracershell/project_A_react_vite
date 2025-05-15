@@ -1,0 +1,68 @@
+.page {
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-size: 14px;
+}
+
+h2 {
+  margin: 0.5rem 0;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.form input {
+  flex: 1 1 120px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 2rem;
+}
+
+.buttons {
+  margin-bottom: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  font-size: 14px;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.buttons button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.list {
+  max-height: 700px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.selected {
+  background: #ffff99;
+}

@@ -25,7 +25,7 @@ h2 {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  align-items: center;
+  align-items: baseline;
 }
 
 /* 직원선택 box 크기 */
@@ -40,7 +40,7 @@ h2 {
   padding: 0 4px;
   border: 1px solid #ccc;
   border-radius: 4px;
-}
+  }
 
 .uploadForm input[type="file"],
 .uploadForm input[type="text"] {
