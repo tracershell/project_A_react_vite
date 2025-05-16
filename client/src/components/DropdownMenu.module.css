@@ -23,7 +23,7 @@
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 120px;
+  min-width: 180px;
   /* 🔥 전체 너비도 조금 줄임 */
   background: rgba(255, 255, 255, 0.95);
   border-radius: 6px;
@@ -47,13 +47,14 @@
 
 .dropdownItem {
   display: block;
-  padding: 2px 4px;
-  /* 🔥 상하 padding 줄임 */
-  font-size: 10px;
+  /*padding: 2px 4px;
+   🔥 상하 padding 줄임 */
+  font-size: 10x;
   /* 🔥 글씨 크기 줄임 */
   color: #333;
-  text-decoration: none;
-  transition: background 0.3s ease, color 0.3s ease;
+  /* text-decoration: none;
+  transition: background 0.3s ease, color 0.3s ease; */
+  line-height: 1.2;
 }
 
 .dropdownItem:hover {

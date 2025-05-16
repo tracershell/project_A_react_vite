@@ -1,112 +1,109 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './ImportDepositPage.module.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ImportDepositPage = () => {
-  const [records, setRecords] = useState([]);
-  const [exrate, setExrate] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { rows = [], vendor_id } = location.state || {};
   const [dpDate, setDpDate] = useState('');
-  const [totalRMB, setTotalRMB] = useState(0);
-  const [totalUSD, setTotalUSD] = useState(0);
+  const [exRate, setExRate] = useState('');
+  const [records, setRecords] = useState([]);
+  const [comment, setComment] = useState('');
 
+  // 페이지 진입 시 받은 rows를 보여주기
   useEffect(() => {
-    const saved = sessionStorage.getItem('depositRecords');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      const enriched = parsed.map(r => ({
+    if (rows?.length) setRecords(rows);
+  }, [rows]);
+
+  // 환율 적용
+  const applyExRate = () => {
+    setRecords(recs =>
+      recs.map(r => ({
         ...r,
-        dp_amount_rmb: (r.amount * r.deposit_rate / 100).toFixed(2),
-        exrate: 1,
-        dp_amount_usd: 0
-      }));
-      setRecords(enriched);
-    }
-  }, []);
-
-  const applyExchangeRate = () => {
-    if (!exrate || isNaN(exrate)) return alert('환율을 입력하세요.');
-    const newRecords = records.map(r => {
-      const usd = (parseFloat(r.dp_amount_rmb) / parseFloat(exrate)).toFixed(2);
-      return { ...r, exrate, dp_amount_usd: usd };
-    });
-    setRecords(newRecords);
-
-    const totalR = newRecords.reduce((sum, r) => sum + parseFloat(r.dp_amount_rmb), 0);
-    const totalU = newRecords.reduce((sum, r) => sum + parseFloat(r.dp_amount_usd), 0);
-    setTotalRMB(totalR.toFixed(2));
-    setTotalUSD(totalU.toFixed(2));
+        dp_amount_usd:
+          r.dp_amount_rmb && exRate
+            ? (parseFloat(r.dp_amount_rmb) / parseFloat(exRate)).toFixed(2)
+            : r.dp_amount_usd,
+        dp_exrate: exRate,
+      }))
+    );
   };
 
+  // Pay
   const handlePay = async () => {
-    if (!dpDate || !exrate) return alert('날짜와 환율을 입력하세요.');
+    if (!dpDate || !exRate) return alert('DP Date/Exchange Rate를 입력하세요');
     try {
-      await axios.post('/api/admin/import/deposit/pay', {
-        records,
-        dp_date: dpDate,
-        exrate
-      });
-      alert('저장 완료');
-      window.location.href = '/admin/import/po';
+      for (const rec of records) {
+        await axios.post('/api/admin/import/deposit/add', {
+          po_id: rec.id,
+          vendor_id,
+          dp_date: dpDate,
+          dp_exrate: exRate,
+          dp_amount_rmb: rec.dp_amount_rmb,
+          dp_amount_usd: rec.dp_amount_usd,
+          comment,
+        });
+      }
+      alert('저장 완료!');
+      navigate('/admin/import/po');
     } catch (err) {
-      alert(err.response?.data?.error || '저장 오류');
+      alert('저장 중 오류');
     }
   };
 
   return (
     <div className={styles.page}>
-      <h2>Deposit Pay List</h2>
-
-      <div className={styles.controlBox}>
-        <label>
-          DP Date:
-          <input type="date" value={dpDate} onChange={e => setDpDate(e.target.value)} />
-        </label>
-        <label>
-          Exchange Rate:
-          <input type="number" value={exrate} onChange={e => setExrate(e.target.value)} step="0.0001" />
-        </label>
-        <button onClick={applyExchangeRate}>환율적용</button>
-        <button onClick={handlePay}>Pay</button>
-        <button
-          onClick={() => window.open(`/api/admin/import/deposit/pdf?date=${dpDate}&exrate=${exrate}`, '_blank')}
-        >
-          📄 PDF 보기
-        </button>
+      <h2>Deposit Pay</h2>
+      <div>
+        <input
+          type="date"
+          value={dpDate}
+          onChange={e => setDpDate(e.target.value)}
+          placeholder="DP Date"
+        />
+        <input
+          type="number"
+          step="0.0001"
+          value={exRate}
+          onChange={e => setExRate(e.target.value)}
+          placeholder="Exchange Rate"
+        />
+        <button type="button" onClick={applyExRate}>환율적용</button>
+        <button type="button" onClick={handlePay}>Pay</button>
+        <button type="button" onClick={() => navigate('/admin/import/po')}>되돌아가기</button>
       </div>
-
-      <div style={{ maxHeight: '700px', overflowY: 'auto' }}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>PO No</th>
-              <th>Vendor</th>
-              <th>PO Amount</th>
-              <th>Rate%</th>
-              <th>DP RMB</th>
-              <th>Exrate</th>
-              <th>DP USD</th>
+      <table className={styles.compactTable}>
+        <thead>
+          <tr>
+            <th>Vendor</th>
+            <th>PO No</th>
+            <th>Style</th>
+            <th>DP Amount(RMB)</th>
+            <th>DP Amount(USD)</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+          {records.map(r => (
+            <tr key={r.id}>
+              <td>{r.vendor_name}</td>
+              <td>{r.po_no}</td>
+              <td>{r.style_no}</td>
+              <td>{r.dp_amount_rmb}</td>
+              <td>{r.dp_amount_usd}</td>
+              <td>
+                <input
+                  value={comment}
+                  onChange={e => setComment(e.target.value)}
+                  placeholder="Comment"
+                />
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {records.map((r, idx) => (
-              <tr key={idx}>
-                <td>{r.po_no}</td>
-                <td>{r.vendor_id}</td>
-                <td>{r.amount}</td>
-                <td>{r.deposit_rate}</td>
-                <td>{r.dp_amount_rmb}</td>
-                <td>{r.exrate}</td>
-                <td>{r.dp_amount_usd}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <div className={styles.totalBox}>
-        <p>Total RMB: {totalRMB}</p>
-        <p>Total USD: {totalUSD}</p>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

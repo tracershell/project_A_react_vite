@@ -92,3 +92,9 @@ white-space: nowrap;
 background: #ffff99;
 }
 
+/* 예: 스타일을 좀 더 깔끔하게 정리하고 싶을 때 */
+.vendorInfo {
+  font-size: 14px;
+  margin-top: 4px;
+  margin-right: 10px;
+}

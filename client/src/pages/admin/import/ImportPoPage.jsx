@@ -187,8 +187,12 @@ const ImportPoPage = () => {
           ))}
         </select>
 
-        <input readOnly placeholder="Vendor ID" value={form.vendor_id || ''} />
-        <input readOnly placeholder="Rate (%)" value={form.deposit_rate || ''} />
+        <div className="vendorInfo">
+          <strong>Vendor ID:</strong> {form.vendor_id || ''}
+        </div>
+        <div className="vendorInfo">
+          <strong>Rate (%):</strong> {form.deposit_rate || ''}
+        </div>
 
         <input
           ref={el => (inputsRef.current[1] = el)}
