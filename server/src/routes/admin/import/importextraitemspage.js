@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
 
-// 전체 조회
+// 전체 조회 (입력용 select combo)
 router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM import_extra_items ORDER BY id');

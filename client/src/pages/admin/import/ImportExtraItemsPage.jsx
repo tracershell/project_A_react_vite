@@ -8,7 +8,6 @@ const ImportExtraItemsPage = () => {
   const [selectedId, setSelectedId] = useState(null);
   const inputsRef = useRef([]);
 
-  // 1) 목록 불러오기
   useEffect(() => {
     fetchItems();
   }, []);
@@ -17,12 +16,10 @@ const ImportExtraItemsPage = () => {
     setItems(data);
   };
 
-  // 2) 입력값 변경
   const handleChange = e => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // 3) Enter → 다음 필드로 포커스
   const handleKeyDown = (idx, e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -31,7 +28,6 @@ const ImportExtraItemsPage = () => {
     }
   };
 
-  // 4) CRUD 핸들러
   const handleAdd = async () => {
     await axios.post('/api/admin/import/extra/add', form);
     fetchItems();
@@ -50,7 +46,6 @@ const ImportExtraItemsPage = () => {
     clearForm();
   };
 
-  // 5) 리스트 선택
   const selectRow = row => {
     setSelectedId(row.id);
     setForm(row);
@@ -64,11 +59,7 @@ const ImportExtraItemsPage = () => {
   return (
     <div className={styles.page}>
       <h2>Extra Pay Input</h2>
-
-      <form
-        className={styles.formRow}
-        onSubmit={e => e.preventDefault()}
-      >
+      <form className={styles.formRow} onSubmit={e => e.preventDefault()}>
         <input
           ref={el => inputsRef.current[0] = el}
           name="extra_no"
@@ -118,7 +109,7 @@ const ImportExtraItemsPage = () => {
 
       <h2>Extra Pay List</h2>
       <div className={styles.list}>
-        <table>
+        <table className="compactTable">
           <thead>
             <tr>
               <th>ID</th>
@@ -132,7 +123,7 @@ const ImportExtraItemsPage = () => {
             {items.map(it => (
               <tr
                 key={it.id}
-                className={it.id === selectedId ? styles.selected : ''}
+                className={it.id === selectedId ? "selected" : ""}
                 onClick={() => selectRow(it)}
               >
                 <td>{it.id}</td>
