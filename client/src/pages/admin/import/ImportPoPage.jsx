@@ -1,4 +1,3 @@
-// ImportPoPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -25,12 +24,12 @@ const ImportPoPage = () => {
   }, []);
 
   const fetchVendors = async () => {
-    const { data } = await axios.get('/api/admin/import/vendors');
+    const { data } = await axios.get('/api/admin/import/vendors', { withCredentials: true });
     setVendors(data);
   };
 
   const fetchList = async () => {
-    const { data } = await axios.get('/api/admin/import/po');
+    const { data } = await axios.get('/api/admin/import/po', { withCredentials: true });
     setList(data);
   };
 
@@ -69,9 +68,8 @@ const ImportPoPage = () => {
       ...form,
       po_date: cleanDate(form.po_date)
     };
-
     try {
-      await axios.post('/api/admin/import/po/add', cleanedForm);
+      await axios.post('/api/admin/import/po/add', cleanedForm, { withCredentials: true });
       fetchList();
       clearFormFields();
       alert('✅ 저장 완료');
@@ -91,7 +89,7 @@ const ImportPoPage = () => {
       po_date: cleanDate(form.po_date)
     };
     try {
-      await axios.put(`/api/admin/import/po/edit/${selectedId}`, cleanedForm);
+      await axios.put(`/api/admin/import/po/edit/${selectedId}`, cleanedForm, { withCredentials: true });
       fetchList();
       clearFormFields();
       alert('✅ 수정 완료');
@@ -104,7 +102,7 @@ const ImportPoPage = () => {
   const handleDelete = async () => {
     if (!selectedId) return;
     try {
-      await axios.delete(`/api/admin/import/po/delete/${selectedId}`);
+      await axios.delete(`/api/admin/import/po/delete/${selectedId}`, { withCredentials: true });
       fetchList();
       clearFormFields();
     } catch (err) {
@@ -140,7 +138,7 @@ const ImportPoPage = () => {
       s.includes(id) ? s.filter(x => x !== id) : [...s, id]
     );
 
-  // **Vendor Name 포함 검색** 반영
+  // 검색 필터 적용
   const filteredList = list.filter(r =>
     (!searchVendor || r.vendor_id === Number(searchVendor)) &&
     (!searchBP || r.bp_status === searchBP) &&
@@ -153,15 +151,21 @@ const ImportPoPage = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    // 실제 동작 없음(필터는 state 기반)
   };
 
-  // <Deposit Pay> 버튼 (vendor_id 보장)
-  const handleDepositPay = () => {
+  // Deposit Pay 버튼: 임시테이블 저장 후 이동 (타입 오류/NaN 방지)
+  const handleDepositPay = async () => {
     let rowsToSend = [];
     let vId = searchVendor || form.vendor_id;
+    let vName = form.vendor_name || (vendors.find(v => v.id === Number(vId))?.name ?? '');
+    let vRate = form.deposit_rate || (vendors.find(v => v.id === Number(vId))?.deposit_rate ?? '');
+
     if (dpSelected.length > 0) {
       rowsToSend = list.filter(r => dpSelected.includes(r.id));
       vId = rowsToSend[0]?.vendor_id || vId;
+      vName = rowsToSend[0]?.vendor_name || vName;
+      vRate = rowsToSend[0]?.deposit_rate || vRate;
     } else if (vId) {
       rowsToSend = list.filter(
         r => r.vendor_id === Number(vId) && r.dp_status === 'paid'
@@ -171,15 +175,40 @@ const ImportPoPage = () => {
       alert('PO를 선택하거나, Vendor를 선택 후 DP 상태가 paid인 건만 이동합니다.');
       return;
     }
-    navigate('/admin/import/deposit', {
-      state: {
-        rows: rowsToSend,
-        vendor_id: vId
-      }
-    });
+    try {
+      // 모든 값은 서버에서 숫자 변환되지만, NaN/undefined 방지 위해 프론트에서 미리 체크
+      const cleanedRows = rowsToSend.map(r => ({
+        vendor_id: r.vendor_id,
+        vendor_name: r.vendor_name,
+        style_no: r.style_no,
+        po_date: cleanDate(r.po_date),
+        pcs: Number(r.pcs) || 0,
+        cost_rmb: Number(r.cost_rmb) || 0,
+        t_amount_rmb: Number(r.pcs) * Number(r.cost_rmb),  // 계산 필드
+        note: r.note || '',
+        deposit_rate: Number(r.deposit_rate || vRate) || 0,
+        // 이하 기존 로직...
+        dp_amount_rmb: (Number(r.pcs) * Number(r.cost_rmb) * (Number(r.deposit_rate || vRate) || 0) / 100).toFixed(2),
+        // dp_amount_usd, dp_exrate, dp_date 등은 0/null로 서버에서 처리
+      }));
+      await axios.post('/api/admin/import/deposit/batchAdd', {
+        rows: cleanedRows,
+        vendor_id: vId,
+        vendor_name: vName,
+        deposit_rate: vRate,
+      }, {
+        withCredentials: true,
+        timeout: 10000,
+      });
+      navigate('/admin/import/deposit');
+    } catch (err) {
+      const errorMsg = err.response?.data?.error ||
+        (err.code === 'ECONNABORTED' ? '요청 시간 초과' : err.message);
+      alert('임시저장 실패: ' + errorMsg);
+    }
   };
 
-  // <Balance Pay> 버튼 (vendor_id 보장)
+  // Balance Pay 버튼 (기존 코드 유지)
   const handleBalancePay = () => {
     let rowsToSend = [];
     let vId = searchVendor || form.vendor_id;
@@ -203,7 +232,7 @@ const ImportPoPage = () => {
     });
   };
 
-  const totalRmb = ((form.pcs || 0) * (form.cost_rmb || 0)).toFixed(2);
+  const totalRmb = ((Number(form.pcs) || 0) * (Number(form.cost_rmb) || 0)).toFixed(2);
 
   return (
     <div className={styles.page}>

@@ -71,6 +71,7 @@ app.use('/api/admin/import/deposit', require('./routes/admin/import/importdeposi
 app.use('/api/admin/import/balance', require('./routes/admin/import/importbalancepage'));
 app.use('/api/admin/import/pdf', require('./routes/admin/import/import_payments_pdf'));
 app.use('/api/admin/import/extra', require('./routes/admin/import/importextraitemspage'));
+app.use('/api/admin/import/deposit', require('./routes/admin/import/deposit_temp'));
 //app.use('/api/admin/import/extra/pdf', require('./routes/admin/import/import_extra_pdf'));
 
 

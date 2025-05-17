@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
+const generateDepositPDF = require('../../../utils/generateDepositPDF');
 
 // Deposit Pay 전체 조회 (특정 Vendor, 기간 등 검색)
 router.get('/', async (req, res) => {
@@ -56,9 +57,22 @@ console.log('req.body:', req.body);  // 값 실제로 도착했는지 체크
   }
 });
 
-// Deposit Pay PDF 보기 (예시, 실제 PDF 구현 필요)
 router.get('/pdf', async (req, res) => {
-  res.status(200).send('PDF 다운로드/보기 구현 필요');
+  try {
+    const { date, exrate } = req.query;
+    const [rows] = await db.query(
+      `SELECT d.*, p.po_no, p.style_no, v.name AS vendor_name
+       FROM import_deposit_pay d
+       JOIN import_po p ON d.po_id = p.id
+       JOIN import_vendors v ON d.vendor_id = v.id
+       WHERE d.dp_date = ?`,
+      [date]
+    );
+    await generateDepositPDF(res, rows, { date, exrate }); // 👈 이렇게 util 호출
+  } catch (err) {
+    console.error('PDF 생성 오류:', err);
+    res.status(500).send('PDF 생성 오류');
+  }
 });
 
 module.exports = router;
