@@ -1,95 +1,108 @@
-
 .page {
-background: #f5f7fa;
-color: #333;
-font-family: Arial, sans-serif;
-padding: 1rem;
-font-size: 14px;
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-size: 12px;
 }
 
 h2 {
-margin: 0.5rem 0;
+  margin: 0.5rem 0;
 }
 
 .formRow {
-display: flex;
-flex-wrap: wrap;
-align-items: center;
-gap: 0.5rem;
-padding: 0.75rem;
-border: 1px solid #ccc;
-border-radius: 4px;
-margin-bottom: 12px;
-overflow-x: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  overflow-x: auto;
 }
 
 .formRow select,
 .formRow input {
-flex: 1 1 120px;
-height: 2rem;
-padding: 0 0.5rem;
-border: 1px solid #ccc;
-border-radius: 4px;
+  flex: 1 1 120px;
+  height: 2rem;
+  padding: 0 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .formRow button {
-flex: 0 0 auto;
-height: 2rem;
-padding: 0 1rem;
-border: 1px solid #066da5;
-background: #fff;
-border-radius: 4px;
-cursor: pointer;
+  flex: 0 0 auto;
+  height: 2rem;
+  padding: 0 1rem;
+  border: 1px solid #066da5;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .formRow button:disabled {
-opacity: 0.5;
-cursor: default;
+  opacity: 0.5;
+  cursor: default;
 }
 
 
 .payButtons {
-display: flex;
-justify-content: flex-start;
-gap: 0.5rem;
-margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .searchBox {
-margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .searchBox input {
-width: 100%;
-max-width: 300px;
-padding: 0.5rem;
-border: 1px solid #ccc;
-border-radius: 4px;
-font-size: 14px;
+  width: 100%;
+  max-width: 300px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .list {
-max-height: 700px;
-overflow-y: auto;
-border: 1px solid #ccc;
-border-radius: 4px;
+  max-height: 700px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 table {
-width: 100%;
-border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: #d0ebff;
+  color: #003366;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 th,
 td {
-padding: 0.4rem;
-border: 1px solid #ddd;
-text-align: center;
-white-space: nowrap;
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+  text-align: center;
+  white-space: nowrap;
+}
+
+tbody tr:hover {
+  background-color: #fff8dc;
+  cursor: pointer;
 }
 
 .selected {
-background: #ffff99;
+  background-color: #ffff99 !important;
 }
 
 /* 예: 스타일을 좀 더 깔끔하게 정리하고 싶을 때 */
@@ -97,4 +110,30 @@ background: #ffff99;
   font-size: 14px;
   margin-top: 4px;
   margin-right: 10px;
+}
+
+/* 줄 전체 폼을 작게 만들기 위해 formRow에 별도 소형 클래스 추가 */
+.formRow.small {
+  flex-wrap: nowrap;
+  /* 줄바꿈 방지 */
+  font-size: 11px;
+  /* 전체 글씨 작게 */
+  gap: 0.3rem;
+  /* 요소 간 간격 좁게 */
+}
+
+/* select, input 크기 축소 */
+.formRow.small select,
+.formRow.small input {
+  height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.3rem;
+  min-width: 80px;
+}
+
+/* 버튼 크기 축소 */
+.formRow.small button {
+  height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.5rem;
 }

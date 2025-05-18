@@ -127,6 +127,12 @@ router.post('/batchAdd', async (req, res) => {
   }
 });
 
-
+// 6. 페이지 이탈 시 전체 임시 데이터 삭제
+router.delete('/temp/clear', async (req, res) => {
+  const user_id = getUserId(req);
+  if (!user_id) return res.status(401).json({ error: '로그인 필요' });
+  await db.query('DELETE FROM import_deposit_temp WHERE user_id = ?', [user_id]);
+  res.json({ success: true });
+});
 
 module.exports = router;

@@ -3,7 +3,7 @@
   color: #333;
   font-family: Arial, sans-serif;
   padding: 1rem;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 h2 {
@@ -11,26 +11,36 @@ h2 {
 }
 
 .compactTable th {
-  background-color: #f0f8ff;
+  background-color: #d0ebff;
+  color: #003366;
+  font-weight: bold;
   position: sticky;
   top: 0;
+  z-index: 1;
 }
 
 .compactTable tr:hover {
-  background-color: #e9f5ff;
+  background-color: #fff8dc;
+  cursor: pointer;
 }
 
-.compactTable th, .compactTable td {
+.compactTable th,
+.compactTable td {
   padding: 0.4rem;
   border: 1px solid #ddd;
   text-align: center;
   white-space: nowrap;
 }
 
-input, button {
+.selected {
+  background-color: #ffff99 !important;
+}
+
+input,
+button {
   margin-right: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 0.25rem;
   border-radius: 4px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 12px;
 }

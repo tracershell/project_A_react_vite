@@ -171,6 +171,14 @@ const ImportPoPage = () => {
         r => r.vendor_id === Number(vId) && r.dp_status === 'paid'
       );
     }
+
+    // ✅ vendor_id가 여러 개 존재하는지 검사
+    const uniqueVendorIds = [...new Set(rowsToSend.map(r => r.vendor_id))];
+    if (uniqueVendorIds.length > 1) {
+      alert('같은 Vendor 가 아닙니다');
+      return;
+    }
+
     if (!rowsToSend.length) {
       alert('PO를 선택하거나, Vendor를 선택 후 DP 상태가 paid인 건만 이동합니다.');
       return;
@@ -221,6 +229,14 @@ const ImportPoPage = () => {
         r => r.vendor_id === Number(vId) && r.bp_status === 'paid'
       );
     }
+
+    // ✅ vendor_id가 여러 개 존재하는지 검사
+    const uniqueVendorIds = [...new Set(rowsToSend.map(r => r.vendor_id))];
+    if (uniqueVendorIds.length > 1) {
+      alert('같은 Vendor 가 아닙니다');
+      return;
+    }
+
     if (!rowsToSend.length) {
       alert('PO를 선택하거나, Vendor를 선택 후 BP 상태가 paid인 건만 이동합니다.');
       return;
@@ -238,7 +254,7 @@ const ImportPoPage = () => {
   return (
     <div className={styles.page}>
       <h2>PO Input</h2>
-      <form className={styles.formRow} onSubmit={e => e.preventDefault()}>
+      <form className={`${styles.formRow} ${styles.small}`} onSubmit={e => e.preventDefault()}>
         <select
           ref={el => (inputsRef.current[0] = el)}
           name="vendor_id"

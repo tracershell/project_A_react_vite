@@ -249,6 +249,13 @@ const ImportDepositPage = () => {
     setTotalUsd(totalUsd);
   }, [records]);
 
+  // 페이지 언마운트 시 임시 테이블 삭제
+  useEffect(() => {
+    return () => {
+      axios.delete('/api/admin/import/deposit/temp/clear').catch(() => { });
+    };
+  }, []);
+
 
   // Pay: 임시테이블 → 실테이블 커밋
   const handlePay = async () => {
