@@ -267,8 +267,24 @@ const ImportDepositPage = () => {
     }
   };
 
-  const handleViewPdf = () => {
-    window.open(`/api/admin/import/deposit/pdf?date=${dpDate}&exrate=${exRate}`, '_blank');
+  const handleViewPdf = async () => {
+    // 현재 Deposit Pay List(ExtraPay/임시포함) 전체를 PDF로 출력
+    try {
+      const response = await axios.post(
+        '/api/admin/import/deposit/pdf',
+        {
+          records,  // 현재 화면의 모든 rows
+          date: dpDate,
+          exrate: exRate,
+        },
+        { responseType: 'blob' } // PDF 파일 다운로드용
+      );
+      // Blob URL로 새 창에 띄움
+      const pdfUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      window.open(pdfUrl);
+    } catch (err) {
+      alert('PDF 생성 오류');
+    }
   };
 
   const handleCommentChange = (id, val) => {

@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
   `;
   const params = [];
   if (vendor_id) { sql += ' AND d.vendor_id = ?'; params.push(vendor_id); }
-  if (dp_date)   { sql += ' AND d.dp_date = ?';   params.push(dp_date); }
+  if (dp_date) { sql += ' AND d.dp_date = ?'; params.push(dp_date); }
   sql += ' ORDER BY d.dp_date DESC, d.id DESC';
   try {
     const [rows] = await db.query(sql, params);
@@ -29,8 +29,8 @@ router.get('/', async (req, res) => {
 
 // Deposit Pay 추가/저장
 router.post('/add', async (req, res) => {
-// 값 도착확인 code
-console.log('req.body:', req.body);  // 값 실제로 도착했는지 체크
+  // 값 도착확인 code
+  console.log('req.body:', req.body);  // 값 실제로 도착했는지 체크
 
   const { po_id, vendor_id, dp_date, dp_exrate, dp_amount_rmb, dp_amount_usd, comment } = req.body;
   try {
@@ -57,6 +57,7 @@ console.log('req.body:', req.body);  // 값 실제로 도착했는지 체크
   }
 });
 
+// GET /pdf 라우터는 "Pay" 처리된 DB 데이터만 보여
 router.get('/pdf', async (req, res) => {
   try {
     const { date, exrate } = req.query;
@@ -69,6 +70,18 @@ router.get('/pdf', async (req, res) => {
       [date]
     );
     await generateDepositPDF(res, rows, { date, exrate }); // 👈 이렇게 util 호출
+  } catch (err) {
+    console.error('PDF 생성 오류:', err);
+    res.status(500).send('PDF 생성 오류');
+  }
+});
+
+//  POST /pdf 라우터는 현재 상태(입력/임시 Extra Pay 등 포함) 전부 PDF로 보여줍니다.
+router.post('/pdf', async (req, res) => {
+  try {
+    const { records, date, exrate } = req.body;
+    // 클라이언트에서 온 데이터를 그대로 PDF 생성 함수에 전달
+    await generateDepositPDF(res, records, { date, exrate });
   } catch (err) {
     console.error('PDF 생성 오류:', err);
     res.status(500).send('PDF 생성 오류');
