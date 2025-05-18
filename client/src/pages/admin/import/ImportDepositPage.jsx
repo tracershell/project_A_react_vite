@@ -105,16 +105,16 @@ const ImportDepositPage = () => {
     const vendorRate = deposit_rate || (records[0] && records[0].deposit_rate) || '-';
 
     try {
-      // 1. PO 테이블에 Extra 항목으로도 등록 (일반 PO와 통일)
-      await axios.post('/api/admin/import/po/add', {
-        vendor_id: useVendorId,
-        po_no: extraForm.po_no,
-        style_no: showStyle,
-        pcs: 0,
-        cost_rmb: 0,
-        po_date: poDate,
-        note: `[EXTRA] ${extraForm.comment}`,
-      });
+      // 1. PO 테이블에 Extra 항목으로도 등록 (일반 PO와 통일) : PO table 에 자동등록되는 Extra Pay 자동등록 제거거
+      // await axios.post('/api/admin/import/po/add', {
+      //   vendor_id: useVendorId,
+      //   po_no: extraForm.po_no,
+      //   style_no: showStyle,
+      //   pcs: 0,
+      //   cost_rmb: 0,
+      //   po_date: poDate,
+      //   note: `[EXTRA] ${extraForm.comment}`,
+      // });
 
       // 2. Deposit Pay Listrecords에만 추가, 임시DB 저장 없음 🔴
       setRecords(recs => [
@@ -177,15 +177,16 @@ const ImportDepositPage = () => {
     }
     setRecords(recs =>
       recs.map(r => {
-        if (Number(r.dp_amount_rmb) === 0) {
-          // 0이면 DP Date만, 나머지는 건드리지 않음
+        // Extra Pay(환율비적용) - dp_amount_rmb === 0 인 경우
+        if (r.dp_amount_rmb === 0 || r.dp_amount_rmb === '0') {
+          // dp_date는 입력값으로, 나머지는 그대로
           return {
             ...r,
-            dp_date: dpDate,
-            // 나머지 필드는 기존 값 그대로
+            dp_date: dpDate
+            // dp_exrate, dp_amount_usd는 기존 값 그대로 둠
           };
         }
-        // 0이 아니면 DP Date, E.rate, Amount(USD) 자동 입력
+        // 일반 PO 또는 Extra Pay(환율적용)
         return {
           ...r,
           dp_date: dpDate,
@@ -311,8 +312,8 @@ const ImportDepositPage = () => {
                 <td>{r.pcs && r.cost_rmb ? (Number(r.pcs) * Number(r.cost_rmb)).toFixed(2) : ''}</td>
                 <td>
                   {
-                    r.dp_amount_rmb !== undefined && r.dp_amount_rmb !== null
-                      ? r.dp_amount_rmb
+                    (Number(r.dp_amount_rmb) || r.dp_amount_rmb === 0)
+                      ? Number(r.dp_amount_rmb)
                       : (
                         Number(r.t_amount_rmb) && Number(r.deposit_rate)
                           ? (Number(r.t_amount_rmb) * Number(r.deposit_rate) / 100).toFixed(2)
