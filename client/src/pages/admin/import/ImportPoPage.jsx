@@ -281,7 +281,8 @@ const ImportPoPage = () => {
         <button type="button" onClick={clearFormFields}>초기화</button>
       </form>
 
-      <form className={styles.searchBox} onSubmit={handleSearch}>
+      <h2>PO List</h2>
+      <form className={`${styles.formRow} ${styles.small}`} onSubmit={handleSearch}>
         <select value={searchVendor} onChange={e => setSearchVendor(e.target.value)}>
           <option value="">:: Vendor ::</option>
           {vendors.map(v => (
@@ -304,7 +305,6 @@ const ImportPoPage = () => {
         <button type="button" onClick={handleBalancePay}>Balance Pay</button>
       </form>
 
-      <h2>PO List</h2>
       <div className={styles.list}>
         <table className="styles.compactTable">
           <thead>

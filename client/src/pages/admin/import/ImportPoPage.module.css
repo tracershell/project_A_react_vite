@@ -90,7 +90,7 @@ th {
 
 th,
 td {
-  padding: 0.4rem;
+  padding: 0.10rem;
   border: 1px solid #ddd;
   text-align: center;
   white-space: nowrap;
@@ -112,28 +112,40 @@ tbody tr:hover {
   margin-right: 10px;
 }
 
-/* 줄 전체 폼을 작게 만들기 위해 formRow에 별도 소형 클래스 추가 */
+/* 1) .formRow.small 에서 align-items를 baseline으로 변경 */
 .formRow.small {
+  display: flex;
   flex-wrap: nowrap;
   /* 줄바꿈 방지 */
+  align-items: baseline;
+  /* center → baseline */
   font-size: 11px;
-  /* 전체 글씨 작게 */
   gap: 0.3rem;
-  /* 요소 간 간격 좁게 */
 }
 
-/* select, input 크기 축소 */
+/* 2) select, input 높이·라인 높이(line-height) 동일하게 */
 .formRow.small select,
 .formRow.small input {
+  display: inline-block;
+  /* baseline 정렬 위해 inline-block */
+  vertical-align: baseline;
+  /* 또는 middle, baseline 테스트 후 선택 */
   height: 1.6rem;
-  font-size: 11px;
+  /* 원하는 박스 높이 */
+  line-height: 1.6rem;
+  /* 텍스트 베이스라인을 박스 중앙에 */
   padding: 0 0.3rem;
-  min-width: 80px;
+  font-size: 11px;
+  appearance: none;
+  /* 브라우저 기본 스타일 제거 */
 }
 
-/* 버튼 크기 축소 */
+/* 3) 버튼도 동일하게 inline-block + vertical-align 처리 */
 .formRow.small button {
+  display: inline-block;
+  vertical-align: baseline;
   height: 1.6rem;
+  line-height: 1.6rem;
   font-size: 11px;
   padding: 0 0.5rem;
 }
