@@ -177,36 +177,78 @@ const ImportDepositPage = () => {
     }
     setRecords(recs =>
       recs.map(r => {
-        // Extra Pay(환율비적용) - dp_amount_rmb === 0 인 경우
-        if (r.dp_amount_rmb === 0 || r.dp_amount_rmb === '0') {
-          // dp_date는 입력값으로, 나머지는 그대로
-          return {
-            ...r,
-            dp_date: dpDate
-            // dp_exrate, dp_amount_usd는 기존 값 그대로 둠
-          };
+        // ExtraPay(환율비적용) 유지
+        if ((r.dp_exrate === 1 || r.dp_exrate === "1") && Number(r.dp_amount_rmb) === 0) {
+          return { ...r, dp_date: dpDate, dp_exrate: 1, dp_amount_usd: r.dp_amount_usd || '' };
         }
-        // 일반 PO 또는 Extra Pay(환율적용)
+
+        // 일반 PO (0 이상만 계산)
+        let dpRmb = Number(r.dp_amount_rmb);
+        if (!dpRmb) {
+          // 만약 0이거나 값이 없으면 계산해서 넣어줌
+          if (r.t_amount_rmb && r.deposit_rate) {
+            dpRmb = Number(r.t_amount_rmb) * Number(r.deposit_rate) / 100;
+          } else {
+            dpRmb = 0;
+          }
+        }
         return {
           ...r,
           dp_date: dpDate,
           dp_exrate: exRate,
-          dp_amount_usd: exRate ? (parseFloat(r.dp_amount_rmb) / parseFloat(exRate)).toFixed(2) : '',
+          dp_amount_rmb: dpRmb,
+          dp_amount_usd: (dpRmb && exRate) ? (dpRmb / parseFloat(exRate)).toFixed(2) : '',
         };
       })
     );
   };
 
+
+
+
   // 합계 (0이 아닌 것만 합계에 포함)
+  useEffect(() => {
+    if (rows.length > 0) {
+      const updatedRows = rows.map(r => {
+        const t_amount = r.t_amount_rmb || (Number(r.pcs || 0) * Number(r.cost_rmb || 0));
+        const rate = Number(r.deposit_rate || deposit_rate || 0);
+        let dpAmount = r.dp_amount_rmb;
+        if (dpAmount === undefined || dpAmount === null || dpAmount === '') {
+          dpAmount = (t_amount * rate / 100).toFixed(2);
+        }
+        return {
+          ...r,
+          t_amount_rmb: t_amount,
+          dp_amount_rmb: dpAmount
+        };
+      });
+      setRecords(updatedRows);
+    } else {
+      fetchDepositTemp();
+    }
+    fetchExtraList();
+  }, []);
+
+  // table 합계 계산
+
   useEffect(() => {
     let totalRmb = 0, totalUsd = 0;
     for (const r of records) {
-      if (Number(r.dp_amount_rmb)) totalRmb += Number(r.dp_amount_rmb);
-      if (r.dp_amount_usd && !isNaN(Number(r.dp_amount_usd))) totalUsd += Number(r.dp_amount_usd);
+      // 테이블과 동일 공식으로 즉석 계산
+      const t_amount_rmb = r.t_amount_rmb || (Number(r.pcs || 0) * Number(r.cost_rmb || 0));
+      const rate =
+        r.deposit_rate !== undefined && r.deposit_rate !== null && r.deposit_rate !== ''
+          ? Number(r.deposit_rate)
+          : Number(deposit_rate) || 0;
+      const dp_amount_rmb = (t_amount_rmb * rate / 100);
+      if (!isNaN(dp_amount_rmb)) totalRmb += dp_amount_rmb;
+
+      if (!isNaN(parseFloat(r.dp_amount_usd))) totalUsd += parseFloat(r.dp_amount_usd) || 0;
     }
     setTotalRmb(totalRmb);
     setTotalUsd(totalUsd);
   }, [records]);
+
 
   // Pay: 임시테이블 → 실테이블 커밋
   const handlePay = async () => {
@@ -311,15 +353,13 @@ const ImportDepositPage = () => {
                 <td>{r.cost_rmb}</td>
                 <td>{r.pcs && r.cost_rmb ? (Number(r.pcs) * Number(r.cost_rmb)).toFixed(2) : ''}</td>
                 <td>
-                  {
-                    (Number(r.dp_amount_rmb) || r.dp_amount_rmb === 0)
+                  {(() => {
+                    const t_amount_rmb = r.t_amount_rmb || (Number(r.pcs || 0) * Number(r.cost_rmb || 0));
+                    const rmbVal = (r.dp_amount_rmb !== undefined && r.dp_amount_rmb !== null && r.dp_amount_rmb !== '' && Number(r.dp_amount_rmb) !== 0)
                       ? Number(r.dp_amount_rmb)
-                      : (
-                        Number(r.t_amount_rmb) && Number(r.deposit_rate)
-                          ? (Number(r.t_amount_rmb) * Number(r.deposit_rate) / 100).toFixed(2)
-                          : ''
-                      )
-                  }
+                      : (t_amount_rmb * (Number(r.deposit_rate) / 100));
+                    return rmbVal.toFixed(2);
+                  })()}
                 </td>
 
                 <td>{r.dp_date || ''}</td>
