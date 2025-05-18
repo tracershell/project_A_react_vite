@@ -31,16 +31,11 @@ const ImportDepositPage = () => {
   // 1) 최초 마운트시: rows(PO선택) 있으면 임시테이블에 저장, 아니면 임시테이블만 fetch
   useEffect(() => {
     if (rows.length > 0) {
-      axios.post('/api/admin/import/deposit/temp/batchAdd', {
-        rows, vendor_id, vendor_name, deposit_rate
-      }).then(() => {
-        fetchDepositTemp();
-      });
+      setRecords(rows); // 🔴 서버 저장 X, 상태로만 보관
     } else {
-      fetchDepositTemp();
+      fetchDepositTemp();   // 이전 임시저장 기록은 DB에서 불러오기
     }
     fetchExtraList();
-    // eslint-disable-next-line
   }, []);
 
   // 2) 임시 테이블에서 리스트 fetch
@@ -92,7 +87,7 @@ const ImportDepositPage = () => {
 
     // 환율적용/비적용 분기
     let dp_amount_rmb = '', dp_amount_usd = '', dp_exrate = '';
-    let showStyle = `선택: ${extraForm.extra_no}`;
+    let showStyle = extraForm.extra_no;
     if (extraForm.rate_apply === '환율적용') {
       dp_amount_rmb = Number(extraForm.amount);
       dp_amount_usd = '';
@@ -121,7 +116,7 @@ const ImportDepositPage = () => {
         note: `[EXTRA] ${extraForm.comment}`,
       });
 
-      // 2. Deposit Pay List(=records)에도 직접 추가
+      // 2. Deposit Pay Listrecords에만 추가, 임시DB 저장 없음 🔴
       setRecords(recs => [
         ...recs,
         {
@@ -151,12 +146,15 @@ const ImportDepositPage = () => {
 
   // 임시테이블 row 삭제
   const handleRemoveRow = async (row) => {
-    try {
-      await axios.delete(`/api/admin/import/deposit/temp/delete/${row.id}`);
-      fetchDepositTemp();
-    } catch {
-      alert('삭제 오류');
-    }
+    // 🔴 상태에서 직접 삭제 (Pay 전에는 DB가 아니라 상태에서만 관리되므로)
+    setRecords(recs => recs.filter(r => r.id !== row.id));
+    // 만약 DB에서만 삭제할 상황이면 아래만 사용
+    //  try {
+    //    await axios.delete(`/api/admin/import/deposit/temp/delete/${row.id}`);
+    //    fetchDepositTemp();
+    //  } catch {
+    //    alert('삭제 오류');
+    //  }
   };
 
   // 검색
@@ -213,6 +211,11 @@ const ImportDepositPage = () => {
   const handlePay = async () => {
     if (!dpDate || !exRate) return alert('DP Date/Exchange Rate를 입력하세요');
     try {
+      // 1. 상태값 전체를 임시DB에 저장 (임시 → 실제로 쓸 값들)
+      await axios.post('/api/admin/import/deposit/temp/batchAdd', {
+        rows: records, vendor_id, vendor_name, deposit_rate
+      });
+      // 2. 커밋 (import_deposit_temp → import_deposit_pay)
       await axios.post('/api/admin/import/deposit/temp/commit', { dp_date: dpDate, dp_exrate: exRate });
       alert('정상적으로 저장(커밋) 완료!');
       navigate('/admin/import/po');
@@ -308,7 +311,7 @@ const ImportDepositPage = () => {
                 <td>{r.pcs && r.cost_rmb ? (Number(r.pcs) * Number(r.cost_rmb)).toFixed(2) : ''}</td>
                 <td>
                   {
-                    (r.dp_amount_rmb && Number(r.dp_amount_rmb) !== 0)
+                    r.dp_amount_rmb !== undefined && r.dp_amount_rmb !== null
                       ? r.dp_amount_rmb
                       : (
                         Number(r.t_amount_rmb) && Number(r.deposit_rate)

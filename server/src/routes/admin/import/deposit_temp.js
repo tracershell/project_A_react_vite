@@ -79,7 +79,7 @@ router.post('/temp/commit', async (req, res) => {
   }
 });
 
-// 5. 선택하여 넘어온 임시PO도 저장 (DepositPay에서 사용)
+
 // 5. 선택하여 넘어온 임시PO도 저장 (DepositPay에서 사용)
 router.post('/batchAdd', async (req, res) => {
   try {
