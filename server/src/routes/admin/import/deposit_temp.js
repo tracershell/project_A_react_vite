@@ -102,10 +102,10 @@ router.post('/batchAdd', async (req, res) => {
       const dp_amount = (pcs * cost_rmb * (dp_rate / 100)).toFixed(2);
 
       await db.query(`
-        INSERT INTO import_deposit_temp
-        (vendor_name, deposit_rate, vendor_id, po_date, style_no, po_no, pcs, cost_rmb, t_amount_rmb, note, user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
+    INSERT INTO import_deposit_temp
+    (vendor_name, deposit_rate, vendor_id, po_date, style_no, po_no, pcs, cost_rmb, t_amount_rmb, note, user_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
         r.vendor_name || vendor_name,
         Number(r.deposit_rate || deposit_rate) || 0,
         r.vendor_id || vendor_id,
@@ -118,8 +118,8 @@ router.post('/batchAdd', async (req, res) => {
         r.note || '',
         user_id,
       ]);
-
     }
+
     res.json({ success: true });
   } catch (error) {
     console.error('Error in batchAdd:', error);

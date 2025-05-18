@@ -180,6 +180,7 @@ const ImportPoPage = () => {
       const cleanedRows = rowsToSend.map(r => ({
         vendor_id: r.vendor_id,
         vendor_name: r.vendor_name,
+        po_no: r.po_no,
         style_no: r.style_no,
         po_date: cleanDate(r.po_date),
         pcs: Number(r.pcs) || 0,
@@ -289,7 +290,7 @@ const ImportPoPage = () => {
 
       <h2>PO List</h2>
       <div className={styles.list}>
-        <table className="compactTable">
+        <table className="styles.compactTable">
           <thead>
             <tr>
               <th>Vendor</th>
