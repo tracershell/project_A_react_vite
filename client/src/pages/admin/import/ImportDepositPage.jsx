@@ -302,7 +302,7 @@ const ImportDepositPage = () => {
   return (
     <div className={styles.page}>
       <h2>Extra Pay Input</h2>
-      <div className={styles.formRow}>
+      <div className={`${styles.formRow} ${styles.small}`}>
         <select name="extra_no" value={extraForm.extra_no} onChange={handleExtraChange}>
           <option value="">선택: Extra no.</option>
           {extraList.map(x => (
@@ -322,7 +322,7 @@ const ImportDepositPage = () => {
 
       <h2>Deposit Pay List</h2>
       {/* 검색 */}
-      <div className={styles.formRow}>
+      <div className={`${styles.formRow} ${styles.small}`}>
         <input type="date" placeholder="DP Date" value={search.dp_date} onChange={e => setSearch(s => ({ ...s, dp_date: e.target.value }))} />
         <input placeholder="Style" value={search.style} onChange={e => setSearch(s => ({ ...s, style: e.target.value }))} />
         <input placeholder="PO no." value={search.po_no} onChange={e => setSearch(s => ({ ...s, po_no: e.target.value }))} />
@@ -330,7 +330,7 @@ const ImportDepositPage = () => {
       </div>
 
       {/* Pay Date/Exchange Rate/적용/PDF/Pay */}
-      <div className={styles.formRow} style={{ alignItems: 'center', marginBottom: 12 }}>
+      <div className={`${styles.formRow} ${styles.small}`} style={{ marginBottom: 12 }}>
         <span style={{ fontWeight: 'bold', marginRight: 8 }}>Pay Date</span>
         <input type="date" value={dpDate} onChange={e => setDpDate(e.target.value)} style={{ width: 140 }} />
         <span style={{ fontWeight: 'bold', margin: '0 8px 0 20px' }}>Exchange Rate</span>
