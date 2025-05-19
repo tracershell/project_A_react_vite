@@ -143,7 +143,7 @@ button {
   /* baseline 맞춤 */
   gap: 1rem;
   /* 좌우 간격 */
-  margin-bottom: 12px;
+  margin-bottom: 0px;
 }
 
 /* 각 .formRow.small 박스는 좌우로 분리된 독립 블록 */

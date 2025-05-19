@@ -40,7 +40,7 @@ const generateDepositPDF = async (res, records, info = {}) => {
   doc.fontSize(8).lineWidth(0.4).fillColor('black');
   headers.forEach((header, i) => {
     doc.rect(x, y, colWidths[i], rowHeight).stroke();
-    doc.text(header, x + 2, y + 4, { width: colWidths[i] - 4, align: 'center' });
+    doc.text(header, x + 2, y + 2, { width: colWidths[i] - 4, align: 'center' });
     x += colWidths[i];
   });
   y += rowHeight;
@@ -73,7 +73,7 @@ const generateDepositPDF = async (res, records, info = {}) => {
 
     dataRow.forEach((cell, i) => {
       doc.rect(x, y, colWidths[i], rowHeight).stroke();
-      doc.text(cell, x + 2, y + 4, {
+      doc.text(cell, x + 2, y + 2, {
         width: colWidths[i] - 4,
         align: (i >= 3 && i <= 8) ? 'center' : 'center'
       });
@@ -89,7 +89,7 @@ const generateDepositPDF = async (res, records, info = {}) => {
       x = startX;
       headers.forEach((header, i) => {
         doc.rect(x, y, colWidths[i], rowHeight).stroke();
-        doc.text(header, x + 2, y + 4, { width: colWidths[i] - 4, align: 'center' });
+        doc.text(header, x + 2, y + 2, { width: colWidths[i] - 4, align: 'center' });
         x += colWidths[i];
       });
       y += rowHeight;
@@ -109,7 +109,7 @@ const generateDepositPDF = async (res, records, info = {}) => {
   totalRow.forEach((cell, i) => {
     doc.rect(x, y, colWidths[i], rowHeight).stroke();
     doc.font('Korean').fontSize(8).fillColor('black');
-    doc.text(cell, x + 2, y + 4, {
+    doc.text(cell, x + 2, y + 2, {
       width: colWidths[i] - 4,
       align: (i >= 3 && i <= 8) ? 'center' : 'center'
     });

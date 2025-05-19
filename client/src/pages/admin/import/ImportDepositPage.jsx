@@ -297,6 +297,19 @@ const ImportDepositPage = () => {
   const handleCommentChange = (id, val) => {
     setComments(c => ({ ...c, [id]: val }));
   };
+    // ── DP Amount 합계 계산 login
+  const dataRows = filtered.length ? filtered : records;
+  const sumDpRmb = dataRows.reduce((sum, r) => {
+    const dp = (r.dp_amount_rmb !== undefined && r.dp_amount_rmb !== null && r.dp_amount_rmb !== '')
+      ? Number(r.dp_amount_rmb)
+      : (Number(r.pcs || 0) * Number(r.cost_rmb || 0) * (Number(r.deposit_rate || deposit_rate) / 100));
+    return sum + (isNaN(dp) ? 0 : dp);
+  }, 0);
+  const sumDpUsd = dataRows.reduce((sum, r) => {
+    const u = parseFloat(r.dp_amount_usd);
+    return sum + (isNaN(u) ? 0 : u);
+  }, 0);
+
 
   // --- TABLE HEADER & BODY 구성: 첨부 이미지와 요구에 맞게 ---
   return (
@@ -399,22 +412,32 @@ const ImportDepositPage = () => {
                 <td>{r.po_date ? String(r.po_date).split('T')[0] : ''}</td>
                 <td>{r.style_no}</td>
                 <td>{r.po_no}</td>
-                <td>{r.pcs}</td>
+                <td>{r.pcs != null ? Number(r.pcs).toLocaleString() : ''}</td>
                 <td>{r.cost_rmb}</td>
-                <td>{r.pcs && r.cost_rmb ? (Number(r.pcs) * Number(r.cost_rmb)).toFixed(2) : ''}</td>
+                <td>{
+                  r.pcs && r.cost_rmb
+                  ? (Number(r.pcs) * Number(r.cost_rmb))
+                  .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                  : ''
+                  }</td>
                 <td>
                   {(() => {
                     const t_amount_rmb = r.t_amount_rmb || (Number(r.pcs || 0) * Number(r.cost_rmb || 0));
                     const rmbVal = (r.dp_amount_rmb !== undefined && r.dp_amount_rmb !== null && r.dp_amount_rmb !== '' && Number(r.dp_amount_rmb) !== 0)
                       ? Number(r.dp_amount_rmb)
                       : (t_amount_rmb * (Number(r.deposit_rate) / 100));
-                    return rmbVal.toFixed(2);
+                    return rmbVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                   })()}
                 </td>
 
                 <td>{r.dp_date || ''}</td>
                 <td>{r.dp_exrate || ''}</td>
-                <td>{r.dp_amount_usd || ''}</td>
+                <td>{
+                  r.dp_amount_usd
+                  ? Number(r.dp_amount_usd)
+                  .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                  : ''
+                }</td>
                 <td>
                   {comments[r.id] ?? r.comment ?? ''}
                 </td>
@@ -423,15 +446,18 @@ const ImportDepositPage = () => {
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={9} style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
-              <td style={{ fontWeight: 'bold', color: 'darkred' }}>
-                {totalRmb.toLocaleString()}
-              </td>
-              <td colSpan={2}></td>
-              <td style={{ fontWeight: 'bold', color: 'darkred' }}>
-                {totalUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </td>
-              <td></td>
+               {/* DP Amount(RMB) 와 DP Amount(USD) 만 합계 */}
+           <td colSpan={9} style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
+           <td style={{ fontWeight: 'bold', color: 'darkred' }}>
+             {sumDpRmb.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+           </td>
+           {/* DP Date, DP E.rate 빈 칸 */}
+           <td></td>
+           <td></td>
+           <td style={{ fontWeight: 'bold', color: 'darkred' }}>
+             {sumDpUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+           </td>
+           <td></td>
             </tr>
           </tfoot>
         </table>
