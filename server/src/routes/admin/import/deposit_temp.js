@@ -3,6 +3,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
+const cleanNumber = (val) =>
+  typeof val === 'string' ? Number(val.replace(/,/g, '')) : Number(val);
 
 // 세션에서 user_id 추출 (로그인 미들웨어에서 세션.user에 id가 저장되어 있다고 가정)
 function getUserId(req) {
@@ -57,15 +59,36 @@ router.post('/temp/commit', async (req, res) => {
     await conn.beginTransaction();
     const [tempRows] = await conn.query('SELECT * FROM import_deposit_temp WHERE user_id = ?', [user_id]);
     for (const row of tempRows) {
-      await conn.query(
-        `INSERT INTO import_deposit_pay (po_id, vendor_id, dp_date, dp_exrate, dp_amount_rmb, dp_amount_usd, comment)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-          row.po_no, // 실제 po_id를 사용할 경우 id로 매핑 필요
-          row.vendor_id, dp_date || row.dp_date, dp_exrate || row.dp_exrate,
-          row.dp_amount_rmb, row.dp_amount_usd, row.comment
-        ]
-      );
+
+      const [[poRow]] = await conn.query('SELECT id FROM import_po WHERE po_no = ?', [row.po_no]);
+if (!poRow) throw new Error(`PO 번호 '${row.po_no}'에 해당하는 PO를 찾을 수 없습니다.`);
+
+// INSERT 시 기존 poRow.id 사용
+await conn.query(
+  `INSERT INTO import_deposit_pay (po_id, vendor_id, dp_date, dp_exrate, dp_amount_rmb, dp_amount_usd, comment)
+   VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  [
+    poRow.id,  // ✅ 중복 없이 poRow 재사용
+    row.vendor_id,
+    dp_date || row.dp_date,
+    dp_exrate || row.dp_exrate,
+    row.dp_amount_rmb,
+    row.dp_amount_usd,
+    row.comment,
+  ]
+);
+
+if (!poRow) throw new Error(`po_no "${row.po_no}"에 해당하는 PO가 존재하지 않습니다.`);
+
+await conn.query(
+  `INSERT INTO import_deposit_pay (po_id, vendor_id, dp_date, dp_exrate, dp_amount_rmb, dp_amount_usd, comment)
+   VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  [
+    poRow.id, // ✅ 올바르게 매핑된 po_id
+    row.vendor_id, dp_date || row.dp_date, dp_exrate || row.dp_exrate,
+    row.dp_amount_rmb, row.dp_amount_usd, row.comment
+  ]
+);
       // import_po dp_status 업데이트 등 추가 필요시 여기에
     }
     await conn.query('DELETE FROM import_deposit_temp WHERE user_id = ?', [user_id]);
@@ -85,36 +108,62 @@ router.post('/batchAdd', async (req, res) => {
   try {
     const user_id = getUserId(req);
     if (!user_id) return res.status(401).json({ error: '로그인 필요' });
+
     const { rows, vendor_id, vendor_name, deposit_rate } = req.body;
     if (!rows || !Array.isArray(rows) || rows.length === 0)
       return res.json({ success: true });
 
     console.log('Processing batch add for user:', user_id, 'with rows:', rows.length);
 
-    // 기존 user_id의 임시 rows는 모두 삭제
+    // ✅ 쉼표 제거 함수
+    const cleanNumber = (val) => {
+      if (val === null || val === undefined) return 0;
+      if (typeof val === 'number') return val;
+      return Number(String(val).replace(/,/g, '')) || 0;
+    };
+
+    // 기존 user_id의 임시 rows 삭제
     await db.query('DELETE FROM import_deposit_temp WHERE user_id = ?', [user_id]);
 
-    // 각각 insert : 
     for (const r of rows) {
-      const pcs = Number(r.pcs) || 0;
-      const cost_rmb = Number(r.cost_rmb) || 0;
-      const dp_rate = Number(r.deposit_rate || deposit_rate) || 0;
-      const dp_amount = (pcs * cost_rmb * (dp_rate / 100)).toFixed(2);
+      // ✅ 필수 값 누락 체크
+      if (!r.po_no || !r.vendor_id || !r.vendor_name) {
+        console.log('❌ 누락된 필드:', r);
+        throw new Error('필수 필드 누락: po_no, vendor_id, vendor_name');
+      }
+
+      const pcs = cleanNumber(r.pcs);
+      const cost_rmb = cleanNumber(r.cost_rmb);
+      const dp_rate = cleanNumber(r.deposit_rate || deposit_rate);
+      const dp_rmb = Number((pcs * cost_rmb * (dp_rate / 100)).toFixed(2));
+
+      // ✅ dp_usd 계산
+      let dp_usd = null;
+      const rawExrate = req.body.dp_exrate || '';
+      const exrate = parseFloat(String(rawExrate).replace(/,/g, ''));
+      if (dp_rmb && !isNaN(exrate) && exrate > 0) {
+        dp_usd = (dp_rmb / exrate).toFixed(2);
+      }
 
       await db.query(`
-    INSERT INTO import_deposit_temp
-    (vendor_name, deposit_rate, vendor_id, po_date, style_no, po_no, pcs, cost_rmb, t_amount_rmb, note, user_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
+        INSERT INTO import_deposit_temp
+        (vendor_name, deposit_rate, vendor_id, po_date, style_no, po_no, pcs, cost_rmb, t_amount_rmb,
+         dp_amount_rmb, dp_amount_usd, dp_exrate, dp_date, note, user_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `, [
         r.vendor_name || vendor_name,
-        Number(r.deposit_rate || deposit_rate) || 0,
+        dp_rate,
         r.vendor_id || vendor_id,
         r.po_date || null,
         r.style_no || '',
         r.po_no || '',
-        Number(r.pcs) || 0,
-        Number(r.cost_rmb) || 0,
-        Number(r.t_amount_rmb) || (Number(r.pcs) * Number(r.cost_rmb)),
+        pcs,
+        cost_rmb,
+        cleanNumber(r.t_amount_rmb) || pcs * cost_rmb,
+        dp_rmb,
+        dp_usd,
+        exrate || null,
+        req.body.dp_date || null,
         r.note || '',
         user_id,
       ]);
@@ -126,6 +175,7 @@ router.post('/batchAdd', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // 6. 페이지 이탈 시 전체 임시 데이터 삭제
 router.delete('/temp/clear', async (req, res) => {

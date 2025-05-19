@@ -256,23 +256,48 @@ const ImportDepositPage = () => {
     };
   }, []);
 
+  // 날짜 포맷 정리 : 형식 변환 함수 MYWQL DATE YYYY-MM-DD
+const cleanDate = (dateStr) => {
+  if (!dateStr) return null;
+  if (typeof dateStr === 'string') return dateStr.split('T')[0]; // '2025-05-15'
+  if (dateStr instanceof Date) return dateStr.toISOString().split('T')[0];
+  return String(dateStr).split('T')[0];
+};
 
   // Pay: 임시테이블 → 실테이블 커밋
-  const handlePay = async () => {
-    if (!dpDate || !exRate) return alert('DP Date/Exchange Rate를 입력하세요');
-    try {
-      // 1. 상태값 전체를 임시DB에 저장 (임시 → 실제로 쓸 값들)
-      await axios.post('/api/admin/import/deposit/temp/batchAdd', {
-        rows: records, vendor_id, vendor_name, deposit_rate
-      });
-      // 2. 커밋 (import_deposit_temp → import_deposit_pay)
-      await axios.post('/api/admin/import/deposit/temp/commit', { dp_date: dpDate, dp_exrate: exRate });
-      alert('정상적으로 저장(커밋) 완료!');
-      navigate('/admin/import/po');
-    } catch (err) {
-      alert('저장 중 오류');
-    }
-  };
+const handlePay = async () => {
+  if (!dpDate || !exRate) return alert('DP Date/Exchange Rate를 입력하세요');
+  try {
+    // 🔸 날짜 포맷 정리
+    const cleanedRecords = records.map(r => ({
+      ...r,
+      po_date: cleanDate(r.po_date),
+      dp_date: cleanDate(dpDate),
+    }));
+
+    console.log('📦 [DEBUG] cleanedRecords:', cleanedRecords);
+
+    // 1. 임시 저장
+    await axios.post(
+      '/api/admin/import/deposit/batchAdd',
+      { rows: cleanedRecords, vendor_id, vendor_name, deposit_rate },
+      { withCredentials: true }
+    );
+
+    // 2. 커밋
+    await axios.post(
+      '/api/admin/import/deposit/temp/commit',
+      { dp_date: cleanDate(dpDate), dp_exrate: exRate },
+      { withCredentials: true }
+    );
+
+    alert('정상적으로 저장(커밋) 완료!');
+    navigate('/admin/import/po');
+  } catch (err) {
+    console.error('❌ 저장 중 오류:', err);
+    alert('저장 중 오류: ' + (err.response?.data?.error || err.message));
+  }
+};
 
   const handleViewPdf = async () => {
     // 현재 Deposit Pay List(ExtraPay/임시포함) 전체를 PDF로 출력
