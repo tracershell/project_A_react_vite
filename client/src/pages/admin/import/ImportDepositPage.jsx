@@ -321,24 +321,51 @@ const ImportDepositPage = () => {
       </div>
 
       <h2>Deposit Pay List</h2>
-      {/* 검색 */}
-      <div className={`${styles.formRow} ${styles.small}`}>
-        <input type="date" placeholder="DP Date" value={search.dp_date} onChange={e => setSearch(s => ({ ...s, dp_date: e.target.value }))} />
-        <input placeholder="Style" value={search.style} onChange={e => setSearch(s => ({ ...s, style: e.target.value }))} />
-        <input placeholder="PO no." value={search.po_no} onChange={e => setSearch(s => ({ ...s, po_no: e.target.value }))} />
-        <button type="button" onClick={handleSearch}>검색</button>
+      <div className={styles.formRowGroup}>
+        {/* 1) 검색 영역 */}
+        <div className={`${styles.formRow} ${styles.small}`}>
+          <input
+            type="date"
+            placeholder="DP Date"
+            value={search.dp_date}
+            onChange={e => setSearch(s => ({ ...s, dp_date: e.target.value }))}
+          />
+          <input
+            placeholder="Style"
+            value={search.style}
+            onChange={e => setSearch(s => ({ ...s, style: e.target.value }))}
+          />
+          <input
+            placeholder="PO no."
+            value={search.po_no}
+            onChange={e => setSearch(s => ({ ...s, po_no: e.target.value }))}
+          />
+          <button type="button" onClick={handleSearch}>검색</button>
+        </div>
+
+        {/* 2) Pay Date / Exchange Rate / 버튼 영역 */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ marginTop: '4px' }}>
+          <span style={{ fontWeight: 'bold' }}>Pay Date</span>
+          <input
+            type="date"
+            value={dpDate}
+            onChange={e => setDpDate(e.target.value)}
+            style={{ minWidth: '8rem' }}
+          />
+          <span style={{ marginLeft: '1rem', fontWeight: 'bold' }}>Exchange Rate</span>
+          <input
+            type="number"
+            step="0.0001"
+            value={exRate}
+            onChange={e => setExRate(e.target.value)}
+            style={{ minWidth: '6rem' }}
+          />
+          <button type="button" onClick={applyExRate}>환율적용</button>
+          <button type="button" onClick={handleViewPdf}>PDF 보기</button>
+          <button type="button" onClick={handlePay}>Pay</button>
+        </div>
       </div>
 
-      {/* Pay Date/Exchange Rate/적용/PDF/Pay */}
-      <div className={`${styles.formRow} ${styles.small}`} style={{ marginBottom: 12 }}>
-        <span style={{ fontWeight: 'bold', marginRight: 8 }}>Pay Date</span>
-        <input type="date" value={dpDate} onChange={e => setDpDate(e.target.value)} style={{ width: 140 }} />
-        <span style={{ fontWeight: 'bold', margin: '0 8px 0 20px' }}>Exchange Rate</span>
-        <input type="number" step="0.0001" value={exRate} onChange={e => setExRate(e.target.value)} style={{ width: 120 }} />
-        <button type="button" onClick={applyExRate} style={{ margin: '0 20px', fontWeight: 'bold' }}>환율적용</button>
-        <button type="button" onClick={handleViewPdf} style={{ fontWeight: 'bold', marginRight: 8 }}>PDF 보기</button>
-        <button type="button" onClick={handlePay} style={{ fontWeight: 'bold' }}>Pay</button>
-      </div>
 
       {/* Deposit Pay Table */}
       <div className={styles.page} style={{ overflowX: 'auto' }}>
@@ -389,11 +416,7 @@ const ImportDepositPage = () => {
                 <td>{r.dp_exrate || ''}</td>
                 <td>{r.dp_amount_usd || ''}</td>
                 <td>
-                  <input
-                    value={comments[r.id] ?? r.comment ?? ''}
-                    onChange={e => handleCommentChange(r.id, e.target.value)}
-                    placeholder="Comment"
-                  />
+                  {comments[r.id] ?? r.comment ?? ''}
                 </td>
               </tr>
             ))}
@@ -413,7 +436,7 @@ const ImportDepositPage = () => {
           </tfoot>
         </table>
       </div>
-    </div>
+    </div >
   );
 };
 

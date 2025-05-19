@@ -132,3 +132,24 @@ button {
   white-space: nowrap;
   /* “환율적용” 등 텍스트 줄바꿈 금지 */
 }
+
+/* — Deposit Pay List 아래 검색 / Pay 폼을 좌/우로 분리 — */
+/* Deposit Pay List 아래의 검색/Pay 파트를 한 줄로 배치하기 위한 wrapper */
+.formRowGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  /* align-items: flex-start; */
+  /* baseline 맞춤 */
+  gap: 1rem;
+  /* 좌우 간격 */
+  margin-bottom: 12px;
+}
+
+/* 각 .formRow.small 박스는 좌우로 분리된 독립 블록 */
+.formRowGroup .formRow.small {
+  flex: 1 1 auto;
+  width: auto;
+  margin-bottom: 0;
+  /* 그룹 내에서 하단 여백 제거 */
+}
