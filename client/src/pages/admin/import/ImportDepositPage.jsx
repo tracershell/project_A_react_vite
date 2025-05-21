@@ -1,4 +1,6 @@
-// ImportDepositPage.jsx
+// client/src/pages/admin/import/ImportDepositPage.jsx
+
+
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import styles from './ImportDepositPage.module.css';
@@ -257,47 +259,47 @@ const ImportDepositPage = () => {
   }, []);
 
   // 날짜 포맷 정리 : 형식 변환 함수 MYWQL DATE YYYY-MM-DD
-const cleanDate = (dateStr) => {
-  if (!dateStr) return null;
-  if (typeof dateStr === 'string') return dateStr.split('T')[0]; // '2025-05-15'
-  if (dateStr instanceof Date) return dateStr.toISOString().split('T')[0];
-  return String(dateStr).split('T')[0];
-};
+  const cleanDate = (dateStr) => {
+    if (!dateStr) return null;
+    if (typeof dateStr === 'string') return dateStr.split('T')[0]; // '2025-05-15'
+    if (dateStr instanceof Date) return dateStr.toISOString().split('T')[0];
+    return String(dateStr).split('T')[0];
+  };
 
   // Pay: 임시테이블 → 실테이블 커밋
-const handlePay = async () => {
-  if (!dpDate || !exRate) return alert('DP Date/Exchange Rate를 입력하세요');
-  try {
-    // 🔸 날짜 포맷 정리
-    const cleanedRecords = records.map(r => ({
-      ...r,
-      po_date: cleanDate(r.po_date),
-      dp_date: cleanDate(dpDate),
-    }));
+  const handlePay = async () => {
+    if (!dpDate || !exRate) return alert('DP Date/Exchange Rate를 입력하세요');
+    try {
+      // 🔸 날짜 포맷 정리
+      const cleanedRecords = records.map(r => ({
+        ...r,
+        po_date: cleanDate(r.po_date),
+        dp_date: cleanDate(dpDate),
+      }));
 
-    console.log('📦 [DEBUG] cleanedRecords:', cleanedRecords);
+      console.log('📦 [DEBUG] cleanedRecords:', cleanedRecords);
 
-    // 1. 임시 저장
-    await axios.post(
-      '/api/admin/import/deposit/batchAdd',
-      { rows: cleanedRecords, vendor_id, vendor_name, deposit_rate },
-      { withCredentials: true }
-    );
+      // 1. 임시 저장
+      await axios.post(
+        '/api/admin/import/deposit/batchAdd',
+        { rows: cleanedRecords, vendor_id, vendor_name, deposit_rate },
+        { withCredentials: true }
+      );
 
-    // 2. 커밋
-    await axios.post(
-      '/api/admin/import/deposit/temp/commit',
-      { dp_date: cleanDate(dpDate), dp_exrate: exRate },
-      { withCredentials: true }
-    );
+      // 2. 커밋
+      await axios.post(
+        '/api/admin/import/deposit/temp/commit',   // ← 로직은 동일, 백엔드가 import_temp 읽도록 수정
+        { dp_date: cleanDate(dpDate), dp_exrate: exRate },
+        { withCredentials: true }
+      );
 
-    alert('정상적으로 저장(커밋) 완료!');
-    navigate('/admin/import/po');
-  } catch (err) {
-    console.error('❌ 저장 중 오류:', err);
-    alert('저장 중 오류: ' + (err.response?.data?.error || err.message));
-  }
-};
+      alert('정상적으로 저장(커밋) 완료!');
+      navigate('/admin/import/po');
+    } catch (err) {
+      console.error('❌ 저장 중 오류:', err);
+      alert('저장 중 오류: ' + (err.response?.data?.error || err.message));
+    }
+  };
 
   const handleViewPdf = async () => {
     // 현재 Deposit Pay List(ExtraPay/임시포함) 전체를 PDF로 출력
@@ -322,7 +324,7 @@ const handlePay = async () => {
   const handleCommentChange = (id, val) => {
     setComments(c => ({ ...c, [id]: val }));
   };
-    // ── DP Amount 합계 계산 login
+  // ── DP Amount 합계 계산 login
   const dataRows = filtered.length ? filtered : records;
   const sumDpRmb = dataRows.reduce((sum, r) => {
     const dp = (r.dp_amount_rmb !== undefined && r.dp_amount_rmb !== null && r.dp_amount_rmb !== '')
@@ -441,10 +443,10 @@ const handlePay = async () => {
                 <td>{r.cost_rmb}</td>
                 <td>{
                   r.pcs && r.cost_rmb
-                  ? (Number(r.pcs) * Number(r.cost_rmb))
-                  .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                  : ''
-                  }</td>
+                    ? (Number(r.pcs) * Number(r.cost_rmb))
+                      .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                    : ''
+                }</td>
                 <td>
                   {(() => {
                     const t_amount_rmb = r.t_amount_rmb || (Number(r.pcs || 0) * Number(r.cost_rmb || 0));
@@ -459,9 +461,9 @@ const handlePay = async () => {
                 <td>{r.dp_exrate || ''}</td>
                 <td>{
                   r.dp_amount_usd
-                  ? Number(r.dp_amount_usd)
-                  .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                  : ''
+                    ? Number(r.dp_amount_usd)
+                      .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                    : ''
                 }</td>
                 <td>
                   {comments[r.id] ?? r.comment ?? ''}
@@ -471,18 +473,18 @@ const handlePay = async () => {
           </tbody>
           <tfoot>
             <tr>
-               {/* DP Amount(RMB) 와 DP Amount(USD) 만 합계 */}
-           <td colSpan={9} style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
-           <td style={{ fontWeight: 'bold', color: 'darkred' }}>
-             {sumDpRmb.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-           </td>
-           {/* DP Date, DP E.rate 빈 칸 */}
-           <td></td>
-           <td></td>
-           <td style={{ fontWeight: 'bold', color: 'darkred' }}>
-             {sumDpUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-           </td>
-           <td></td>
+              {/* DP Amount(RMB) 와 DP Amount(USD) 만 합계 */}
+              <td colSpan={9} style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
+              <td style={{ fontWeight: 'bold', color: 'darkred' }}>
+                {sumDpRmb.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </td>
+              {/* DP Date, DP E.rate 빈 칸 */}
+              <td></td>
+              <td></td>
+              <td style={{ fontWeight: 'bold', color: 'darkred' }}>
+                {sumDpUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </td>
+              <td></td>
             </tr>
           </tfoot>
         </table>

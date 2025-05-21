@@ -1,5 +1,3 @@
-// server/routes/admin/import/importpopage.js
-
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
@@ -10,7 +8,7 @@ router.get('/', async (req, res) => {
   const { vendor_id, bp_status, keyword } = req.query;
   let sql = `
     SELECT p.*, v.name AS vendor_name, v.deposit_rate
-      FROM import_po_list p
+      FROM import_po p
       JOIN import_vendors v ON p.vendor_id = v.id
       WHERE 1=1
   `;
@@ -27,9 +25,9 @@ router.get('/', async (req, res) => {
   if (keyword) {
     sql += `
       AND (
-        v.name    LIKE ? OR
+        v.name LIKE ? OR
         p.style_no LIKE ? OR
-        p.po_no    LIKE ?
+        p.po_no LIKE ?
       )
     `;
     params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`);
@@ -50,17 +48,15 @@ router.get('/', async (req, res) => {
 router.post('/add', async (req, res) => {
   const { vendor_id, po_date, style_no, po_no, pcs, cost_rmb, note } = req.body;
   try {
-    // ← 테이블명 import_po_list로 변경
     const [dup] = await db.query(
-      'SELECT COUNT(*) AS cnt FROM import_po_list WHERE po_no = ?',
+      'SELECT COUNT(*) AS cnt FROM import_po WHERE po_no = ?',
       [po_no]
     );
     if (dup[0].cnt > 0) {
       return res.status(400).json({ error: '중복된 PO 번호입니다.' });
     }
-
     await db.query(
-      `INSERT INTO import_po_list
+      `INSERT INTO import_po
          (vendor_id, po_date, style_no, po_no, pcs, cost_rmb, note)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -85,17 +81,15 @@ router.put('/edit/:id', async (req, res) => {
   const { id } = req.params;
   const { vendor_id, po_date, style_no, po_no, pcs, cost_rmb, note } = req.body;
   try {
-    // ← 테이블명 import_po_list로 변경
     const [dup] = await db.query(
-      'SELECT COUNT(*) AS cnt FROM import_po_list WHERE po_no = ? AND id <> ?',
+      'SELECT COUNT(*) AS cnt FROM import_po WHERE po_no = ? AND id <> ?',
       [po_no, id]
     );
     if (dup[0].cnt > 0) {
       return res.status(400).json({ error: '중복된 PO 번호입니다.' });
     }
-
     const [result] = await db.query(
-      `UPDATE import_po_list SET
+      `UPDATE import_po SET
          vendor_id = ?,
          po_date   = ?,
          style_no  = ?,
@@ -121,7 +115,7 @@ router.delete('/delete/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const [result] = await db.query(
-      'DELETE FROM import_po_list WHERE id = ?',
+      'DELETE FROM import_po WHERE id = ?',
       [id]
     );
     if (result.affectedRows === 0) {
