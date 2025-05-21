@@ -10,6 +10,8 @@ const ImportDepositPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [dataSource, setDataSource] = useState('temp');  // 'temp' or 'final'
+
   // ImportPoPage에서 넘어온 값
   const { rows = [], vendor_id, vendor_name, deposit_rate } = location.state || {};
   const [records, setRecords] = useState([]);
@@ -39,6 +41,11 @@ const ImportDepositPage = () => {
     }
     fetchExtraList();
   }, []);
+  
+  // 1) 임시 테이블에서 리스트 fetch : 임시 or 확정 저장 데이타 검색 관련
+  useEffect(() => {
+  fetchRecords();
+}, [dataSource]);
 
   // 2) 임시 테이블에서 리스트 fetch
   const fetchDepositTemp = async () => {
@@ -51,6 +58,22 @@ const ImportDepositPage = () => {
     const { data } = await axios.get('/api/admin/import/extra');
     setExtraList(data);
   };
+
+
+  const fetchRecords = async () => {
+  const endpoint =
+    dataSource === 'temp'
+      ? '/api/admin/import/deposit/temp'
+      : '/api/admin/import/deposit/final';
+  try {
+    const { data } = await axios.get(endpoint, { withCredentials: true });
+    setRecords(data);
+  } catch (err) {
+    console.error('❌ fetchRecords 오류:', err);
+    alert('데이터를 불러오는 데 실패했습니다.');
+  }
+};
+
 
   // 4) Extra 선택 시 자동 값 세팅
   useEffect(() => {
@@ -160,15 +183,34 @@ const ImportDepositPage = () => {
   };
 
   // 검색
-  const handleSearch = () => {
-    setFiltered(
-      records.filter(r =>
-        (!search.dp_date || (r.dp_date && r.dp_date === search.dp_date)) &&
-        (!search.style || r.style_no?.toLowerCase().includes(search.style.toLowerCase())) &&
-        (!search.po_no || r.po_no?.toLowerCase().includes(search.po_no.toLowerCase()))
-      )
+const handleSearch = () => {
+  setFiltered(
+    records.filter(r =>
+      (!search.dp_date || (r.dp_date && cleanDate(r.dp_date) === search.dp_date)) &&
+      (!search.style || r.style_no?.toLowerCase().includes(search.style.toLowerCase())) &&
+      (!search.po_no || r.po_no?.toLowerCase().includes(search.po_no.toLowerCase()))
+    )
+  );
+};
+
+const handleFilteredPdf = async () => {
+  try {
+    const response = await axios.post(
+      '/api/admin/import/deposit/pdf',
+      {
+        records: filtered.length ? filtered : records,
+        date: dpDate,
+        exrate: exRate,
+      },
+      { responseType: 'blob' }
     );
-  };
+    const pdfUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    window.open(pdfUrl);
+  } catch (err) {
+    alert('PDF 생성 오류');
+  }
+};
+
   useEffect(() => { setFiltered(records); }, [records]);
 
   // PayDate, 환율 적용 (DP Amount(RMB)값이 0이 아니면 모두 자동 계산)
@@ -257,6 +299,16 @@ const ImportDepositPage = () => {
       axios.delete('/api/admin/import/deposit/temp/clear').catch(() => { });
     };
   }, []);
+
+  const formatDate = (value) => {
+  if (!value) return '';
+  const date = new Date(value);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 
   // 날짜 포맷 정리 : 형식 변환 함수 MYWQL DATE YYYY-MM-DD
   const cleanDate = (dateStr) => {
@@ -362,6 +414,14 @@ const ImportDepositPage = () => {
 
       <h2>Deposit Pay List</h2>
       <div className={styles.formRowGroup}>
+        {/* ✅ [추가 위치] 조회 대상 선택 콤보박스 */}
+  <div className={`${styles.formRow} ${styles.small}`}>
+    <label style={{ fontWeight: 'bold', marginRight: '8px' }}>조회 대상:</label>
+    <select value={dataSource} onChange={e => setDataSource(e.target.value)}>
+      <option value="temp">임시 데이터</option>
+      <option value="final">확정 데이터</option>
+    </select>
+  </div>
         {/* 1) 검색 영역 */}
         <div className={`${styles.formRow} ${styles.small}`}>
           <input
@@ -381,6 +441,7 @@ const ImportDepositPage = () => {
             onChange={e => setSearch(s => ({ ...s, po_no: e.target.value }))}
           />
           <button type="button" onClick={handleSearch}>검색</button>
+          <button type="button" onClick={handleFilteredPdf}>PDF 보기</button>
         </div>
 
         {/* 2) Pay Date / Exchange Rate / 버튼 영역 */}
@@ -432,7 +493,13 @@ const ImportDepositPage = () => {
             {(filtered.length ? filtered : records).map(r => (
               <tr key={r.id}>
                 <td>
-                  <button type="button" onClick={() => handleRemoveRow(r)}>선택제거</button>
+                  <button
+    type="button"
+    onClick={() => handleRemoveRow(r)}
+    disabled={dataSource === 'final'}  // 확정 데이터면 비활성화
+  >
+    선택제거
+  </button>
                 </td>
                 <td>{r.vendor_name}</td>
                 <td>{r.deposit_rate || ''}</td>
@@ -457,7 +524,7 @@ const ImportDepositPage = () => {
                   })()}
                 </td>
 
-                <td>{r.dp_date || ''}</td>
+                <td>{formatDate(r.dp_date)}</td>
                 <td>{r.dp_exrate || ''}</td>
                 <td>{
                   r.dp_amount_usd

@@ -194,13 +194,13 @@ CREATE TABLE import_temp (
   dp_amount_rmb    DECIMAL(14,2)     DEFAULT 0.00,
   dp_date          DATE              DEFAULT NULL,
   dp_exrate        DECIMAL(10,4)     DEFAULT NULL,
-  dp_amount_usd    DECIMAL(14,2)     AS (CASE WHEN dp_exrate>0 THEN dp_amount_rmb/dp_exrate ELSE 0 END) STORED,
+  dp_amount_usd    DECIMAL(14,2)     DEFAULT 0.00,
   dp_status        ENUM('', 'paid')  NOT NULL DEFAULT '',
   -- 잔금 필드
   bp_amount_rmb    DECIMAL(14,2)     DEFAULT 0.00,
   bp_date          DATE              DEFAULT NULL,
   bp_exrate        DECIMAL(10,4)     DEFAULT NULL,
-  bp_amount_usd    DECIMAL(14,2)     AS (CASE WHEN bp_exrate>0 THEN bp_amount_rmb/bp_exrate ELSE 0 END) STORED,
+  bp_amount_usd    DECIMAL(14,2)     DEFAULT 0.00,
   bp_status        ENUM('', 'paid')  NOT NULL DEFAULT '',
   note             TEXT,
   user_id          VARCHAR(100)      NOT NULL
