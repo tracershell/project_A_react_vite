@@ -214,7 +214,14 @@ const ImportPoPage = () => {
         { rows: cleanedRows, vendor_id: vId, vendor_name: vName, deposit_rate: vRate },
         { withCredentials: true }
       );
-      navigate('/admin/import/deposit');
+      navigate('/admin/import/deposit', {
+    state: {
+    rows: cleanedRows,
+    vendor_id: vId,
+    vendor_name: vName,
+    deposit_rate: vRate
+  }
+});
     } catch (err) {
       alert('임시저장 실패: ' + (err.response?.data?.error || err.message));
     }
@@ -315,7 +322,18 @@ const ImportPoPage = () => {
         />
         <button type="button" onClick={handleAdd}>입력</button>
         <button type="button" onClick={handleEdit} disabled={!selectedId}>수정</button>
-        <button type="button" onClick={handleDelete} disabled={!selectedId}>제거</button>
+        <button
+          type="button"
+          onClick={handleDelete}
+          disabled={
+            !selectedId ||
+           (list.find(r => r.id === selectedId)?.dp_status === 'paid' ||
+             list.find(r => r.id === selectedId)?.bp_status === 'paid')
+       }
+      >
+      제거
+      </button>
+
         <button type="button" onClick={clearFormFields}>초기화</button>
       </form>
 
@@ -378,7 +396,7 @@ const ImportPoPage = () => {
                 </td>
                 <td>{r.vendor_name}</td>
                 <td>{r.deposit_rate}%</td>
-                <td>{r.po_date}</td>
+                <td>{cleanDate(r.po_date)}</td>
                 <td>{r.style_no}</td>
                 <td>{r.po_no}</td>
                 <td>{r.pcs}</td>

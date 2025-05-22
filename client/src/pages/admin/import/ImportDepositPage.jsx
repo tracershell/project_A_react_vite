@@ -41,11 +41,11 @@ const ImportDepositPage = () => {
     }
     fetchExtraList();
   }, []);
-  
+
   // 1) 임시 테이블에서 리스트 fetch : 임시 or 확정 저장 데이타 검색 관련
   useEffect(() => {
-  fetchRecords();
-}, [dataSource]);
+    fetchRecords();
+  }, [dataSource]);
 
   // 2) 임시 테이블에서 리스트 fetch
   const fetchDepositTemp = async () => {
@@ -61,18 +61,18 @@ const ImportDepositPage = () => {
 
 
   const fetchRecords = async () => {
-  const endpoint =
-    dataSource === 'temp'
-      ? '/api/admin/import/deposit/temp'
-      : '/api/admin/import/deposit/final';
-  try {
-    const { data } = await axios.get(endpoint, { withCredentials: true });
-    setRecords(data);
-  } catch (err) {
-    console.error('❌ fetchRecords 오류:', err);
-    alert('데이터를 불러오는 데 실패했습니다.');
-  }
-};
+    const endpoint =
+      dataSource === 'temp'
+        ? '/api/admin/import/deposit/temp'
+        : '/api/admin/import/deposit/final';
+    try {
+      const { data } = await axios.get(endpoint, { withCredentials: true });
+      setRecords(data);
+    } catch (err) {
+      console.error('❌ fetchRecords 오류:', err);
+      alert('데이터를 불러오는 데 실패했습니다.');
+    }
+  };
 
 
   // 4) Extra 선택 시 자동 값 세팅
@@ -130,16 +130,17 @@ const ImportDepositPage = () => {
     const vendorRate = deposit_rate || (records[0] && records[0].deposit_rate) || '-';
 
     try {
-      // 1. PO 테이블에 Extra 항목으로도 등록 (일반 PO와 통일) : PO table 에 자동등록되는 Extra Pay 자동등록 제거거
-      // await axios.post('/api/admin/import/po/add', {
-      //   vendor_id: useVendorId,
-      //   po_no: extraForm.po_no,
-      //   style_no: showStyle,
-      //   pcs: 0,
-      //   cost_rmb: 0,
-      //   po_date: poDate,
-      //   note: `[EXTRA] ${extraForm.comment}`,
-      // });
+
+      // 💡 Extra Pay 항목을 import_po_list에도 추가
+      await axios.post('/api/admin/import/deposit/po/add', {
+        vendor_id: useVendorId,
+        po_date: poDate,
+        style_no: showStyle,
+        po_no: extraForm.po_no,
+        pcs: 0,
+        cost_rmb: 0,
+        note: `[EXTRA] ${extraForm.comment}`
+      }, { withCredentials: true });
 
       // 2. Deposit Pay Listrecords에만 추가, 임시DB 저장 없음 🔴
       setRecords(recs => [
@@ -169,47 +170,61 @@ const ImportDepositPage = () => {
     }
   };
 
-  // 임시테이블 row 삭제
+  // 임시테이블 row 삭제 (두가지 분기로 임시 DB import_temp 제거, import_po_list에도 삭제)
+  // ✅ 선택제거 버튼 핸들러
   const handleRemoveRow = async (row) => {
-    // 🔴 상태에서 직접 삭제 (Pay 전에는 DB가 아니라 상태에서만 관리되므로)
-    setRecords(recs => recs.filter(r => r.id !== row.id));
-    // 만약 DB에서만 삭제할 상황이면 아래만 사용
-    //  try {
-    //    await axios.delete(`/api/admin/import/deposit/temp/delete/${row.id}`);
-    //    fetchDepositTemp();
-    //  } catch {
-    //    alert('삭제 오류');
-    //  }
+    const isExtra = row.t_amount_rmb === 0 || row.isExtra === true;
+
+    // 상태에서 먼저 제거
+    setRecords(prev => prev.filter(r => r.id !== row.id));
+
+    try {
+      // Extra Pay → 임시 + 마스터 동시 삭제
+      if (isExtra) {
+        await axios.delete(`/api/admin/import/deposit/po/delete/${row.po_no}`, {
+          withCredentials: true,
+        });
+      } else {
+        // 일반 → 임시만 삭제
+        await axios.delete(`/api/admin/import/deposit/temp/delete/${row.id}`, {
+          withCredentials: true,
+        });
+      }
+    } catch (err) {
+      alert('삭제 중 오류 발생');
+      console.error('❌ 삭제 실패:', err);
+    }
   };
 
-  // 검색
-const handleSearch = () => {
-  setFiltered(
-    records.filter(r =>
-      (!search.dp_date || (r.dp_date && cleanDate(r.dp_date) === search.dp_date)) &&
-      (!search.style || r.style_no?.toLowerCase().includes(search.style.toLowerCase())) &&
-      (!search.po_no || r.po_no?.toLowerCase().includes(search.po_no.toLowerCase()))
-    )
-  );
-};
 
-const handleFilteredPdf = async () => {
-  try {
-    const response = await axios.post(
-      '/api/admin/import/deposit/pdf',
-      {
-        records: filtered.length ? filtered : records,
-        date: dpDate,
-        exrate: exRate,
-      },
-      { responseType: 'blob' }
+  // 검색
+  const handleSearch = () => {
+    setFiltered(
+      records.filter(r =>
+        (!search.dp_date || (r.dp_date && cleanDate(r.dp_date) === search.dp_date)) &&
+        (!search.style || r.style_no?.toLowerCase().includes(search.style.toLowerCase())) &&
+        (!search.po_no || r.po_no?.toLowerCase().includes(search.po_no.toLowerCase()))
+      )
     );
-    const pdfUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-    window.open(pdfUrl);
-  } catch (err) {
-    alert('PDF 생성 오류');
-  }
-};
+  };
+
+  const handleFilteredPdf = async () => {
+    try {
+      const response = await axios.post(
+        '/api/admin/import/deposit/pdf',
+        {
+          records: filtered.length ? filtered : records,
+          date: dpDate,
+          exrate: exRate,
+        },
+        { responseType: 'blob' }
+      );
+      const pdfUrl = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      window.open(pdfUrl);
+    } catch (err) {
+      alert('PDF 생성 오류');
+    }
+  };
 
   useEffect(() => { setFiltered(records); }, [records]);
 
@@ -301,13 +316,13 @@ const handleFilteredPdf = async () => {
   }, []);
 
   const formatDate = (value) => {
-  if (!value) return '';
-  const date = new Date(value);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+    if (!value) return '';
+    const date = new Date(value);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
 
   // 날짜 포맷 정리 : 형식 변환 함수 MYWQL DATE YYYY-MM-DD
@@ -322,11 +337,13 @@ const handleFilteredPdf = async () => {
   const handlePay = async () => {
     if (!dpDate || !exRate) return alert('DP Date/Exchange Rate를 입력하세요');
     try {
-      // 🔸 날짜 포맷 정리
+      // 🔸 날짜 및 기타 포맷 정리
       const cleanedRecords = records.map(r => ({
         ...r,
         po_date: cleanDate(r.po_date),
         dp_date: cleanDate(dpDate),
+        dp_exrate: r.dp_exrate || exRate || 1,          // 기본 1 보완
+        dp_amount_rmb: r.dp_amount_rmb ?? 0             // undefined/null 방지
       }));
 
       console.log('📦 [DEBUG] cleanedRecords:', cleanedRecords);
@@ -415,13 +432,13 @@ const handleFilteredPdf = async () => {
       <h2>Deposit Pay List</h2>
       <div className={styles.formRowGroup}>
         {/* ✅ [추가 위치] 조회 대상 선택 콤보박스 */}
-  <div className={`${styles.formRow} ${styles.small}`}>
-    <label style={{ fontWeight: 'bold', marginRight: '8px' }}>조회 대상:</label>
-    <select value={dataSource} onChange={e => setDataSource(e.target.value)}>
-      <option value="temp">임시 데이터</option>
-      <option value="final">확정 데이터</option>
-    </select>
-  </div>
+        <div className={`${styles.formRow} ${styles.small}`}>
+          <label style={{ fontWeight: 'bold', marginRight: '8px' }}>조회 대상:</label>
+          <select value={dataSource} onChange={e => setDataSource(e.target.value)}>
+            <option value="temp">임시 데이터</option>
+            <option value="final">확정 데이터</option>
+          </select>
+        </div>
         {/* 1) 검색 영역 */}
         <div className={`${styles.formRow} ${styles.small}`}>
           <input
@@ -494,16 +511,16 @@ const handleFilteredPdf = async () => {
               <tr key={r.id}>
                 <td>
                   <button
-    type="button"
-    onClick={() => handleRemoveRow(r)}
-    disabled={dataSource === 'final'}  // 확정 데이터면 비활성화
-  >
-    선택제거
-  </button>
+                    type="button"
+                    onClick={() => handleRemoveRow(r)}
+                    disabled={dataSource === 'final'}  // 확정 데이터면 비활성화
+                  >
+                    선택제거
+                  </button>
                 </td>
                 <td>{r.vendor_name}</td>
                 <td>{r.deposit_rate || ''}</td>
-                <td>{r.po_date ? String(r.po_date).split('T')[0] : ''}</td>
+                <td>{formatDate(r.po_date)}</td>
                 <td>{r.style_no}</td>
                 <td>{r.po_no}</td>
                 <td>{r.pcs != null ? Number(r.pcs).toLocaleString() : ''}</td>
