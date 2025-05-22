@@ -32,6 +32,7 @@ const ImportDepositPage = () => {
   const [totalRmb, setTotalRmb] = useState(0);
   const [totalUsd, setTotalUsd] = useState(0);
 
+
   // 1) 최초 마운트시: rows(PO선택) 있으면 임시테이블에 저장, 아니면 임시테이블만 fetch
   useEffect(() => {
     if (rows.length > 0) {
@@ -42,12 +43,28 @@ const ImportDepositPage = () => {
     fetchExtraList();
   }, []);
 
+useEffect(() => {
+  fetchRecords();   // ← temp 또는 final 불러오기
+  setSearch({ dp_date: '', style: '', po_no: '' });  // 선택 시 기존 검색값 초기화
+}, [dataSource]);
+
+
   // 1) 임시 테이블에서 리스트 fetch : 임시 or 확정 저장 데이타 검색 관련
-  useEffect(() => {
-    fetchRecords();
-   // 📌 dataSource가 바뀔 때(임시 ⇄ 확정) 이전 검색 필터를 모두 초기화
-   setSearch({ dp_date: '', style: '', po_no: '' });
-  }, [dataSource]);
+const [availableDates, setAvailableDates] = useState([]);
+
+useEffect(() => {
+  const fetchDates = async () => {
+    try {
+      const res = await axios.get('/api/admin/import/deposit/dates');
+      setAvailableDates(res.data);  // ['2025-05-22', '2025-05-21', ...]
+       console.log('📆 availableDates:', res.data); // Date 값이 잘 들어오는 지 - 검색 안에에
+    } catch (err) {
+      console.error('❌ dp_date 목록 불러오기 실패:', err);
+    }
+  };
+  if (dataSource === 'final') fetchDates();  // 확정데이터 선택 시에만 불러오기
+}, [dataSource]);
+
 
   // 2) 임시 테이블에서 리스트 fetch
   const fetchDepositTemp = async () => {
@@ -201,14 +218,21 @@ const ImportDepositPage = () => {
 
   // 검색
   const handleSearch = () => {
-    setFiltered(
-      records.filter(r =>
-        (!search.dp_date || (r.dp_date && cleanDate(r.dp_date) === search.dp_date)) &&
-        (!search.style || r.style_no?.toLowerCase().includes(search.style.toLowerCase())) &&
-        (!search.po_no || r.po_no?.toLowerCase().includes(search.po_no.toLowerCase()))
-      )
-    );
-  };
+  setFiltered(
+    records.filter(r => {
+      const cleanedDpDate = cleanDate(r.dp_date);
+      const matchDpDate = dataSource === 'final'
+  ? (!search.dp_date || r.dp_date === search.dp_date)
+  : true;  // 임시 데이터는 dp_date 필터 생략
+
+      const matchStyle = !search.style || r.style_no?.toLowerCase().includes(search.style.toLowerCase());
+      const matchPoNo = !search.po_no || r.po_no?.toLowerCase().includes(search.po_no.toLowerCase());
+
+      return matchDpDate && matchStyle && matchPoNo;
+    })
+  );
+};
+
 
   const handleFilteredPdf = async () => {
     try {
@@ -288,7 +312,7 @@ const applyExRate = async () => {
     }
     return {
       ...r,
-      dp_date: dpDate,
+      dp_date: cleanDate(dpDate),
       dp_exrate: exRate,
       dp_amount_rmb: dpRmb,
       dp_amount_usd: (dpRmb && exRate) ? (dpRmb / parseFloat(exRate)).toFixed(2) : '',
@@ -361,23 +385,26 @@ const applyExRate = async () => {
     };
   }, []);
 
-  const formatDate = (value) => {
-    if (!value) return '';
-    const date = new Date(value);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  // formatDate 함수 수정
+const formatDate = (value) => {
+  if (!value) return '';
+  if (typeof value === 'string' && value.includes('-')) return value;
+  const date = new Date(value);
+  const offset = date.getTimezoneOffset();
+  const localDate = new Date(date.getTime() - offset * 60000);
+  return localDate.toISOString().split('T')[0];
+};
 
 
   // 날짜 포맷 정리 : 형식 변환 함수 MYWQL DATE YYYY-MM-DD
-  const cleanDate = (dateStr) => {
-    if (!dateStr) return null;
-    if (typeof dateStr === 'string') return dateStr.split('T')[0]; // '2025-05-15'
-    if (dateStr instanceof Date) return dateStr.toISOString().split('T')[0];
-    return String(dateStr).split('T')[0];
-  };
+  // 수정 (🚀 서버에서 문자열로 오므로 그대로 반환)
+const cleanDate = (dateStr) => {
+  if (!dateStr) return null;
+  if (typeof dateStr === 'string' && dateStr.includes('-')) return dateStr;
+  const date = new Date(dateStr);
+  return date.toISOString().split('T')[0];
+};
+
 
   // Pay: 임시테이블 → 실테이블 커밋
   const handlePay = async () => {
@@ -482,30 +509,81 @@ const applyExRate = async () => {
       <div className={styles.formRowGroup}>
         {/* ✅ [추가 위치] 조회 대상 선택 콤보박스 */}
         <div className={`${styles.formRow} ${styles.small}`}>
-          <label style={{ fontWeight: 'bold', marginRight: '8px' }}>조회 대상:</label>
-          <select value={dataSource} onChange={e => setDataSource(e.target.value)}>
-            <option value="temp">임시 데이터</option>
-            <option value="final">확정 데이터</option>
-          </select>
-        </div>
-        {/* 1) 검색 영역 */}
-        <div className={`${styles.formRow} ${styles.small}`}>
+            <label style={{ fontWeight: 'bold', marginRight: '8px' }}>조회 대상:</label>
+  <select value={dataSource} onChange={e => setDataSource(e.target.value)}>
+    <option value="temp">임시 데이터</option>
+    <option value="final">확정 데이터</option>
+  </select>
+
+          {/* ✅ [추가된 자동 날짜 필터 select] */}
+  {dataSource === 'final' && (
+    <select
+  value={search.dp_date}
+  onChange={e => {
+    const val = e.target.value;
+
+    if (!val) {
+      setSearch({ dp_date: '', style: '', po_no: '' });
+      setFiltered(records);
+      return;
+    }
+
+    // ✅ 최신 search 상태를 기준으로 필터링
+    const updatedSearch = { ...search, dp_date: val };
+    setSearch(updatedSearch);
+
+    const newFiltered = records.filter(r => {
+      return (
+        cleanDate(r.dp_date) === val &&
+        (!updatedSearch.style || r.style_no?.toLowerCase().includes(updatedSearch.style.toLowerCase())) &&
+        (!updatedSearch.po_no || r.po_no?.toLowerCase().includes(updatedSearch.po_no.toLowerCase()))
+      );
+    });
+
+    setFiltered(newFiltered);
+  }}
+>
+  <option value="">:: 전체 날짜 보기 ::</option>
+  {availableDates.map(d => (
+    <option key={d} value={cleanDate(d)}>
+      {cleanDate(d)}
+    </option>
+  ))}
+</select>
+
+  )}
+
+
           <input
-            type="date"
-            placeholder="DP Date"
-            value={search.dp_date}
-            onChange={e => setSearch(s => ({ ...s, dp_date: e.target.value }))}
-          />
+  placeholder="Style"
+  value={search.style}
+  onChange={e => {
+    const newVal = e.target.value;
+    const updated = { ...search, style: newVal };
+    setSearch(updated);
+    // 필터 적용
+    setFiltered(records.filter(r =>
+      (!updated.dp_date || cleanDate(r.dp_date) === updated.dp_date) &&
+      (!updated.style || r.style_no?.toLowerCase().includes(updated.style.toLowerCase())) &&
+      (!updated.po_no || r.po_no?.toLowerCase().includes(updated.po_no.toLowerCase()))
+    ));
+  }}
+/>
           <input
-            placeholder="Style"
-            value={search.style}
-            onChange={e => setSearch(s => ({ ...s, style: e.target.value }))}
-          />
-          <input
-            placeholder="PO no."
-            value={search.po_no}
-            onChange={e => setSearch(s => ({ ...s, po_no: e.target.value }))}
-          />
+  placeholder="PO no."
+  value={search.po_no}
+  onChange={e => {
+    const newVal = e.target.value;
+    const updated = { ...search, po_no: newVal };
+    setSearch(updated);
+    // 필터 적용
+    setFiltered(records.filter(r =>
+      (!updated.dp_date || cleanDate(r.dp_date) === updated.dp_date) &&
+      (!updated.style || r.style_no?.toLowerCase().includes(updated.style.toLowerCase())) &&
+      (!updated.po_no || r.po_no?.toLowerCase().includes(updated.po_no.toLowerCase()))
+    ));
+  }}
+/>
           <button type="button" onClick={handleSearch}>검색</button>
           <button type="button" onClick={handleFilteredPdf}>PDF 보기</button>
         </div>

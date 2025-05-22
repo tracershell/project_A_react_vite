@@ -22,9 +22,15 @@ router.get('/temp', async (req, res) => {
 
   try {
     const [rows] = await db.query(
-      'SELECT * FROM import_temp WHERE user_id = ? ORDER BY created_at',
-      [user_id]
-    );
+  `SELECT *, 
+   DATE_FORMAT(po_date, '%Y-%m-%d') AS po_date,
+   DATE_FORMAT(dp_date, '%Y-%m-%d') AS dp_date,
+   DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') AS created_at
+   FROM import_temp 
+   WHERE user_id = ? 
+   ORDER BY created_at`,
+  [user_id]
+);
     console.debug('[GET /temp] fetched rows count=', rows.length);
     res.json(rows);
   } catch (err) {
@@ -155,7 +161,7 @@ router.post('/temp/commit', async (req, res) => {
       // const usedDpDate = bodyDpDate || row.dp_date || new Date().toISOString().split('T')[0];
       // const usedDpExrate = bodyExrate || row.dp_exrate || 1;
 
-      const usedDpDate = row.dp_date;
+      const usedDpDate = bodyDpDate || row.dp_date || new Date().toISOString().split('T')[0];
       const usedDpExrate = row.dp_exrate;
 
       console.debug(
@@ -311,7 +317,13 @@ router.delete('/temp/clear', async (req, res) => {
 // GET /deposit/final - 확정 데이터 조회
 router.get('/final', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM import_deposit_list ORDER BY dp_date DESC');
+    const [rows] = await db.query(
+  `SELECT *, 
+   DATE_FORMAT(po_date, '%Y-%m-%d') AS po_date,
+   DATE_FORMAT(dp_date, '%Y-%m-%d') AS dp_date 
+   FROM import_deposit_list 
+   ORDER BY dp_date DESC`
+);
     res.json(rows);
   } catch (err) {
     console.error('[GET /deposit/final] 오류:', err.stack || err);
@@ -471,6 +483,21 @@ router.post('/temp/update', async (req, res) => {
   }
 });
 
+// server/routes/admin/import/deposit.js
+
+router.get('/dates', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+  `SELECT DISTINCT DATE_FORMAT(dp_date, '%Y-%m-%d') AS dp_date 
+   FROM import_deposit_list 
+   ORDER BY dp_date DESC`
+);
+    res.json(rows.map(r => r.dp_date));
+  } catch (err) {
+    console.error('❌ distinct dp_date 불러오기 실패:', err);
+    res.status(500).json({ error: 'Failed to fetch dates' });
+  }
+});
 
 
 
