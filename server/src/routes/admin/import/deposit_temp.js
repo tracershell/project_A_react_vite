@@ -151,37 +151,44 @@ router.post('/temp/commit', async (req, res) => {
         console.debug(`[POST /temp/commit] 신규 PO 생성, id=${temp_po_id}`);
       }
 
-      // ② dp_date, dp_exrate fallback 로직
-      const usedDpDate = bodyDpDate || row.dp_date || new Date().toISOString().split('T')[0];
-      const usedDpExrate = bodyExrate || row.dp_exrate || 1;
+      // // ② dp_date, dp_exrate fallback 로직
+      // const usedDpDate = bodyDpDate || row.dp_date || new Date().toISOString().split('T')[0];
+      // const usedDpExrate = bodyExrate || row.dp_exrate || 1;
+
+      const usedDpDate = row.dp_date;
+      const usedDpExrate = row.dp_exrate;
+
       console.debug(
         `[POST /temp/commit] using dp_date='${usedDpDate}', dp_exrate=${usedDpExrate}`
       );
 
       // ③ 입금 이력 저장 : 임시 DB 에서 실제 DB 로 이동 | "import_temp" → "import_deposit_list"
-      await conn.query(
-        `INSERT INTO import_deposit_list (
+await conn.query(
+  `INSERT INTO import_deposit_list (
      po_id, vendor_id, vendor_name, deposit_rate,
      po_date, style_no, po_no, pcs, cost_rmb,
-     dp_amount_rmb, dp_date, dp_exrate, dp_status, note
-   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          temp_po_id,
-          row.vendor_id,
-          row.vendor_name || '',
-          row.deposit_rate || 0,
-          row.po_date,
-          row.style_no,
-          row.po_no,
-          row.pcs || 0,
-          row.cost_rmb || 0,
-          row.dp_amount_rmb,
-          usedDpDate,
-          usedDpExrate,
-          row.dp_status || 'paid',   // ✅ 추가됨
-          row.note || ''
-        ]
-      );
+     dp_amount_rmb, dp_amount_usd, dp_date, dp_exrate, dp_status, note
+   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    temp_po_id,
+    row.vendor_id,
+    row.vendor_name || '',
+    row.deposit_rate || 0,
+    row.po_date,
+    row.style_no,
+    row.po_no,
+    row.pcs || 0,
+    row.cost_rmb || 0,
+    row.dp_amount_rmb || 0,
+    row.dp_amount_usd || 0,
+    row.dp_date,
+    row.dp_exrate,
+    row.dp_status || 'paid',
+    row.note || ''
+  ]
+);
+
+
       console.debug('[POST /temp/commit] import_deposit_list INSERT 완료');
 
       // ④ PO master 업데이트
@@ -423,6 +430,48 @@ router.delete('/po/delete/:po_no', async (req, res) => {
     conn.release();
   }
 });
+
+// ✅ 환율적용 후 import_temp 업데이트
+router.post('/temp/update', async (req, res) => {
+  const user_id = getUserId(req);
+  if (!user_id) return res.status(401).json({ error: '로그인 필요' });
+
+  const { rows } = req.body;
+  if (!Array.isArray(rows)) return res.status(400).json({ error: 'rows 배열 필요' });
+
+  try {
+    for (const r of rows) {
+      if (!r.po_no || !r.dp_date || !r.dp_exrate) continue;
+
+      await db.query(
+        `UPDATE import_temp 
+         SET dp_amount_rmb = ?, 
+             dp_date = ?, 
+             dp_exrate = ?, 
+             dp_amount_usd = ?, 
+             dp_status = ?, 
+             note = ?
+         WHERE po_no = ? AND user_id = ?`,
+        [
+          cleanNumber(r.dp_amount_rmb) || 0,
+          r.dp_date,
+          cleanNumber(r.dp_exrate),
+          cleanNumber(r.dp_amount_usd) || 0,
+          r.dp_status || 'paid',
+          r.note || '',
+          r.po_no,
+          user_id
+        ]
+      );
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[POST /temp/update] 업데이트 오류:', err.stack || err);
+    res.status(500).json({ error: '업데이트 실패' });
+  }
+});
+
+
 
 
 module.exports = router;

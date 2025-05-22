@@ -45,6 +45,8 @@ const ImportDepositPage = () => {
   // 1) 임시 테이블에서 리스트 fetch : 임시 or 확정 저장 데이타 검색 관련
   useEffect(() => {
     fetchRecords();
+   // 📌 dataSource가 바뀔 때(임시 ⇄ 확정) 이전 검색 필터를 모두 초기화
+   setSearch({ dp_date: '', style: '', po_no: '' });
   }, [dataSource]);
 
   // 2) 임시 테이블에서 리스트 fetch
@@ -228,41 +230,85 @@ const ImportDepositPage = () => {
 
   useEffect(() => { setFiltered(records); }, [records]);
 
-  // PayDate, 환율 적용 (DP Amount(RMB)값이 0이 아니면 모두 자동 계산)
-  const applyExRate = () => {
-    if (!dpDate || !exRate) {
-      alert('Pay Date와 Exchange Rate를 입력하세요');
-      return;
+  // // PayDate, 환율 적용 (DP Amount(RMB)값이 0이 아니면 모두 자동 계산)
+  // const applyExRate = () => {
+  //   if (!dpDate || !exRate) {
+  //     alert('Pay Date와 Exchange Rate를 입력하세요');
+  //     return;
+  //   }
+  //   setRecords(recs =>
+  //     recs.map(r => {
+  //       // ExtraPay(환율비적용) 유지
+  //       if ((r.dp_exrate === 1 || r.dp_exrate === "1") && Number(r.dp_amount_rmb) === 0) {
+  //         return { ...r, dp_date: dpDate, dp_exrate: 1, dp_amount_usd: r.dp_amount_usd || '' };
+  //       }
+
+  //       // 일반 PO (0 이상만 계산)
+  //       let dpRmb = Number(r.dp_amount_rmb);
+  //       if (!dpRmb) {
+  //         // 만약 0이거나 값이 없으면 계산해서 넣어줌
+  //         if (r.t_amount_rmb && r.deposit_rate) {
+  //           dpRmb = Number(r.t_amount_rmb) * Number(r.deposit_rate) / 100;
+  //         } else {
+  //           dpRmb = 0;
+  //         }
+  //       }
+  //       return {
+  //         ...r,
+  //         dp_date: dpDate,
+  //         dp_exrate: exRate,
+  //         dp_amount_rmb: dpRmb,
+  //         dp_amount_usd: (dpRmb && exRate) ? (dpRmb / parseFloat(exRate)).toFixed(2) : '',
+  //       };
+  //     })
+  //   );
+  // };
+
+const applyExRate = async () => {
+  if (!dpDate || !exRate) {
+    alert('Pay Date와 Exchange Rate를 입력하세요');
+    return;
+  }
+
+  // 1. 화면 상태 먼저 계산
+  const updatedRecords = records.map(r => {
+    // ExtraPay(환율비적용) 유지
+    if ((r.dp_exrate === 1 || r.dp_exrate === "1") && Number(r.dp_amount_rmb) === 0) {
+      return { ...r, dp_date: dpDate, dp_exrate: 1, dp_amount_usd: r.dp_amount_usd || '' };
     }
-    setRecords(recs =>
-      recs.map(r => {
-        // ExtraPay(환율비적용) 유지
-        if ((r.dp_exrate === 1 || r.dp_exrate === "1") && Number(r.dp_amount_rmb) === 0) {
-          return { ...r, dp_date: dpDate, dp_exrate: 1, dp_amount_usd: r.dp_amount_usd || '' };
-        }
 
-        // 일반 PO (0 이상만 계산)
-        let dpRmb = Number(r.dp_amount_rmb);
-        if (!dpRmb) {
-          // 만약 0이거나 값이 없으면 계산해서 넣어줌
-          if (r.t_amount_rmb && r.deposit_rate) {
-            dpRmb = Number(r.t_amount_rmb) * Number(r.deposit_rate) / 100;
-          } else {
-            dpRmb = 0;
-          }
-        }
-        return {
-          ...r,
-          dp_date: dpDate,
-          dp_exrate: exRate,
-          dp_amount_rmb: dpRmb,
-          dp_amount_usd: (dpRmb && exRate) ? (dpRmb / parseFloat(exRate)).toFixed(2) : '',
-        };
-      })
-    );
-  };
+    // 일반 PO (0 이상만 계산)
+    let dpRmb = Number(r.dp_amount_rmb);
+    if (!dpRmb) {
+      if (r.t_amount_rmb && r.deposit_rate) {
+        dpRmb = Number(r.t_amount_rmb) * Number(r.deposit_rate) / 100;
+      } else {
+        dpRmb = 0;
+      }
+    }
+    return {
+      ...r,
+      dp_date: dpDate,
+      dp_exrate: exRate,
+      dp_amount_rmb: dpRmb,
+      dp_amount_usd: (dpRmb && exRate) ? (dpRmb / parseFloat(exRate)).toFixed(2) : '',
+    };
+  });
 
+  // 2. 화면에 반영
+  setRecords(updatedRecords);
 
+  // 3. 서버에 import_temp 업데이트 요청
+  try {
+    await axios.post('/api/admin/import/deposit/temp/update', {
+      rows: updatedRecords
+    });
+    console.log('[applyExRate] import_temp 업데이트 완료');
+  } catch (err) {
+    console.error('[applyExRate] 서버 업데이트 오류:', err);
+    alert('환율 적용 후 서버 저장에 실패했습니다.');
+  }
+};
 
 
   // 합계 (0이 아닌 것만 합계에 포함)
@@ -343,7 +389,10 @@ const ImportDepositPage = () => {
         po_date: cleanDate(r.po_date),
         dp_date: cleanDate(dpDate),
         dp_exrate: r.dp_exrate || exRate || 1,          // 기본 1 보완
-        dp_amount_rmb: r.dp_amount_rmb ?? 0             // undefined/null 방지
+        dp_amount_rmb: r.dp_amount_rmb ?? 0,             // undefined/null 방지
+        vendor_id: r.vendor_id || vendor_id,            // ✅ 기본값 보완
+        vendor_name: r.vendor_name || vendor_name,      // ✅ 기본값 보완
+        deposit_rate: r.deposit_rate || deposit_rate
       }));
 
       console.log('📦 [DEBUG] cleanedRecords:', cleanedRecords);

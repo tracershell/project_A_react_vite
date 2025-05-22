@@ -241,7 +241,7 @@ CREATE TABLE import_deposit_list (
   dp_date          DATE              NOT NULL,
   dp_exrate        DECIMAL(10,4)     NOT NULL
     COMMENT '사용된 환율',
-  dp_amount_usd    DECIMAL(14,2)     AS (CASE WHEN dp_exrate>0 THEN dp_amount_rmb/dp_exrate ELSE 0 END) STORED,
+  dp_amount_usd    DECIMAL(14,2)     NOT NULL,
   dp_status        ENUM('', 'paid')  NOT NULL DEFAULT ''
     COMMENT '입금 상태',
 
@@ -285,7 +285,7 @@ CREATE TABLE import_balance_list (
   bp_amount_rmb    DECIMAL(14,2)     NOT NULL,
   bp_date          DATE              NOT NULL,
   bp_exrate        DECIMAL(10,4)     NOT NULL,
-  bp_amount_usd    DECIMAL(14,2)     AS (CASE WHEN bp_exrate>0 THEN bp_amount_rmb/bp_exrate ELSE 0 END) STORED,
+  bp_amount_usd    DECIMAL(14,2)     NOT NULL,
   bp_status        ENUM('', 'paid')  NOT NULL DEFAULT ''
     COMMENT '잔금 상태',
 
