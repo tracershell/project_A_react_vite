@@ -385,57 +385,70 @@ const ImportPoPage = () => {
             </tr>
           </thead>
           <tbody>
-  {filteredList.map(r => (
-    <tr key={r.id} onClick={() => selectRow(r)}>
-      <td>
-        <input
-          type="checkbox"
-          onChange={() => handleRowSelect(r.id)}
-          checked={selectedRows.has(r.id)}
-        />
-      </td>
-      <td>{r.vendor_name}</td>
-      <td>{r.deposit_rate}%</td>
-      <td>{cleanDate(r.po_date)}</td>
-      <td>{r.style_no}</td>
-      <td>{r.po_no}</td>
-      <td>{r.pcs != null ? Number(r.pcs).toLocaleString() : ''}</td>
-      <td>{r.cost_rmb.toLocaleString()}</td>
-      <td>{r.t_amount_rmb.toLocaleString()}</td>
-      <td>{(r.dp_amount_rmb || 0).toLocaleString()}</td>
-      <td>
-        {r.dp_status === 'paid' ? (
-          <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
-        ) : (
-          <input
-            type="checkbox"
-            onChange={() => toggleDp(r.id)}
-            checked={dpSelected.includes(r.id)}
-            hidden={r.bp_amount_rmb === r.t_amount_rmb}
-          />
-        )}
-      </td>
-      <td>{(r.bp_amount_rmb || 0).toLocaleString()}</td>
-      <td>
-        {r.bp_status === 'paid' ? (
-          <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
-        ) : (
-          <input
-            type="checkbox"
-            onChange={() => toggleBp(r.id)}
-            checked={bpSelected.includes(r.id)}
-            hidden={r.dp_amount_rmb === r.t_amount_rmb}
-          />
-        )}
-      </td>
-    </tr>
-  ))}
-</tbody>
-
+            {filteredList.map(r => (
+              <tr key={r.id} onClick={() => selectRow(r)}>
+                <td>
+                  <input
+                    type="checkbox"
+                    onChange={() => handleRowSelect(r.id)}
+                    checked={selectedRows.has(r.id)}
+                  />
+                </td>
+                <td>{r.vendor_name}</td>
+                <td>{r.deposit_rate}%</td>
+                <td>{cleanDate(r.po_date)}</td>
+                <td>{r.style_no}</td>
+                <td>{r.po_no}</td>
+                <td>{r.pcs != null ? Number(r.pcs).toLocaleString() : ''}</td>
+                <td>{r.cost_rmb.toLocaleString()}</td>
+                <td>
+                  {r.t_amount_rmb != null
+                    ? Number(r.t_amount_rmb).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                    : ''}
+                </td>
+                <td>
+                  {(r.dp_amount_rmb || 0).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
+                <td>
+                  {r.dp_amount_rmb !== r.t_amount_rmb && (
+                    <input
+                      type="checkbox"
+                      onChange={() => toggleDp(r.id)}
+                      checked={dpSelected.includes(r.id)}
+                      disabled={r.dp_status === 'paid'}
+                    />
+                  )}
+                </td>
+                <td>
+                  {(r.bp_amount_rmb || 0).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
+                <td>
+                  {r.dp_amount_rmb === r.t_amount_rmb && (
+                    <input
+                      type="checkbox"
+                      onChange={() => toggleBp(r.id)}
+                      checked={bpSelected.includes(r.id)}
+                      disabled={r.bp_status === 'paid'}
+                    />
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
+
     </div>
   );
 };
 
-export default ImportPoPage;
+export default ImportPoPage; cd

@@ -12,36 +12,45 @@ h2 {
 
 .form {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.form input {
-  flex: 1 1 120px;
-  padding: 0.5rem;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  font-size: 11px;
+  gap: 0.3rem;
+  padding: 0.75rem;
   border: 1px solid #ccc;
   border-radius: 4px;
-  height: 2rem;
-}
+  margin-bottom: 12px;
+  }
 
-.buttons {
-  margin-bottom: 1rem;
-}
-
-button {
-  padding: 0.5rem 1rem;
-  margin-right: 0.5rem;
-  font-size: 14px;
-  border: 1px solid #066da5;
+.form input {
+  display: inline-block;
+  vertical-align: baseline;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  padding: 0 0.3rem;
+  font-size: 11px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
+  flex: 1 1 120px;
+  appearance: none;
 }
+
 
 .buttons button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.buttons button {
+  vertical-align: baseline;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.5rem;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
 }
 
 .list {
@@ -65,4 +74,27 @@ th, td {
 
 .selected {
   background: #ffff99;
+}
+
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.formRow.small {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  font-size: 11px;
+  gap: 0.3rem;
+  padding-top: 1.0rem;
+  padding-bottom: 0.1rem;
 }
