@@ -157,6 +157,28 @@ const ImportPoPage = () => {
     });
   };
 
+const handleViewPdf = async () => {
+  try {
+    const payload = {
+      records: filteredList.length ? filteredList : list,  // ✅ 필터링된 리스트가 있으면 사용
+      vendor_id: form.vendor_id || '',                     // ✅ form 상태에 있는 vendor_id
+      dp_date: form.po_date || '',                         // ✅ form 상태에 있는 날짜 (필요시 이름 변경 가능)
+      vendor_name: form.vendor_name || ''
+    };
+
+    const response = await axios.post(
+      '/api/admin/import/po/pdf',                          // ✅ PO 전용 PDF 생성 엔드포인트
+      payload,
+      { responseType: 'blob' }                             // ✅ PDF 파일로 응답 받기
+    );
+
+    const pdfUrl = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+    window.open(pdfUrl);                                   // ✅ 새 창에서 PDF 열기
+  } catch (err) {
+    alert('PDF 생성 오류: ' + (err.response?.data?.error || err.message));
+  }
+};
+
   // Deposit Pay 핸들러
   const handleDepositPay = async () => {
     let rowsToSend = [];
@@ -355,6 +377,7 @@ const ImportPoPage = () => {
           onChange={e => setSearchText(e.target.value)}
         />
         <button type="submit">검색</button>
+        <button type="button" onClick={handleViewPdf}>PDF 보기</button>
         <button type="button" onClick={handleDepositPay}>Deposit Pay</button>
         <button type="button" onClick={handleBalancePay}>Balance Pay</button>
       </form>
@@ -401,8 +424,8 @@ const ImportPoPage = () => {
       <td>{r.po_no}</td>
       <td>{r.pcs != null ? Number(r.pcs).toLocaleString() : ''}</td>
       <td>{r.cost_rmb.toLocaleString()}</td>
-      <td>{r.t_amount_rmb.toLocaleString()}</td>
-      <td>{(r.dp_amount_rmb || 0).toLocaleString()}</td>
+      <td>{Number(r.t_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+      <td>{Number(r.dp_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
       <td>
         {r.dp_status === 'paid' ? (
           <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
@@ -415,7 +438,7 @@ const ImportPoPage = () => {
           />
         )}
       </td>
-      <td>{(r.bp_amount_rmb || 0).toLocaleString()}</td>
+      <td>{Number(r.bp_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
       <td>
         {r.bp_status === 'paid' ? (
           <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
