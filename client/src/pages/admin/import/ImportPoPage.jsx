@@ -157,62 +157,87 @@ const ImportPoPage = () => {
     });
   };
 
-const handleViewPdf = async () => {
-  try {
-    const payload = {
-      records: filteredList.length ? filteredList : list,  // ✅ 필터링된 리스트가 있으면 사용
-      vendor_id: form.vendor_id || '',                     // ✅ form 상태에 있는 vendor_id
-      dp_date: form.po_date || '',                         // ✅ form 상태에 있는 날짜 (필요시 이름 변경 가능)
-      vendor_name: form.vendor_name || ''
-    };
+  const handleViewPdf = async () => {
+    try {
+      const payload = {
+        records: filteredList.length ? filteredList : list,  // ✅ 필터링된 리스트가 있으면 사용
+        vendor_id: form.vendor_id || '',                     // ✅ form 상태에 있는 vendor_id
+        dp_date: form.po_date || '',                         // ✅ form 상태에 있는 날짜 (필요시 이름 변경 가능)
+        vendor_name: form.vendor_name || ''
+      };
 
-    const response = await axios.post(
-      '/api/admin/import/po/pdf',                          // ✅ PO 전용 PDF 생성 엔드포인트
-      payload,
-      { responseType: 'blob' }                             // ✅ PDF 파일로 응답 받기
-    );
+      const response = await axios.post(
+        '/api/admin/import/po/pdf',                          // ✅ PO 전용 PDF 생성 엔드포인트
+        payload,
+        { responseType: 'blob' }                             // ✅ PDF 파일로 응답 받기
+      );
 
-    const pdfUrl = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-    window.open(pdfUrl);                                   // ✅ 새 창에서 PDF 열기
-  } catch (err) {
-    alert('PDF 생성 오류: ' + (err.response?.data?.error || err.message));
-  }
-};
+      const pdfUrl = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      window.open(pdfUrl);                                   // ✅ 새 창에서 PDF 열기
+    } catch (err) {
+      alert('PDF 생성 오류: ' + (err.response?.data?.error || err.message));
+    }
+  };
 
   // Deposit Pay 핸들러
-  const handleDepositPay = async () => {
-    let rowsToSend = [];
-    let vId = searchVendor || form.vendor_id;
-    let vName = form.vendor_name ||
-      (vendors.find(v => v.id === Number(vId))?.name || '');
-    let vRate = form.deposit_rate ||
-      (vendors.find(v => v.id === Number(vId))?.deposit_rate || '');
+  // const handleDepositPay = async () => {
+  //   let rowsToSend = [];
+  //   let vId = searchVendor || form.vendor_id;
+  //   let vName = form.vendor_name ||
+  //     (vendors.find(v => v.id === Number(vId))?.name || '');
+  //   let vRate = form.deposit_rate ||
+  //     (vendors.find(v => v.id === Number(vId))?.deposit_rate || '');
 
-    if (dpSelected.length > 0) {
-      rowsToSend = list.filter(r => dpSelected.includes(r.id));
-      vId = rowsToSend[0]?.vendor_id || vId;
-      vName = rowsToSend[0]?.vendor_name || vName;
-      vRate = rowsToSend[0]?.deposit_rate || vRate;
-    } else if (vId) {
-      rowsToSend = list.filter(
-        r => r.vendor_id === Number(vId) && r.dp_status === 'paid'
-      );
+  //   if (dpSelected.length > 0) {
+  //     rowsToSend = list.filter(r => dpSelected.includes(r.id));
+  //     vId = rowsToSend[0]?.vendor_id || vId;
+  //     vName = rowsToSend[0]?.vendor_name || vName;
+  //     vRate = rowsToSend[0]?.deposit_rate || vRate;
+  //   } else if (vId) {
+  //     rowsToSend = list.filter(
+  //       r => r.vendor_id === Number(vId) && r.dp_status === 'paid'
+  //     );
+  //   }
+
+  //   const uniq = [...new Set(rowsToSend.map(r => r.vendor_id))];
+  //   if (uniq.length > 1) {
+  //     return alert('같은 Vendor만 선택 가능합니다.');
+  //   }
+  //   if (!rowsToSend.length) {
+  //     return alert('Deposit 선택을 해야 합니다.');
+  //   }
+
+  const handleDepositPay = async () => {
+    if (dpSelected.length === 0) {
+      return alert('Deposit 선택을 하셔야 합니다.');
     }
 
-    const uniq = [...new Set(rowsToSend.map(r => r.vendor_id))];
-    if (uniq.length > 1) {
+    const combinedSelectedIds = [...new Set([...dpSelected, ...bpSelected])];
+    const combinedRows = list.filter(r => combinedSelectedIds.includes(r.id));
+
+    const uniqVendorIds = [...new Set(combinedRows.map(r => r.vendor_id))];
+    if (uniqVendorIds.length > 1) {
       return alert('같은 Vendor만 선택 가능합니다.');
     }
-    if (!rowsToSend.length) {
-      return alert('DP paid인 항목을 선택하세요.');
-    }
 
+    const rowsToSend = list.filter(r => dpSelected.includes(r.id));
+    const vId = rowsToSend[0]?.vendor_id || '';
+    const vName = rowsToSend[0]?.vendor_name || '';
+    const vRate = rowsToSend[0]?.deposit_rate || '';
+
+    // ✅ 여기에 try/catch 블록 포함시킴
     try {
       const cleanedRows = rowsToSend.map(r => {
         const pcs = Number(r.pcs) || 0;
         const cost = Number(r.cost_rmb) || 0;
         const rate = Number(r.deposit_rate || vRate) / 100;
-        const dpRmb = parseFloat((pcs * cost * rate).toFixed(2));
+
+        const t_amount_rmb = pcs * cost;
+        const dpRmb =
+          dpSelected.includes(r.id) && bpSelected.includes(r.id)
+            ? t_amount_rmb
+            : parseFloat((t_amount_rmb * rate).toFixed(2));
+
         return {
           vendor_id: r.vendor_id,
           vendor_name: r.vendor_name,
@@ -236,6 +261,7 @@ const handleViewPdf = async () => {
         { rows: cleanedRows, vendor_id: vId, vendor_name: vName, deposit_rate: vRate },
         { withCredentials: true }
       );
+
       navigate('/admin/import/deposit', {
         state: {
           rows: cleanedRows,
@@ -244,37 +270,67 @@ const handleViewPdf = async () => {
           deposit_rate: vRate
         }
       });
+
     } catch (err) {
       alert('임시저장 실패: ' + (err.response?.data?.error || err.message));
     }
   };
 
   // Balance Pay 핸들러
-  const handleBalancePay = () => {
-    let rowsToSend = [];
-    let vId = searchVendor || form.vendor_id;
+  // const handleBalancePay = () => {
+  //   let rowsToSend = [];
+  //   let vId = searchVendor || form.vendor_id;
 
-    if (bpSelected.length > 0) {
-      rowsToSend = list.filter(r => bpSelected.includes(r.id));
-      vId = rowsToSend[0]?.vendor_id || vId;
-    } else if (vId) {
-      rowsToSend = list.filter(
-        r => r.vendor_id === Number(vId) && r.bp_status === 'paid'
-      );
+  //   if (bpSelected.length > 0) {
+  //     rowsToSend = list.filter(r => bpSelected.includes(r.id));
+  //     vId = rowsToSend[0]?.vendor_id || vId;
+  //   } else if (vId) {
+  //     rowsToSend = list.filter(
+  //       r => r.vendor_id === Number(vId) && r.bp_status === 'paid'
+  //     );
+  //   }
+
+  //   const uniq = [...new Set(rowsToSend.map(r => r.vendor_id))];
+  //   if (uniq.length > 1) {
+  //     return alert('같은 Vendor만 선택 가능합니다.');
+  //   }
+  //   if (!rowsToSend.length) {
+  //     return alert('BP paid인 항목을 선택하세요.');
+  //   }
+
+  //   navigate('/admin/import/balance', { state: { rows: rowsToSend, vendor_id: vId } });
+  // };
+
+  const handleBalancePay = async () => {
+    if (bpSelected.length === 0) {
+      return alert('Balance 선택을 하셔야 합니다.');
     }
 
-    const uniq = [...new Set(rowsToSend.map(r => r.vendor_id))];
-    if (uniq.length > 1) {
+    // ✅ dp + bp 선택 항목 병합
+    const combinedSelectedIds = [...new Set([...dpSelected, ...bpSelected])];
+    const combinedRows = list.filter(r => combinedSelectedIds.includes(r.id));
+
+    const uniqVendorIds = [...new Set(combinedRows.map(r => r.vendor_id))];
+    if (uniqVendorIds.length > 1) {
       return alert('같은 Vendor만 선택 가능합니다.');
     }
-    if (!rowsToSend.length) {
-      return alert('BP paid인 항목을 선택하세요.');
-    }
 
-    navigate('/admin/import/balance', { state: { rows: rowsToSend, vendor_id: vId } });
+    // ✅ 실제 Balance 처리 대상
+    const rowsToSend = list.filter(r => bpSelected.includes(r.id));
+
+    const vId = rowsToSend[0]?.vendor_id || '';
+    const vName = rowsToSend[0]?.vendor_name || '';
+
+    // 이후 로직 계속...
   };
 
+
   // T.Amount 계산
+  // 수정해야 함 : DP Status 가 paid 인 경우 DP Amount(RMB) 값을 "import_temp" 테이블 field dp_amount_rmb 에 저장 
+  //              bp_amount_rmb = t_amount_rmb - dp_amount_rmb
+  //             DP Status 값이 paid 가 아니고 dpSelected 와 bpSelected 되었을 때  dp_amount_rmb =0, dp_status = 'paid' 로 저장
+  //                bp_amount_rmb = t_amount_rmb
+
   const totalRmb = ((Number(form.pcs) || 0) * (Number(form.cost_rmb) || 0)).toFixed(2);
 
   return (
@@ -408,52 +464,52 @@ const handleViewPdf = async () => {
             </tr>
           </thead>
           <tbody>
-  {filteredList.map(r => (
-    <tr key={r.id} onClick={() => selectRow(r)}>
-      <td>
-        <input
-          type="checkbox"
-          onChange={() => handleRowSelect(r.id)}
-          checked={selectedRows.has(r.id)}
-        />
-      </td>
-      <td>{r.vendor_name}</td>
-      <td>{r.deposit_rate}%</td>
-      <td>{cleanDate(r.po_date)}</td>
-      <td>{r.style_no}</td>
-      <td>{r.po_no}</td>
-      <td>{r.pcs != null ? Number(r.pcs).toLocaleString() : ''}</td>
-      <td>{r.cost_rmb.toLocaleString()}</td>
-      <td>{Number(r.t_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-      <td>{Number(r.dp_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-      <td>
-        {r.dp_status === 'paid' ? (
-          <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
-        ) : (
-          <input
-            type="checkbox"
-            onChange={() => toggleDp(r.id)}
-            checked={dpSelected.includes(r.id)}
-            hidden={r.bp_amount_rmb === r.t_amount_rmb}
-          />
-        )}
-      </td>
-      <td>{Number(r.bp_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-      <td>
-        {r.bp_status === 'paid' ? (
-          <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
-        ) : (
-          <input
-            type="checkbox"
-            onChange={() => toggleBp(r.id)}
-            checked={bpSelected.includes(r.id)}
-            hidden={r.dp_amount_rmb === r.t_amount_rmb}
-          />
-        )}
-      </td>
-    </tr>
-  ))}
-</tbody>
+            {filteredList.map(r => (
+              <tr key={r.id} onClick={() => selectRow(r)}>
+                <td>
+                  <input
+                    type="checkbox"
+                    onChange={() => handleRowSelect(r.id)}
+                    checked={selectedRows.has(r.id)}
+                  />
+                </td>
+                <td>{r.vendor_name}</td>
+                <td>{r.deposit_rate}%</td>
+                <td>{cleanDate(r.po_date)}</td>
+                <td>{r.style_no}</td>
+                <td>{r.po_no}</td>
+                <td>{r.pcs != null ? Number(r.pcs).toLocaleString() : ''}</td>
+                <td>{r.cost_rmb.toLocaleString()}</td>
+                <td>{Number(r.t_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td>{Number(r.dp_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td>
+                  {r.dp_status === 'paid' ? (
+                    <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
+                  ) : (
+                    <input
+                      type="checkbox"
+                      onChange={() => toggleDp(r.id)}
+                      checked={dpSelected.includes(r.id)}
+                      hidden={r.bp_amount_rmb === r.t_amount_rmb}
+                    />
+                  )}
+                </td>
+                <td>{Number(r.bp_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td>
+                  {r.bp_status === 'paid' ? (
+                    <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
+                  ) : (
+                    <input
+                      type="checkbox"
+                      onChange={() => toggleBp(r.id)}
+                      checked={bpSelected.includes(r.id)}
+                      hidden={r.dp_amount_rmb === r.t_amount_rmb}
+                    />
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
 
         </table>
       </div>
