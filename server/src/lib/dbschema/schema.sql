@@ -95,49 +95,6 @@ CREATE TABLE import_extra_items (
   COLLATE=utf8mb4_general_ci;
 
 
-CREATE TABLE import_po (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  vendor_id INT NOT NULL,
-  po_date DATE NOT NULL,
-  style_no VARCHAR(100),
-  po_no VARCHAR(100) NOT NULL UNIQUE,
-  pcs INT NOT NULL,
-  cost_rmb DECIMAL(12,2) NOT NULL,
-  note TEXT,
-  dp_amount_rmb DECIMAL(14,2) NOT NULL DEFAULT 0,
-  dp_status   ENUM('', 'paid')      NOT NULL DEFAULT '',
-  bp_amount_rmb DECIMAL(14,2) NOT NULL DEFAULT 0,
-  bp_status   ENUM('', 'paid')      NOT NULL DEFAULT '',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (vendor_id) REFERENCES import_vendors(id)
-) ENGINE=InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_general_ci;
-
-
-CREATE TABLE import_deposit_temp (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  vendor_name VARCHAR(100) NOT NULL,
-  deposit_rate DECIMAL(5,2) NOT NULL,
-  vendor_id INT NOT NULL,
-  po_date DATE NOT NULL,
-  style_no VARCHAR(100),
-  po_no VARCHAR(100) NOT NULL,
-  pcs INT NOT NULL,
-  cost_rmb DECIMAL(12,2) NOT NULL,
-  t_amount_rmb DECIMAL(14,2) NOT NULL,
-  dp_amount_rmb DECIMAL(14,2) NOT NULL,
-  dp_date DATE,
-  dp_rate DECIMAL(8,4),
-  dp_amount_usd DECIMAL(14,2),
-  dp_status ENUM('', 'paid') NOT NULL DEFAULT '',
-  note TEXT,
-  user_id VARCHAR(100) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB
-  DEFAULT CHARSET=utf8mb4
-  COLLATE=utf8mb4_general_ci;
-
 
 ==========================================================
 

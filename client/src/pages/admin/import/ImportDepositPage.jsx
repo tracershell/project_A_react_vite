@@ -641,7 +641,7 @@ const ImportDepositPage = () => {
       </div>
       {/* Deposit Pay Table */}
       <div className={styles.page} style={{ overflowX: 'auto' }}>
-        <table className="styles.compactTable">
+        <table className={styles.compactTable}>
           <thead>
             <tr>
               <th>선택제거</th>

@@ -22,6 +22,10 @@ const ImportPoPage = () => {
   const [searchBP, setSearchBP] = useState('');
   const [searchText, setSearchText] = useState('');
 
+  // T.Amount 실시간 계산용 상태
+  const [totalRmb, setTotalRmb] = useState('');
+
+
   const inputsRef = useRef([]);
   const navigate = useNavigate();
 
@@ -30,6 +34,19 @@ const ImportPoPage = () => {
     fetchVendors();
     fetchList();
   }, []);
+
+  // ── pcs 또는 cost_rmb 변경 시 totalRmb 업데이트 ──
+  useEffect(() => {
+    const pcs = Number(form.pcs) || 0;
+    const cost = Number(form.cost_rmb) || 0;
+    setTotalRmb(
+      (pcs * cost).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    );
+  }, [form.pcs, form.cost_rmb]);
+
 
   const fetchVendors = async () => {
     const { data } = await axios.get('/api/admin/import/vendors', { withCredentials: true });
@@ -73,6 +90,12 @@ const ImportPoPage = () => {
       inputsRef.current[idx + 1]?.focus();
     }
   };
+
+  // ── **여기** tAmount 계산을 추가하세요! ────────────────────────────────
+  const tAmount = form.pcs && form.cost_rmb
+    ? (Number(form.pcs) * Number(form.cost_rmb))
+      .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : '';
 
   // CRUD 핸들러
   const handleAdd = async () => {
@@ -315,23 +338,72 @@ const ImportPoPage = () => {
       return alert('같은 Vendor만 선택 가능합니다.');
     }
 
-    // ✅ 실제 Balance 처리 대상
+    // ✅ 실제 Balance 처리 대상: bpSelected 기준
     const rowsToSend = list.filter(r => bpSelected.includes(r.id));
-
     const vId = rowsToSend[0]?.vendor_id || '';
     const vName = rowsToSend[0]?.vendor_name || '';
+    const vRate = rowsToSend[0]?.deposit_rate || 0;
 
-    // 이후 로직 계속...
+    try {
+      const cleanedRows = rowsToSend.map(r => {
+        const pcs = Number(r.pcs) || 0;
+        const cost = Number(r.cost_rmb) || 0;
+        const rate = Number(r.deposit_rate || vRate) / 100;
+        const t_amount_rmb = pcs * cost;
+
+        let dp_amount_rmb = 0;
+        let bp_amount_rmb = 0;
+
+        const isDpChecked = dpSelected.includes(r.id);
+        const isBpChecked = bpSelected.includes(r.id);
+
+        if (r.dp_status === 'paid' && isBpChecked && !isDpChecked) {
+          // dp_status 이미 paid일 때
+          dp_amount_rmb = parseFloat((t_amount_rmb * rate).toFixed(2));
+          bp_amount_rmb = parseFloat((t_amount_rmb - dp_amount_rmb).toFixed(2));
+        } else if (isDpChecked && isBpChecked) {
+          // 둘 다 선택됨 (dp_status는 paid가 아닐 수도 있음)
+          dp_amount_rmb = 0;
+          bp_amount_rmb = t_amount_rmb;
+        }
+
+        return {
+          vendor_id: r.vendor_id,
+          vendor_name: r.vendor_name,
+          po_no: r.po_no,
+          style_no: r.style_no,
+          po_date: cleanDate(r.po_date),
+          pcs,
+          cost_rmb: cost,
+          t_amount_rmb,
+          note: r.note || '',
+          deposit_rate: Number(r.deposit_rate || vRate) || 0,
+          dp_amount_rmb,
+          bp_amount_rmb,
+          dp_exrate: 0,
+          dp_amount_usd: 0,
+          dp_date: null
+        };
+      });
+
+      await axios.post(
+        '/api/admin/import/balance/batchAdd',
+        { rows: cleanedRows, vendor_id: vId, vendor_name: vName, deposit_rate: vRate },
+        { withCredentials: true }
+      );
+
+      navigate('/admin/import/balance', {
+        state: {
+          rows: cleanedRows,
+          vendor_id: vId,
+          vendor_name: vName,
+          deposit_rate: vRate
+        }
+      });
+    } catch (err) {
+      alert('Balance 저장 실패: ' + (err.response?.data?.error || err.message));
+    }
   };
-
-
-  // T.Amount 계산
-  // 수정해야 함 : DP Status 가 paid 인 경우 DP Amount(RMB) 값을 "import_temp" 테이블 field dp_amount_rmb 에 저장 
-  //              bp_amount_rmb = t_amount_rmb - dp_amount_rmb
-  //             DP Status 값이 paid 가 아니고 dpSelected 와 bpSelected 되었을 때  dp_amount_rmb =0, dp_status = 'paid' 로 저장
-  //                bp_amount_rmb = t_amount_rmb
-
-  const totalRmb = ((Number(form.pcs) || 0) * (Number(form.cost_rmb) || 0)).toFixed(2);
 
   return (
     <div className={styles.page}>
@@ -503,7 +575,7 @@ const ImportPoPage = () => {
                       type="checkbox"
                       onChange={() => toggleBp(r.id)}
                       checked={bpSelected.includes(r.id)}
-                      hidden={r.dp_amount_rmb === r.t_amount_rmb}
+                      hidden={r.dp_amount_rmb === r.t_amount_rmb || r.t_amount_rmb === 0}
                     />
                   )}
                 </td>

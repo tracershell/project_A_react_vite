@@ -3,7 +3,7 @@
   color: #333;
   font-family: Arial, sans-serif;
   padding: 1rem;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 h2 {
@@ -11,26 +11,154 @@ h2 {
 }
 
 .compactTable th {
-  background-color: #f0f8ff;
+  background-color: #d0ebff;
+  color: #003366;
+  font-weight: bold;
   position: sticky;
   top: 0;
+  z-index: 1;
 }
 
 .compactTable tr:hover {
-  background-color: #e9f5ff;
+  background-color: #fff8dc;
+  cursor: pointer;
 }
 
-.compactTable th, .compactTable td {
+.compactTable th,
+.compactTable td {
   padding: 0.4rem;
   border: 1px solid #ddd;
   text-align: center;
   white-space: nowrap;
 }
 
-input, button {
+.selected {
+  background-color: #ffff99 !important;
+}
+
+input,
+button {
   margin-right: 0.5rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 0.25rem;
   border-radius: 4px;
   border: 1px solid #ccc;
+  font-size: 12px;
+}
+
+.formRow {
+  display: flex;
+  /* 한 줄로 정렬 */
+  flex-wrap: nowrap;
+  /* 줄바꿈 금지 */
+  align-items: center;
+  /* 세로 중앙 정렬(또는 baseline으로 바꿔도 됩니다) */
+  gap: 0.5rem;
+  /* 요소 사이 간격 */
+  padding: 0.75rem;
+  /* 내부 여백 */
+  border: 1px solid #ccc;
+  /* 외곽선 */
+  border-radius: 4px;
+  /* 모서리 둥글게 */
+  margin-bottom: 12px;
+  /* 아래쪽 여백 */
+  background: #fff;
+  /* 배경 흰색 */
+}
+
+.formRow select,
+.formRow input {
+  flex: 1 1 120px;
+  height: 2rem;
+  line-height: 2rem;
+  /* 추가된 부분 */
   font-size: 14px;
+  padding: 0 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* 한 줄로 컴팩트하게, PO 페이지와 동일한 UI */
+.formRow.small {
+  display: flex;
+  flex-wrap: nowrap;
+  /* 한 줄로 배치 */
+  align-items: baseline;
+  /* 입력박스·버튼 baseline 정렬 */
+  gap: 0.3rem;
+  /* 요소 사이 간격 */
+  font-size: 11px;
+  /* 텍스트 작게 */
+  padding: 0.5rem 0.75rem;
+  /* 위아래/좌우 패딩 (필요시 조절) */
+  background: #fff;
+  /* 배경 흰색 */
+  border: 1px solid #ccc;
+  /* 테두리 */
+  border-radius: 4px;
+  /* 둥근 모서리 */
+  margin-bottom: 12px;
+  /* 아래 간격 */
+}
+
+/* 박스 높이·라인·폰트·패딩을 PO Input 과 동일하게 */
+.formRow.small select,
+.formRow.small input,
+.formRow.small button {
+  height: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.formRow.small button {
+  border: 1px solid #066da5;
+  background: #fff;
+  cursor: pointer;
+}
+
+.formRow button {
+  height: 2rem;
+  line-height: 2rem;
+  font-size: 14px;
+  padding: 0 1rem;
+  border: 1px solid #066da5;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  /* “환율적용” 등 텍스트 줄바꿈 금지 */
+}
+
+/* — Deposit Pay List 아래 검색 / Pay 폼을 좌/우로 분리 — */
+/* Deposit Pay List 아래의 검색/Pay 파트를 한 줄로 배치하기 위한 wrapper */
+.formRowGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  /* align-items: flex-start; */
+  /* baseline 맞춤 */
+  gap: 1rem;
+  /* 좌우 간격 */
+  margin-bottom: 0px;
+}
+
+/* 각 .formRow.small 박스는 좌우로 분리된 독립 블록 */
+.formRowGroup .formRow.small {
+  flex: 1 1 auto;
+  width: auto;
+  margin-bottom: 0;
+  /* 그룹 내에서 하단 여백 제거 */
+}
+
+.boldRed {
+  color: red;
+  font-weight: bold;
+}
+
+.textRight {
+  text-align: right;
 }
