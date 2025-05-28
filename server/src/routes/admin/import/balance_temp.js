@@ -312,7 +312,7 @@ router.get('/final', async (req, res) => {
   `SELECT *, 
    DATE_FORMAT(po_date, '%Y-%m-%d') AS po_date,
    DATE_FORMAT(dp_date, '%Y-%m-%d') AS dp_date 
-   FROM import_deposit_list 
+   FROM import_balance_list 
    ORDER BY dp_date DESC`
 );
     res.json(rows);
@@ -444,23 +444,23 @@ router.post('/temp/update', async (req, res) => {
 
   try {
     for (const r of rows) {
-      if (!r.po_no || !r.dp_date || !r.dp_exrate) continue;
+      if (!r.po_no || !r.bp_date || !r.bp_exrate) continue;
 
       await db.query(
         `UPDATE import_temp 
-         SET dp_amount_rmb = ?, 
-             dp_date = ?, 
-             dp_exrate = ?, 
-             dp_amount_usd = ?, 
-             dp_status = ?, 
+         SET bp_amount_rmb = ?, 
+             bp_date = ?, 
+             bp_exrate = ?, 
+             bp_amount_usd = ?, 
+             bp_status = ?, 
              note = ?
          WHERE po_no = ? AND user_id = ?`,
         [
-          cleanNumber(r.dp_amount_rmb) || 0,
-          r.dp_date,
-          cleanNumber(r.dp_exrate),
-          cleanNumber(r.dp_amount_usd) || 0,
-          r.dp_status || 'paid',
+          cleanNumber(r.bp_amount_rmb) || 0,
+          r.bp_date,
+          cleanNumber(r.bp_exrate),
+          cleanNumber(r.bp_amount_usd) || 0,
+          r.bp_status || 'paid',
           r.note || '',
           r.po_no,
           user_id

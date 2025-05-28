@@ -106,7 +106,7 @@ const ImportBalancePage = () => {
     setExtraForm(f => ({ ...f, [name]: value }));
   };
 
-  // Extra 추가
+   // 5) Extra Pay Add (임시테이블에 저장)
   const handleAddExtra = async () => {
     const { extra_no, po_no, rate_apply, comment, amount } = extraForm;
     if (!extra_no || !po_no || !rate_apply || !amount) {
@@ -214,25 +214,42 @@ const ImportBalancePage = () => {
     }
   };
 
-  // 환율 적용
+  // 환율 적용 버튼 함수수
   const applyExRate = async () => {
     if (!bpDate || !exRate) {
       return alert('Pay Date와 Exchange Rate를 입력하세요');
     }
+
+    // 1. 화면 Table 값 계산 (bp_amount_rmb 값에 환율을 적용하여 table 에 나타나게)
     const updated = records.map(r => {
-      if (r.isExtra && r.bp_exrate === 1 && r.bp_amount_rmb === 0) {
-        return { ...r, bp_date: cleanDate(bpDate), bp_exrate: 1 };
-      }
+  // Extra Pay 행도 RMB→USD 환산을 적용
+  if (r.isExtra) {
+    const rate = r.bp_exrate || exRate;
+    const usd = (r.bp_amount_rmb && rate)
+      ? (Number(r.bp_amount_rmb) / parseFloat(rate)).toFixed(2)
+      : r.bp_amount_usd || '';
+    return {
+      ...r,
+      bp_date:       cleanDate(bpDate),
+      bp_exrate:     rate,
+      bp_amount_usd: usd
+      // bp_amount_rmb는 이미 가진 값을 그대로 유지합니다.
+    };
+  }
+
+      // 일반 PO 행은 기존 로직대로 계산 (일반행 bp_amount_rmb table 계산산)
       const base = r.t_amount_rmb || (r.pcs * r.cost_rmb);
       const bpR = Number(((base * (100 - (r.deposit_rate || deposit_rate))) / 100).toFixed(2));
       return {
         ...r,
-        bp_date: cleanDate(bpDate),
-        bp_exrate: exRate,
+        bp_date:      cleanDate(bpDate),
+        bp_exrate:    exRate,
         bp_amount_rmb: bpR,
         bp_amount_usd: exRate ? (bpR / parseFloat(exRate)).toFixed(2) : ''
       };
     });
+
+
     setRecords(updated);
     try {
       await axios.post('/api/admin/import/balance/temp/update', { rows: updated }, { withCredentials: true });
