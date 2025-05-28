@@ -4,8 +4,16 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
 
-// 숫자 문자열 → Number 타입으로 변환
-const cleanNumber = (val) => typeof val === 'string' ? Number(val.replace(/,/g, '')) : Number(val);
+// 문자열 형 숫자 정리 헬퍼
+const cleanNumber = (val) => {
+  if (typeof val === 'string') return Number(val.replace(/,/g, ''));
+  return Number(val);
+};
+
+// 세션에서 user_id 추출 (로그인 미들웨어에서 세션.user에 id가 저장되어 있다고 가정)
+function getUserId(req) {
+  return req.session.user?.id || req.session.userid || null;
+}
 
 // 1) 임시 리스트 조회 (bp_status = '')
 router.get('/temp', async (req, res) => {
@@ -15,8 +23,8 @@ router.get('/temp', async (req, res) => {
          DATE_FORMAT(po_date, '%Y-%m-%d') AS po_date,
          DATE_FORMAT(bp_date, '%Y-%m-%d') AS bp_date
        FROM import_balance_list
-      WHERE bp_status = ''
-      ORDER BY created_at` // 추가: bp_status = '' 조건
+       WHERE bp_status = ''
+       ORDER BY created_at`
     );
     res.json(rows);
   } catch (err) {
@@ -30,7 +38,7 @@ router.post('/temp/add', async (req, res) => {
   const {
     vendor_id, vendor_name, deposit_rate,
     po_no, style_no, po_date, pcs, cost_rmb,
-    dp_amount_rmb = 0,      // 신규로 받고 싶으면 req.body 에서 받아도 됩니다
+    dp_amount_rmb = 0,
     bp_amount_rmb = 0,
     bp_date = null,
     bp_exrate = 0,
@@ -40,27 +48,28 @@ router.post('/temp/add', async (req, res) => {
 
   try {
     await db.query(
-      `INSERT INTO import_balance_list
-         (vendor_id, vendor_name, deposit_rate,
-          po_date, style_no, po_no, pcs, cost_rmb,
-          dp_amount_rmb, bp_amount_rmb, bp_date, bp_exrate, bp_amount_usd, bp_status, note)
+      `INSERT INTO import_temp
+       (po_id, vendor_id, vendor_name, deposit_rate, po_date,
+        style_no, po_no, pcs, cost_rmb,
+        dp_amount_rmb, bp_amount_rmb, bp_amount_usd, bp_exrate, bp_date,
+        user_id)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
+        null,
         vendor_id,
         vendor_name,
-        cleanNumber(deposit_rate || 0),
+        cleanNumber(deposit_rate),
         po_date,
-        style_no || '',
+        style_no,
         po_no,
-        cleanNumber(pcs || 0),
-        cleanNumber(cost_rmb || 0),
+        cleanNumber(pcs),
+        cleanNumber(cost_rmb),
         cleanNumber(dp_amount_rmb),
         cleanNumber(bp_amount_rmb),
-        bp_date,
-        cleanNumber(bp_exrate),
         cleanNumber(bp_amount_usd),
-        '',                // staging 상태는 빈 문자열로
-        note
+        cleanNumber(bp_exrate),
+        bp_date,
+        getUserId(req)
       ]
     );
     res.json({ success: true });
@@ -71,209 +80,416 @@ router.post('/temp/add', async (req, res) => {
 });
 
 
-// 3) 임시 삭제
+// 3. 임시 삭제
 router.delete('/temp/delete/:id', async (req, res) => {
+  const user_id = getUserId(req);
+  if (!user_id) return res.status(401).json({ error: '로그인 필요' });
+
   try {
     await db.query(
-      'DELETE FROM import_balance_list WHERE id = ? AND bp_status = ""', // bp_status='' 조건 추가
-      [req.params.id]
+      'DELETE FROM import_temp WHERE id = ? AND user_id = ?',
+      [req.params.id, user_id]
     );
+    console.debug('[DELETE /temp/delete] id=', req.params.id);
     res.json({ success: true });
   } catch (err) {
-    console.error('DELETE /temp/delete 오류:', err);
+    console.error('[DELETE /temp/delete] 삭제 오류:', err.stack || err);
     res.status(500).json({ error: '삭제 실패' });
   }
 });
 
-// 4) 수정된 임시행 업데이트 (환율 적용 등)
-router.post('/temp/update', async (req, res) => {
-  const { rows } = req.body;
-  try {
-    for (const r of rows) {
-      await db.query(
-        `UPDATE import_balance_list
-           SET bp_amount_rmb = ?,
-               bp_amount_usd = ?,
-               bp_exrate     = ?,
-               bp_date       = ?,
-               note          = ?
-         WHERE id = ? AND bp_status = ""`, // bp_status='' 조건
-        [
-          cleanNumber(r.bp_amount_rmb || 0),
-          cleanNumber(r.bp_amount_usd || 0),
-          cleanNumber(r.bp_exrate || 0),
-          r.bp_date || null,
-          r.comment || '',
-          r.id
-        ]
-      );
-    }
-    res.json({ success: true });
-  } catch (err) {
-    console.error('POST /temp/update 오류:', err);
-    res.status(500).json({ error: '업데이트 실패' });
-  }
-});
+// 4. Pay(커밋) - 임시 데이터를 실제 테이블로 이동
+router.post('/temp/commit', async (req, res) => {
+  const user_id = getUserId(req);
+  if (!user_id) return res.status(401).json({ error: '로그인 필요' });
 
-// 5) batchAdd: 화면에서 전달된 rows 로 staging 전체 재구성
-router.post('/batchAdd', async (req, res) => {
-  const { rows } = req.body;
-  try {
-    // 1) 기존 staging 삭제
-    await db.query('DELETE FROM import_balance_list WHERE bp_status = ""');
-
-    // 2) 새로 insert
-    for (const r of rows) {
-      await db.query(
-        `INSERT INTO import_balance_list
-           (po_id, vendor_id, vendor_name, deposit_rate,
-            po_date, style_no, po_no, pcs, cost_rmb,
-            dp_amount_rmb, bp_amount_rmb, bp_date, bp_exrate, bp_amount_usd, bp_status, note)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          r.po_id || null,
-          r.vendor_id,
-          r.vendor_name,
-          cleanNumber(r.deposit_rate || 0),
-          r.po_date,
-          r.style_no,
-          r.po_no,
-          cleanNumber(r.pcs || 0),
-          cleanNumber(r.cost_rmb || 0),
-          cleanNumber(r.dp_amount_rmb || 0),
-          cleanNumber(r.bp_amount_rmb || 0),
-          r.bp_date || null,
-          cleanNumber(r.bp_exrate || 0),
-          cleanNumber(r.bp_amount_usd || 0),
-          '',                // staging 상태
-          r.comment || ''
-        ]
-      );
-    }
-
-    res.json({ success: true });
-  } catch (err) {
-    console.error('POST /batchAdd 오류:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// 6) 페이지 언마운트 시 전체 임시행 삭제
-router.delete('/temp/clear', async (req, res) => {
-  try {
-    await db.query('DELETE FROM import_balance_list WHERE bp_status = ""');
-    res.json({ success: true });
-  } catch (err) {
-    console.error('DELETE /temp/clear 오류:', err);
-    res.status(500).json({ error: '삭제 실패' });
-  }
-});
-
-// 7) Extra Pay용 PO 추가
-// 7) Extra Pay용 PO 추가
-router.post('/po/add', async (req, res) => {
-  const {
-    vendor_id, vendor_name, deposit_rate,
-    po_no, style_no, po_date, pcs, cost_rmb, note = ''
-  } = req.body;
+  // 클라이언트에서 전달된 Pay Date, Exrate
+  const { dp_date: bodyDpDate, dp_exrate: bodyExrate } = req.body;
+  console.debug('[POST /temp/commit] Pay Date(body)=', bodyDpDate, 'Exrate(body)=', bodyExrate);
 
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
 
-    // 1) import_po_list 에도 insert
-    const [result] = await conn.query(
-      `INSERT INTO import_po_list
-         (vendor_id, po_date, style_no, po_no, pcs, cost_rmb, note)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        vendor_id,
-        po_date,
-        style_no,
-        po_no,
-        cleanNumber(pcs || 0),
-        cleanNumber(cost_rmb || 0),
-        note
-      ]
-    );
-    const po_id = result.insertId;
+    //     // 📌 vendor_name, deposit_rate 를 vendor_id로 조회
+    // const [[vendor]] = await conn.query(
+    //   'SELECT name AS vendor_name, deposit_rate FROM import_vendors WHERE id = ?',
+    //   [vendor_id]
+    // );
 
-    // 2) staging(import_balance_list)에도 insert
-    await conn.query(
-      `INSERT INTO import_balance_list
-         (po_id, vendor_id, vendor_name, deposit_rate,
-          po_date, style_no, po_no, pcs, cost_rmb,
-          dp_amount_rmb, bp_amount_rmb, bp_date, bp_exrate, bp_amount_usd, bp_status, note)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        po_id,
-        vendor_id,
-        vendor_name,
-        cleanNumber(deposit_rate || 0),
-        po_date,
-        style_no,
-        po_no,
-        cleanNumber(pcs || 0),
-        cleanNumber(cost_rmb || 0),
-        0,          // dp_amount_rmb 기본 0
-        0,          // bp_amount_rmb 기본 0
-        null,       // bp_date
-        0,          // bp_exrate
-        0,          // bp_amount_usd
-        '',         // staging 상태
-        note
-      ]
+    const [tempRows] = await conn.query(
+      'SELECT * FROM import_temp WHERE user_id = ?',
+      [user_id]
     );
+    console.debug('[POST /temp/commit] tempRows count=', tempRows.length);
+
+    for (const row of tempRows) {
+      console.debug('[POST /temp/commit] 처리할 row:', row);
+
+      // ① po_id 없으면 새로 생성
+      let temp_po_id = row.po_id;
+      if (!temp_po_id) {
+        const [insertPo] = await conn.query(
+          `INSERT INTO import_po_list (
+             vendor_id, po_date, style_no, po_no, pcs, cost_rmb
+           ) VALUES (?, ?, ?, ?, ?, ?)`,
+          [
+            row.vendor_id,
+            row.po_date || new Date(),
+            row.style_no || '',
+            row.po_no,
+            row.pcs || 0,
+            row.cost_rmb || 0
+          ]
+        );
+        temp_po_id = insertPo.insertId;
+        console.debug(`[POST /temp/commit] 신규 PO 생성, id=${temp_po_id}`);
+      }
+
+      // // ② dp_date, dp_exrate fallback 로직
+      // const usedDpDate = bodyDpDate || row.dp_date || new Date().toISOString().split('T')[0];
+      // const usedDpExrate = bodyExrate || row.dp_exrate || 1;
+
+      const usedDpDate = bodyDpDate || row.dp_date || new Date().toISOString().split('T')[0];
+      const usedDpExrate = row.dp_exrate;
+
+      console.debug(
+        `[POST /temp/commit] using dp_date='${usedDpDate}', dp_exrate=${usedDpExrate}`
+      );
+
+      // ③ 입금 이력 저장 : 임시 DB 에서 실제 DB 로 이동 | "import_temp" → "import_deposit_list"
+await conn.query(
+  `INSERT INTO import_deposit_list (
+     po_id, vendor_id, vendor_name, deposit_rate,
+     po_date, style_no, po_no, pcs, cost_rmb,
+     dp_amount_rmb, dp_amount_usd, dp_date, dp_exrate, dp_status, note
+   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  [
+    temp_po_id,
+    row.vendor_id,
+    row.vendor_name || '',
+    row.deposit_rate || 0,
+    row.po_date,
+    row.style_no,
+    row.po_no,
+    row.pcs || 0,
+    row.cost_rmb || 0,
+    row.dp_amount_rmb || 0,
+    row.dp_amount_usd || 0,
+    row.dp_date,
+    row.dp_exrate,
+    row.dp_status || 'paid',
+    row.note || ''
+  ]
+);
+
+
+      console.debug('[POST /temp/commit] import_deposit_list INSERT 완료');
+
+      // ④ PO master 업데이트
+      await conn.query(
+        `UPDATE import_po_list
+           SET dp_amount_rmb = dp_amount_rmb + ?,
+               dp_status     = 'paid'
+         WHERE id = ?`,
+        [row.dp_amount_rmb, temp_po_id]
+      );
+      console.debug('[POST /temp/commit] import_po_list 업데이트, id=', temp_po_id);
+
+      // ⑤ 임시 데이터 삭제
+      await conn.query('DELETE FROM import_temp WHERE id = ?', [row.id]);
+      console.debug('[POST /temp/commit] import_temp 삭제, id=', row.id);
+    }
 
     await conn.commit();
-    res.json({ success: true, insertId: po_id });
+    console.debug('[POST /temp/commit] 트랜잭션 커밋 완료');
+    res.json({ success: true });
   } catch (err) {
     await conn.rollback();
-    console.error('POST /po/add 오류:', err);
-    res.status(500).json({ error: 'PO 추가 실패' });
+    console.error('[POST /temp/commit] 트랜잭션 롤백:', err.stack || err);
+    res.status(500).json({ error: err.message });
   } finally {
     conn.release();
   }
 });
 
-// 8) Extra Pay용 PO 삭제
-router.delete('/po/delete/:po_no', async (req, res) => {
-  const { po_no } = req.params;
+// 5. batchAdd
+router.post('/batchAdd', async (req, res) => {
+  const user_id = getUserId(req);
+  if (!user_id) return res.status(401).json({ error: '로그인 필요' });
+
+  const { rows, vendor_id, vendor_name, deposit_rate } = req.body;
+  console.debug('[POST /batchAdd] called, user_id=', user_id, 'body.rows=', rows);
+
+  if (!rows || !Array.isArray(rows) || rows.length === 0) {
+    return res.json({ success: true });
+  }
+
   try {
-    // staging 삭제
-    await db.query(
-      'DELETE FROM import_balance_list WHERE po_no = ? AND bp_status = ""',
-      [po_no]
-    );
-    // master 삭제
-    await db.query(
-      'DELETE FROM import_po_list WHERE po_no = ?',
-      [po_no]
-    );
+    // 5-1) 기존 임시 삭제
+    await db.query('DELETE FROM import_temp WHERE user_id = ?', [user_id]);
+    console.debug('[POST /batchAdd] 기존 import_temp 삭제 완료');
+
+    // 5-2) 새 임시 추가
+    for (const r of rows) {
+      console.debug('[POST /batchAdd] 처리할 r=', r);
+      if (!r.po_no || !r.vendor_id || !r.vendor_name) {
+        throw new Error('필수 필드 누락: po_no, vendor_id, vendor_name');
+      }
+
+      const po_date = r.po_date || new Date().toISOString().split('T')[0];
+      const style_no = r.style_no || '';
+      const pcs = cleanNumber(r.pcs) || 0;
+      const cost_rmb = cleanNumber(r.cost_rmb) || 0;
+
+      // po_id 조회
+      const [[poRow]] = await db.query(
+        'SELECT id FROM import_po_list WHERE po_no = ?',
+        [r.po_no]
+      );
+      const po_id = poRow?.id || null;
+      if (!poRow) {
+        console.warn(
+          `[POST /batchAdd] PO No '${r.po_no}' not found → commit 시 신규 생성 예정`
+        );
+      }
+
+      await db.query(
+        `INSERT INTO import_temp
+   (po_id, vendor_id, vendor_name, deposit_rate, po_date,
+    style_no, po_no, pcs, cost_rmb,
+    dp_amount_rmb, bp_amount_rmb, bp_amount_usd, bp_exrate, bp_date,
+    user_id)
+   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          po_id,
+          r.vendor_id || vendor_id,
+          r.vendor_name || vendor_name,
+          cleanNumber(r.deposit_rate || deposit_rate),
+          po_date,
+          style_no,
+          r.po_no,
+          pcs,
+          cost_rmb,
+          cleanNumber(r.dp_amount_rmb) || 0,
+          cleanNumber(r.bp_amount_rmb) || 0,
+          cleanNumber(r.bp_amount_usd) || 0,
+          cleanNumber(r.bp_exrate) || null,
+          r.bp_date || null,
+          user_id
+        ]
+      );
+
+      console.debug('[POST /batchAdd] import_temp INSERT 완료 for po_no=', r.po_no);
+    }
+
     res.json({ success: true });
   } catch (err) {
-    console.error('DELETE /po/delete 오류:', err);
-    res.status(500).json({ error: 'PO 삭제 실패' });
+    console.error('[POST /batchAdd] 오류:', err.stack || err);
+    res.status(500).json({ error: err.message });
   }
 });
 
-// 9) 확정 데이터 조회 (bp_status = 'paid')
+// 6. 페이지 이탈 시 전체 임시 데이터 삭제
+router.delete('/temp/clear', async (req, res) => {
+  const user_id = getUserId(req);
+  if (!user_id) return res.status(401).json({ error: '로그인 필요' });
+  try {
+    await db.query('DELETE FROM import_temp WHERE user_id = ?', [user_id]);
+    console.debug('[DELETE /temp/clear] import_temp 전체 삭제 for user_id=', user_id);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[DELETE /temp/clear] clear 오류:', err.stack || err);
+    res.status(500).json({ error: '삭제 실패' });
+  }
+});
+
+// GET /deposit/final - 확정 데이터 조회
 router.get('/final', async (req, res) => {
   try {
     const [rows] = await db.query(
-      `SELECT *,
-         DATE_FORMAT(po_date, '%Y-%m-%d') AS po_date,
-         DATE_FORMAT(bp_date, '%Y-%m-%d') AS bp_date
-       FROM import_balance_list
-      WHERE bp_status = 'paid'
-      ORDER BY bp_date DESC`
-    );
+  `SELECT *, 
+   DATE_FORMAT(po_date, '%Y-%m-%d') AS po_date,
+   DATE_FORMAT(dp_date, '%Y-%m-%d') AS dp_date 
+   FROM import_deposit_list 
+   ORDER BY dp_date DESC`
+);
     res.json(rows);
   } catch (err) {
-    console.error('GET /final 조회 오류:', err);
+    console.error('[GET /deposit/final] 오류:', err.stack || err);
     res.status(500).json({ error: '조회 실패' });
   }
 });
+
+// 7. PO 추가 (Extra Pay PO) 
+router.post('/po/add', async (req, res) => {
+  const {
+    vendor_id,
+    vendor_name,
+    deposit_rate,
+    po_no,
+    style_no,
+    po_date,
+    pcs,
+    cost_rmb,
+    note,
+    dp_amount_rmb,
+    dp_exrate,
+    dp_date
+  } = req.body;
+
+  if (!vendor_id || !po_no) return res.status(400).json({ error: '필수 항목 누락' });
+
+  const user_id = req.session.user?.id || req.session.userid || null;
+  if (!user_id) return res.status(401).json({ error: '로그인 필요' });
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // 1. import_po_list 에 저장 (())
+    const [result] = await conn.query(
+      `INSERT INTO import_po_list 
+         (vendor_id, po_date, style_no, po_no, pcs, cost_rmb, note) 
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [vendor_id, po_date, style_no, po_no, pcs, cost_rmb, note]
+    );
+
+    // 1-1. vendor_id 로 vendor_name, deposit_rate 조회
+
+    const [[vendor]] = await conn.query(
+      'SELECT name, deposit_rate FROM import_vendors WHERE id = ?',
+      [vendor_id]
+    );
+
+
+
+    // 2. import_temp 에 저장
+    await conn.query(
+      `INSERT INTO import_temp 
+   (po_id, vendor_id, vendor_name, deposit_rate, po_date,
+    style_no, po_no, pcs, cost_rmb,
+    dp_amount_rmb, dp_exrate, dp_date, note, user_id)
+ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        result.insertId,
+        vendor_id,
+        vendor.name || '',         // ✅ vendors field
+        vendor.deposit_rate || 0,         // ✅ 수정된 부분
+        po_date,
+        style_no || '',
+        po_no,
+        pcs || 0,
+        cost_rmb || 0,
+        dp_amount_rmb || 0,
+        dp_exrate || null,
+        dp_date || null,
+        note || '',
+        user_id
+      ]
+    );
+    await conn.commit();
+    res.json({ success: true, insertId: result.insertId });
+  } catch (err) {
+    await conn.rollback();
+    console.error('[POST /po/add] 오류:', err.stack || err);
+    res.status(500).json({ error: 'DB 저장 실패' });
+  } finally {
+    conn.release();
+  }
+});
+
+// ✅ Extra Pay PO: temp + po_list 동시 삭제
+router.delete('/po/delete/:po_no', async (req, res) => {
+  const user_id = getUserId(req);
+  const { po_no } = req.params;
+
+  if (!user_id) return res.status(401).json({ error: '로그인 필요' });
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // 1. import_temp 삭제 (user_id 확인)
+    await conn.query(
+      'DELETE FROM import_temp WHERE po_no = ? AND user_id = ?',
+      [po_no, user_id]
+    );
+
+    // 2. import_po_list 삭제
+    await conn.query(
+      'DELETE FROM import_po_list WHERE po_no = ?',
+      [po_no]
+    );
+
+    await conn.commit();
+    res.json({ success: true });
+  } catch (err) {
+    await conn.rollback();
+    console.error('[DELETE /po/delete/:po_no] 오류:', err.stack || err);
+    res.status(500).json({ error: '삭제 실패' });
+  } finally {
+    conn.release();
+  }
+});
+
+// ✅ 환율적용 후 import_temp 업데이트
+router.post('/temp/update', async (req, res) => {
+  const user_id = getUserId(req);
+  if (!user_id) return res.status(401).json({ error: '로그인 필요' });
+
+  const { rows } = req.body;
+  if (!Array.isArray(rows)) return res.status(400).json({ error: 'rows 배열 필요' });
+
+  try {
+    for (const r of rows) {
+      if (!r.po_no || !r.dp_date || !r.dp_exrate) continue;
+
+      await db.query(
+        `UPDATE import_temp 
+         SET dp_amount_rmb = ?, 
+             dp_date = ?, 
+             dp_exrate = ?, 
+             dp_amount_usd = ?, 
+             dp_status = ?, 
+             note = ?
+         WHERE po_no = ? AND user_id = ?`,
+        [
+          cleanNumber(r.dp_amount_rmb) || 0,
+          r.dp_date,
+          cleanNumber(r.dp_exrate),
+          cleanNumber(r.dp_amount_usd) || 0,
+          r.dp_status || 'paid',
+          r.note || '',
+          r.po_no,
+          user_id
+        ]
+      );
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[POST /temp/update] 업데이트 오류:', err.stack || err);
+    res.status(500).json({ error: '업데이트 실패' });
+  }
+});
+
+// server/routes/admin/import/deposit.js
+
+router.get('/dates', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+  `SELECT DISTINCT DATE_FORMAT(dp_date, '%Y-%m-%d') AS dp_date 
+   FROM import_deposit_list 
+   ORDER BY dp_date DESC`
+);
+    res.json(rows.map(r => r.dp_date));
+  } catch (err) {
+    console.error('❌ distinct dp_date 불러오기 실패:', err);
+    res.status(500).json({ error: 'Failed to fetch dates' });
+  }
+});
+
+
+
 
 module.exports = router;

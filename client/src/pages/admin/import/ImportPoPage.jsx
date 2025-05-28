@@ -351,21 +351,13 @@ const ImportPoPage = () => {
         const rate = Number(r.deposit_rate || vRate) / 100;
         const t_amount_rmb = pcs * cost;
 
-        let dp_amount_rmb = 0;
-        let bp_amount_rmb = 0;
-
-        const isDpChecked = dpSelected.includes(r.id);
-        const isBpChecked = bpSelected.includes(r.id);
-
-        if (r.dp_status === 'paid' && isBpChecked && !isDpChecked) {
-          // dp_status 이미 paid일 때
-          dp_amount_rmb = parseFloat((t_amount_rmb * rate).toFixed(2));
-          bp_amount_rmb = parseFloat((t_amount_rmb - dp_amount_rmb).toFixed(2));
-        } else if (isDpChecked && isBpChecked) {
-          // 둘 다 선택됨 (dp_status는 paid가 아닐 수도 있음)
-          dp_amount_rmb = 0;
-          bp_amount_rmb = t_amount_rmb;
-        }
+        const dpRmb = rowsToSend[0]?.dp_amount_rmb || 0;  // table 에서 가지고  옴 
+        
+        const bpRmb = 
+          bpSelected.includes(r.id) && dpSelected.includes(r.id)
+            ? t_amount_rmb
+            : parseFloat((t_amount_rmb - dpRmb).toFixed(2));
+        
 
         return {
           vendor_id: r.vendor_id,
@@ -378,11 +370,11 @@ const ImportPoPage = () => {
           t_amount_rmb,
           note: r.note || '',
           deposit_rate: Number(r.deposit_rate || vRate) || 0,
-          dp_amount_rmb,
-          bp_amount_rmb,
-          dp_exrate: 0,
-          dp_amount_usd: 0,
-          dp_date: null
+          dp_amount_rmb: dpRmb,
+          bp_amount_rmb: bpRmb,
+          bp_exrate: 0,
+          bp_amount_usd: 0,
+          bp_date: null
         };
       });
 
