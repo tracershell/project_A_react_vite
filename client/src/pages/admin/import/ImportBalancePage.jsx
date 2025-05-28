@@ -424,11 +424,15 @@ const ImportBalancePage = () => {
                     : ''
                 }</td>
                 <td>{
-                  r.dp_amount_rmb?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || ''
-                }</td>
+                 r.dp_amount_rmb != null
+                    ? Number(r.dp_amount_rmb)
+                    .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                    : ''
+                 }</td>
                 <td>{
-                  r.bp_amount_rmb != null
-                    ? Number(r.bp_amount_rmb).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                 r.bp_amount_rmb != null
+                    ? Number(r.bp_amount_rmb)
+                    .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                     : ''
                 }</td>
                 <td>{cleanDate(r.bp_date)}</td>

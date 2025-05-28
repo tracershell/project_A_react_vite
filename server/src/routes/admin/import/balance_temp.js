@@ -22,7 +22,7 @@ router.get('/temp', async (req, res) => {
       `SELECT *,
          DATE_FORMAT(po_date, '%Y-%m-%d') AS po_date,
          DATE_FORMAT(bp_date, '%Y-%m-%d') AS bp_date
-       FROM import_balance_list
+       FROM import_temp
        WHERE bp_status = ''
        ORDER BY created_at`
     );
@@ -159,11 +159,11 @@ router.post('/temp/commit', async (req, res) => {
 
       // ③ 입금 이력 저장 : 임시 DB 에서 실제 DB 로 이동 | "import_temp" → "import_deposit_list"
 await conn.query(
-  `INSERT INTO import_deposit_list (
+  `INSERT INTO import_balance_list (
      po_id, vendor_id, vendor_name, deposit_rate,
      po_date, style_no, po_no, pcs, cost_rmb,
-     dp_amount_rmb, dp_amount_usd, dp_date, dp_exrate, dp_status, note
-   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+     dp_amount_rmb, bp_amount_rmb, bp_amount_usd, bp_date, bp_exrate, bp_status, note
+   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   [
     temp_po_id,
     row.vendor_id,
@@ -175,10 +175,11 @@ await conn.query(
     row.pcs || 0,
     row.cost_rmb || 0,
     row.dp_amount_rmb || 0,
-    row.dp_amount_usd || 0,
-    row.dp_date,
-    row.dp_exrate,
-    row.dp_status || 'paid',
+    row.bp_amount_rmb || 0,
+    row.bp_amount_usd || 0,
+    row.bp_date,
+    row.bp_exrate,
+    row.bp_status || 'paid',
     row.note || ''
   ]
 );
