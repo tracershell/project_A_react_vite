@@ -477,7 +477,9 @@ const ImportDepositPage = () => {
     setComments(c => ({ ...c, [id]: val }));
   };
   // ── DP Amount 합계 계산 login
-  const dataRows = filtered.length ? filtered : records;
+  const dataRows = filtered.length
+  ? filtered.filter(r => r.selected)
+  : records.filter(r => r.selected);
   const sumDpRmb = dataRows.reduce((sum, r) => {
     const dp = (r.dp_amount_rmb !== undefined && r.dp_amount_rmb !== null && r.dp_amount_rmb !== '')
       ? Number(r.dp_amount_rmb)

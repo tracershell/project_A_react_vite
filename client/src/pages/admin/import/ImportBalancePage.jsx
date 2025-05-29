@@ -316,16 +316,17 @@ const applyExRate = async () => {
 
   // 합계 계산
   useEffect(() => {
-    let sumR = 0, sumU = 0;
-    records.forEach(r => {
-      const rmb = Number(r.bp_amount_rmb || 0);
-      const usd = parseFloat(r.bp_amount_usd) || 0;
-      if (!isNaN(rmb)) sumR += rmb;
-      if (!isNaN(usd)) sumU += usd;
-    });
-    setTotalRmb(sumR);
-    setTotalUsd(sumU);
-  }, [records]);
+  let sumR = 0, sumU = 0;
+  const list = filtered.length ? filtered : records;
+  list.forEach(r => {
+    const rmb = Number(r.bp_amount_rmb || 0);
+    const usd = parseFloat(r.bp_amount_usd) || 0;
+    if (!isNaN(rmb)) sumR += rmb;
+    if (!isNaN(usd)) sumU += usd;
+  });
+  setTotalRmb(sumR);
+  setTotalUsd(sumU);
+}, [filtered, records]); // ✅ filtered도 의존성에 추가
 
   const handleCommentChange = (id, val) => {
     setComments(c => ({ ...c, [id]: val }));

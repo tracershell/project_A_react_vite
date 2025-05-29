@@ -195,6 +195,18 @@ const filteredList = list.filter(r => {
   return matchesVendor && matchesBP && matchesSearchText;
 });
 
+// filteredList 의 합계용
+const totalSummary = filteredList.reduce(
+  (acc, row) => {
+    acc.total += Number(row.t_amount_rmb || 0);
+    acc.dp += Number(row.dp_amount_rmb || 0);
+    acc.bp += Number(row.bp_amount_rmb || 0);
+    return acc;
+  },
+  { total: 0, dp: 0, bp: 0 }
+);
+
+
 
   const handleSearch = e => { e.preventDefault(); };
 
@@ -617,7 +629,16 @@ const filteredList = list.filter(r => {
               </tr>
             ))}
           </tbody>
-
+            <tfoot>
+  <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
+    <td colSpan={8} style={{ textAlign: 'right' }}>합계</td>
+    <td>{totalSummary.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+    <td>{totalSummary.dp.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+    <td></td>
+    <td>{totalSummary.bp.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+    <td></td>
+  </tr>
+</tfoot>
         </table>
       </div>
     </div>
