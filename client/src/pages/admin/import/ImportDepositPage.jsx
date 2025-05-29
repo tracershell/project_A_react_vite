@@ -165,7 +165,7 @@ const ImportDepositPage = () => {
         po_no: extraForm.po_no,
         pcs: 0,
         cost_rmb: 0,
-        note: `[EXTRA] ${extraForm.comment}`
+        note: `${extraForm.comment}`
       }, { withCredentials: true });
 
       // 2. Deposit Pay Listrecords에만 추가, 임시DB 저장 없음 🔴

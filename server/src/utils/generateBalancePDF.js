@@ -27,7 +27,7 @@ const generateBalancePDF = async (res, records, info = {}) => {
   doc.moveDown(1);
 
   const headers = ['PO Date', 'Style', 'PO No', 'pcs', 'cost(RMB)', 'T.Amount(RMB)', 'DP Amount(RMB)', 'BP Amount(RMB)', 'BP E.rate', 'BP Amount(USD)', 'Comment'];
-  const colWidths = [60, 60, 110, 40, 50, 80, 80, 80, 50, 80, 120];
+  const colWidths = [60, 60, 90, 40, 50, 70, 70, 70, 40, 70, 120];
   const startX = doc.page.margins.left;
   let y = doc.y + 5;
   const rowHeight = 16;

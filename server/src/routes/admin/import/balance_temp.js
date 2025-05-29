@@ -104,7 +104,7 @@ router.post('/temp/commit', async (req, res) => {
   if (!user_id) return res.status(401).json({ error: '로그인 필요' });
 
   // 클라이언트에서 전달된 Pay Date, Exrate
-  const { dp_date: bodyDpDate, dp_exrate: bodyExrate } = req.body;
+  const { bp_date: bodyDpDate, dp_exrate: bodyExrate } = req.body;
   console.debug('[POST /temp/commit] Pay Date(body)=', bodyDpDate, 'Exrate(body)=', bodyExrate);
 
   const conn = await db.getConnection();
@@ -146,15 +146,15 @@ router.post('/temp/commit', async (req, res) => {
         console.debug(`[POST /temp/commit] 신규 PO 생성, id=${temp_po_id}`);
       }
 
-      // // ② dp_date, dp_exrate fallback 로직
-      // const usedDpDate = bodyDpDate || row.dp_date || new Date().toISOString().split('T')[0];
+      // // ② bp_date, dp_exrate fallback 로직
+      // const usedDpDate = bodyDpDate || row.bp_date || new Date().toISOString().split('T')[0];
       // const usedDpExrate = bodyExrate || row.dp_exrate || 1;
 
-      const usedDpDate = bodyDpDate || row.dp_date || new Date().toISOString().split('T')[0];
+      const usedDpDate = bodyDpDate || row.bp_date || new Date().toISOString().split('T')[0];
       const usedDpExrate = row.dp_exrate;
 
       console.debug(
-        `[POST /temp/commit] using dp_date='${usedDpDate}', dp_exrate=${usedDpExrate}`
+        `[POST /temp/commit] using bp_date='${usedDpDate}', dp_exrate=${usedDpExrate}`
       );
 
       // ③ 입금 이력 저장 : 임시 DB 에서 실제 DB 로 이동 | "import_temp" → "import_deposit_list"
@@ -190,10 +190,10 @@ await conn.query(
       // ④ PO master 업데이트
       await conn.query(
         `UPDATE import_po_list
-           SET dp_amount_rmb = dp_amount_rmb + ?,
-               dp_status     = 'paid'
+           SET bp_amount_rmb = ?,
+               bp_status     = 'paid'
          WHERE id = ?`,
-        [row.dp_amount_rmb, temp_po_id]
+        [row.bp_amount_rmb, temp_po_id]
       );
       console.debug('[POST /temp/commit] import_po_list 업데이트, id=', temp_po_id);
 
@@ -311,9 +311,9 @@ router.get('/final', async (req, res) => {
     const [rows] = await db.query(
   `SELECT *, 
    DATE_FORMAT(po_date, '%Y-%m-%d') AS po_date,
-   DATE_FORMAT(dp_date, '%Y-%m-%d') AS dp_date 
+   DATE_FORMAT(bp_date, '%Y-%m-%d') AS bp_date 
    FROM import_balance_list 
-   ORDER BY dp_date DESC`
+   ORDER BY bp_date DESC`
 );
     res.json(rows);
   } catch (err) {
@@ -334,9 +334,9 @@ router.post('/po/add', async (req, res) => {
     pcs,
     cost_rmb,
     note,
-    dp_amount_rmb,
-    dp_exrate,
-    dp_date
+    bp_amount_rmb,
+    bp_exrate,
+    bp_date
   } = req.body;
 
   if (!vendor_id || !po_no) return res.status(400).json({ error: '필수 항목 누락' });
@@ -370,7 +370,7 @@ router.post('/po/add', async (req, res) => {
       `INSERT INTO import_temp 
    (po_id, vendor_id, vendor_name, deposit_rate, po_date,
     style_no, po_no, pcs, cost_rmb,
-    dp_amount_rmb, dp_exrate, dp_date, note, user_id)
+    bp_amount_rmb, bp_exrate, bp_date, note, user_id)
  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         result.insertId,
@@ -382,9 +382,9 @@ router.post('/po/add', async (req, res) => {
         po_no,
         pcs || 0,
         cost_rmb || 0,
-        dp_amount_rmb || 0,
-        dp_exrate || null,
-        dp_date || null,
+        bp_amount_rmb || 0,
+        bp_exrate || null,
+        bp_date || null,
         note || '',
         user_id
       ]
@@ -479,13 +479,13 @@ router.post('/temp/update', async (req, res) => {
 router.get('/dates', async (req, res) => {
   try {
     const [rows] = await db.query(
-  `SELECT DISTINCT DATE_FORMAT(dp_date, '%Y-%m-%d') AS dp_date 
+  `SELECT DISTINCT DATE_FORMAT(bp_date, '%Y-%m-%d') AS bp_date 
    FROM import_deposit_list 
-   ORDER BY dp_date DESC`
+   ORDER BY bp_date DESC`
 );
-    res.json(rows.map(r => r.dp_date));
+    res.json(rows.map(r => r.bp_date));
   } catch (err) {
-    console.error('❌ distinct dp_date 불러오기 실패:', err);
+    console.error('❌ distinct bp_date 불러오기 실패:', err);
     res.status(500).json({ error: 'Failed to fetch dates' });
   }
 });

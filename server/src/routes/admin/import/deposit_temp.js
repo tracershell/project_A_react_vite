@@ -200,7 +200,7 @@ await conn.query(
       // ④ PO master 업데이트
       await conn.query(
         `UPDATE import_po_list
-           SET dp_amount_rmb = dp_amount_rmb + ?,
+           SET dp_amount_rmb = ?,
                dp_status     = 'paid'
          WHERE id = ?`,
         [row.dp_amount_rmb, temp_po_id]

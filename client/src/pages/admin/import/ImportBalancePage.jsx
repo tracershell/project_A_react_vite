@@ -134,7 +134,7 @@ const ImportBalancePage = () => {
         po_no,
         pcs: 0,
         cost_rmb: 0,
-        note: `[EXTRA] ${comment}`
+        note: `${comment}`
       }, { withCredentials: true });
 
       // 화면에만 추가
@@ -215,61 +215,65 @@ const ImportBalancePage = () => {
   };
 
   // 환율 적용 버튼 함수수
-  const applyExRate = async () => {
-    if (!bpDate || !exRate) {
-      return alert('Pay Date와 Exchange Rate를 입력하세요');
+const applyExRate = async () => {
+  if (!bpDate || !exRate) {
+    return alert('Pay Date와 Exchange Rate를 입력하세요');
+  }
+
+  const updated = records.map(r => {
+    // ✅ Extra Pay 항목 처리
+    if (r.isExtra) {
+      // 환율비적용 케이스: 그대로 유지
+      if ((r.bp_exrate === 1 || r.bp_exrate === "1") && Number(r.bp_amount_rmb) === 0) {
+        return {
+          ...r,
+          bp_date: cleanDate(bpDate),
+          bp_exrate: 1,
+          bp_amount_usd: r.bp_amount_usd || ''
+        };
+      }
+
+      // ✅ 환율적용된 Extra 항목: 환율 변경 시 다시 계산
+      const rmb = Number(r.bp_amount_rmb) || 0;
+      const usd = (rmb && exRate)
+        ? (rmb / parseFloat(exRate)).toFixed(2)
+        : '';
+      return {
+        ...r,
+        bp_date: cleanDate(bpDate),
+        bp_exrate: exRate,
+        bp_amount_rmb: rmb,
+        bp_amount_usd: usd
+      };
     }
 
-    // 1. 화면 Table 값 계산 (bp_amount_rmb 값에 환율을 적용하여 table 에 나타나게)
-    const updated = records.map(r => {
-  // Extra Pay 행도 RMB→USD 환산을 적용
-  if (r.isExtra) {
-  // 환율비적용 케이스: 기존 USD 유지
-  if ((r.bp_exrate === 1 || r.bp_exrate === "1") && Number(r.bp_amount_rmb) === 0) {
+    // ✅ 일반 PO 항목 처리 (import_temp에 있는 값 사용)
+    const tRmb = Number(r.t_amount_rmb) || 0;
+    const dpRmb = Number(r.dp_amount_rmb) || 0;
+    const bpR = tRmb - dpRmb;
+
     return {
       ...r,
       bp_date: cleanDate(bpDate),
-      bp_exrate: 1,
-      bp_amount_usd: r.bp_amount_usd || ''
+      bp_exrate: exRate,
+      bp_amount_rmb: bpR,
+      bp_amount_usd: exRate ? (bpR / parseFloat(exRate)).toFixed(2) : ''
     };
+  });
+
+  // 화면 업데이트
+  setRecords(updated);
+
+  // 서버 저장
+  try {
+    await axios.post('/api/admin/import/balance/temp/update', {
+      rows: updated
+    }, { withCredentials: true });
+  } catch {
+    alert('서버 저장 실패');
   }
-
-  // 환율적용 케이스
-  const rate = r.bp_exrate || exRate;
-  const usd = (r.bp_amount_rmb && rate)
-    ? (Number(r.bp_amount_rmb) / parseFloat(rate)).toFixed(2)
-    : r.bp_amount_usd || '';
-  return {
-    ...r,
-    bp_date: cleanDate(bpDate),
-    bp_exrate: rate,
-    bp_amount_usd: usd
-  };
-}
-
-
-      // 일반 PO 행은 기존 로직대로 계산 (이미 계산되어 DB import_temp 에 들어온 bp_amount_rmb 그대로 사용
-const tRmb = Number(r.t_amount_rmb) || 0;
-const dpRmb = Number(r.dp_amount_rmb) || 0;
-const bpR = tRmb - dpRmb;
-
-return {
-  ...r,
-  bp_date:       cleanDate(bpDate),
-  bp_exrate:     exRate,
-  bp_amount_rmb: bpR,
-  bp_amount_usd: exRate ? (bpR / parseFloat(exRate)).toFixed(2) : ''
 };
-    });
 
-
-    setRecords(updated);
-    try {
-      await axios.post('/api/admin/import/balance/temp/update', { rows: updated }, { withCredentials: true });
-    } catch {
-      alert('서버 저장 실패');
-    }
-  };
 
   // Pay(커밋)
   const handlePay = async () => {

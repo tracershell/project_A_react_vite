@@ -153,15 +153,49 @@ const ImportPoPage = () => {
     setBpSelected(s => s.includes(id) ? s.filter(x => x !== id) : [...s, id]);
 
   // 검색 필터링
-  const filteredList = list.filter(r =>
-    (!searchVendor || r.vendor_id === Number(searchVendor)) &&
-    (!searchBP || r.bp_status === searchBP) &&
-    (
-      r.vendor_name?.toLowerCase().includes(searchText.toLowerCase()) ||
-      r.style_no?.toLowerCase().includes(searchText.toLowerCase()) ||
-      r.po_no?.toLowerCase().includes(searchText.toLowerCase())
-    )
-  );
+const filteredList = list.filter(r => {
+  // 검색 조건: Vendor
+  const matchesVendor = !searchVendor || r.vendor_id === Number(searchVendor);
+
+  // 검색 조건: 텍스트 (vendor_name, style_no, po_no)
+  const matchesSearchText =
+    r.vendor_name?.toLowerCase().includes(searchText.toLowerCase()) ||
+    r.style_no?.toLowerCase().includes(searchText.toLowerCase()) ||
+    r.po_no?.toLowerCase().includes(searchText.toLowerCase());
+
+  // 금액 필드 숫자 변환 (NaN 방지)
+  const tAmount = Number(r.t_amount_rmb) || 0;
+  const dpAmount = Number(r.dp_amount_rmb) || 0;
+  const bpAmount = Number(r.bp_amount_rmb) || 0;
+  const totalPaid = dpAmount + bpAmount;
+
+// 문자열 비교 전 정제 (안정성 향상) - 공백, 대소문자 실수 방지
+  const bpStatus = searchBP?.trim().toLowerCase();
+
+
+  // 검색 조건: BP 상태별 필터링
+  let matchesBP = true;
+  if (searchBP === 'paid') {
+    // 조건 1~4: 지급 완료된 경우
+    matchesBP =
+      tAmount === 0 ||                // 조건 1
+      dpAmount === tAmount ||        // 조건 2
+      bpAmount === tAmount ||        // 조건 3
+      totalPaid === tAmount;         // 조건 4
+  } else if (searchBP === 'unpaid') {
+    // 조건 1~2: 미지급 or 일부 지급
+    matchesBP =
+      tAmount > 0 && (
+        (dpAmount === 0 && bpAmount === 0) ||   // 조건 1
+        totalPaid < tAmount                     // 조건 2 (일부 지급)
+      );
+  }
+
+  // 최종 결과 리턴
+  return matchesVendor && matchesBP && matchesSearchText;
+});
+
+
   const handleSearch = e => { e.preventDefault(); };
 
   // 전체 선택 토글 (filteredList 기준)
@@ -346,37 +380,38 @@ const ImportPoPage = () => {
 
     try {
       const cleanedRows = rowsToSend.map(r => {
-        const pcs = Number(r.pcs) || 0;
-        const cost = Number(r.cost_rmb) || 0;
-        const rate = Number(r.deposit_rate || vRate) / 100;
-        const t_amount_rmb = pcs * cost;
+  const pcs = Number(r.pcs) || 0;
+  const cost = Number(r.cost_rmb) || 0;
+  const rate = Number(r.deposit_rate || vRate) / 100;
+  const t_amount_rmb = pcs * cost;
 
-        const dpRmb = rowsToSend[0]?.dp_amount_rmb || 0;  // table 에서 가지고  옴 
-        
-        const bpRmb = 
-          bpSelected.includes(r.id) && dpSelected.includes(r.id)
-            ? t_amount_rmb
-            : parseFloat((t_amount_rmb - dpRmb).toFixed(2));
-        
+  const isFullPayment = dpSelected.includes(r.id) && bpSelected.includes(r.id);
 
-        return {
-          vendor_id: r.vendor_id,
-          vendor_name: r.vendor_name,
-          po_no: r.po_no,
-          style_no: r.style_no,
-          po_date: cleanDate(r.po_date),
-          pcs,
-          cost_rmb: cost,
-          t_amount_rmb,
-          note: r.note || '',
-          deposit_rate: Number(r.deposit_rate || vRate) || 0,
-          dp_amount_rmb: dpRmb,
-          bp_amount_rmb: bpRmb,
-          bp_exrate: 0,
-          bp_amount_usd: 0,
-          bp_date: null
-        };
-      });
+  const dpRmb = isFullPayment ? 0 : (r.dp_amount_rmb || 0);
+
+  const bpRmb = isFullPayment
+    ? t_amount_rmb
+    : parseFloat((t_amount_rmb - dpRmb).toFixed(2));
+
+  return {
+    vendor_id: r.vendor_id,
+    vendor_name: r.vendor_name,
+    po_no: r.po_no,
+    style_no: r.style_no,
+    po_date: cleanDate(r.po_date),
+    pcs,
+    cost_rmb: cost,
+    t_amount_rmb,
+    note: r.note || '',
+    deposit_rate: Number(r.deposit_rate || vRate) || 0,
+    dp_amount_rmb: dpRmb, // <- 이 부분이 핵심
+    bp_amount_rmb: bpRmb,
+    bp_exrate: 0,
+    bp_amount_usd: 0,
+    bp_date: null
+  };
+});
+
 
       await axios.post(
         '/api/admin/import/balance/batchAdd',
@@ -488,7 +523,7 @@ const ImportPoPage = () => {
         <select value={searchBP} onChange={e => setSearchBP(e.target.value)}>
           <option value="">:: BP Status ::</option>
           <option value="paid">paid</option>
-          <option value="">unpaid</option>
+          <option value="unpaid">unpaid</option>
         </select>
         <input
           type="text"
@@ -554,27 +589,31 @@ const ImportPoPage = () => {
                       type="checkbox"
                       onChange={() => toggleDp(r.id)}
                       checked={dpSelected.includes(r.id)}
-                      hidden={r.bp_amount_rmb === r.t_amount_rmb}
+                      hidden={
+                        r.bp_amount_rmb === r.t_amount_rmb ||
+                        r.t_amount_rmb === 0 ||
+                        (Number(r.pcs) === 0 && Number(r.cost_rmb) === 0)
+                      }
                     />
                   )}
                 </td>
                 <td>{Number(r.bp_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 <td>
-  {r.bp_status === 'paid' ? (
-    <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
-  ) : (
-    <input
-      type="checkbox"
-      onChange={() => toggleBp(r.id)}
-      checked={bpSelected.includes(r.id)}
-      hidden={
-        r.dp_amount_rmb === r.t_amount_rmb ||
-        r.t_amount_rmb === 0 ||
-        (Number(r.pcs) === 0 && Number(r.cost_rmb) === 0)
-      }
-    />
-  )}
-</td>
+                  {r.bp_status === 'paid' ? (
+                    <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
+                  ) : (
+                    <input
+                      type="checkbox"
+                      onChange={() => toggleBp(r.id)}
+                      checked={bpSelected.includes(r.id)}
+                      hidden={
+                        r.dp_amount_rmb === r.t_amount_rmb ||
+                        r.t_amount_rmb === 0 ||
+                        (Number(r.pcs) === 0 && Number(r.cost_rmb) === 0)
+                   }
+                 />
+            )}
+              </td>
               </tr>
             ))}
           </tbody>
