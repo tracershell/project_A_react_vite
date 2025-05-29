@@ -224,29 +224,42 @@ const ImportBalancePage = () => {
     const updated = records.map(r => {
   // Extra Pay 행도 RMB→USD 환산을 적용
   if (r.isExtra) {
-    const rate = r.bp_exrate || exRate;
-    const usd = (r.bp_amount_rmb && rate)
-      ? (Number(r.bp_amount_rmb) / parseFloat(rate)).toFixed(2)
-      : r.bp_amount_usd || '';
+  // 환율비적용 케이스: 기존 USD 유지
+  if ((r.bp_exrate === 1 || r.bp_exrate === "1") && Number(r.bp_amount_rmb) === 0) {
     return {
       ...r,
-      bp_date:       cleanDate(bpDate),
-      bp_exrate:     rate,
-      bp_amount_usd: usd
-      // bp_amount_rmb는 이미 가진 값을 그대로 유지합니다.
+      bp_date: cleanDate(bpDate),
+      bp_exrate: 1,
+      bp_amount_usd: r.bp_amount_usd || ''
     };
   }
 
-      // 일반 PO 행은 기존 로직대로 계산 (일반행 bp_amount_rmb table 계산산)
-      const base = r.t_amount_rmb || (r.pcs * r.cost_rmb);
-      const bpR = Number(((base * (100 - (r.deposit_rate || deposit_rate))) / 100).toFixed(2));
-      return {
-        ...r,
-        bp_date:      cleanDate(bpDate),
-        bp_exrate:    exRate,
-        bp_amount_rmb: bpR,
-        bp_amount_usd: exRate ? (bpR / parseFloat(exRate)).toFixed(2) : ''
-      };
+  // 환율적용 케이스
+  const rate = r.bp_exrate || exRate;
+  const usd = (r.bp_amount_rmb && rate)
+    ? (Number(r.bp_amount_rmb) / parseFloat(rate)).toFixed(2)
+    : r.bp_amount_usd || '';
+  return {
+    ...r,
+    bp_date: cleanDate(bpDate),
+    bp_exrate: rate,
+    bp_amount_usd: usd
+  };
+}
+
+
+      // 일반 PO 행은 기존 로직대로 계산 (이미 계산되어 DB import_temp 에 들어온 bp_amount_rmb 그대로 사용
+const tRmb = Number(r.t_amount_rmb) || 0;
+const dpRmb = Number(r.dp_amount_rmb) || 0;
+const bpR = tRmb - dpRmb;
+
+return {
+  ...r,
+  bp_date:       cleanDate(bpDate),
+  bp_exrate:     exRate,
+  bp_amount_rmb: bpR,
+  bp_amount_usd: exRate ? (bpR / parseFloat(exRate)).toFixed(2) : ''
+};
     });
 
 

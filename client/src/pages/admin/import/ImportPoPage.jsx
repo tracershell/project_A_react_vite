@@ -560,17 +560,21 @@ const ImportPoPage = () => {
                 </td>
                 <td>{Number(r.bp_amount_rmb || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 <td>
-                  {r.bp_status === 'paid' ? (
-                    <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
-                  ) : (
-                    <input
-                      type="checkbox"
-                      onChange={() => toggleBp(r.id)}
-                      checked={bpSelected.includes(r.id)}
-                      hidden={r.dp_amount_rmb === r.t_amount_rmb || r.t_amount_rmb === 0}
-                    />
-                  )}
-                </td>
+  {r.bp_status === 'paid' ? (
+    <span style={{ color: 'red', fontWeight: 'bold' }}>paid</span>
+  ) : (
+    <input
+      type="checkbox"
+      onChange={() => toggleBp(r.id)}
+      checked={bpSelected.includes(r.id)}
+      hidden={
+        r.dp_amount_rmb === r.t_amount_rmb ||
+        r.t_amount_rmb === 0 ||
+        (Number(r.pcs) === 0 && Number(r.cost_rmb) === 0)
+      }
+    />
+  )}
+</td>
               </tr>
             ))}
           </tbody>
