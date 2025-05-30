@@ -7,6 +7,7 @@ import adminMainRoutes from './adminMainRoutes';
 import adminEmployeesRoutes from './adminEmployeesRoutes';
 import adminImportRoutes from './adminImportRoutes';
 import adminGeneralRoutes from './adminGeneralRoutes';
+import adminPayrollRoutes from './adminRoutes/adminPayrollRoutes';
 
 
 console.log('✅ adminMainRoutes import 확인'); // ← 이건 찍히는지 먼저 확인
@@ -33,6 +34,8 @@ export default function AdminRoutes() {
       {/* /admin/import/... */}
       {adminImportRoutes}
 
+      {/* /admin/payroll/... */}
+      {adminPayrollRoutes}
 
       {/* /admin/general/... (비어 있어도 괜찮습니다) */}
       {adminGeneralRoutes}

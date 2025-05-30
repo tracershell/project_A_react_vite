@@ -74,6 +74,7 @@ app.use('/api/admin/import/balance', require('./routes/admin/import/balance_temp
 app.use('/api/admin/import/pdf', require('./routes/admin/import/import_payments_pdf'));
 app.use('/api/admin/import/extra', require('./routes/admin/import/importextraitemspage'));
 
+app.use('/api/admin/payroll/payrolltax', require('./routes/admin/payroll/payrolltaxpage'));
 //app.use('/api/admin/import/extra/pdf', require('./routes/admin/import/import_extra_pdf'));
 
 

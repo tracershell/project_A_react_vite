@@ -1,0 +1,131 @@
+.page {
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  padding-bottom: 1rem; /* bottom-padding 강조 */
+  font-size: 12px;
+}
+
+h2 {
+  margin: 0.5rem 0;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.payTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  background: #fff;
+}
+.payTable th {
+  background: #d0ebff;
+  color: #003366;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+}
+.payTable td {
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+  text-align: center;
+  white-space: nowrap;
+}
+.payTable tr:hover {
+  background: #fff8dc;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+.formRow.small {
+  font-size: 11px;
+  padding-top: 1rem;
+  padding-bottom: 0.1rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  gap: 0.3rem;
+}
+
+.formRow select,
+.formRow input,
+.formRow button {
+  height: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.formRow button {
+  border: 1px solid #066da5;
+  background: #fff;
+  cursor: pointer;
+}
+
+.formRowGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0;
+}
+
+.itemWrapper {
+  display: flex;
+  flex-direction: column;
+  margin-right: 0.5rem;
+}
+.itemWrapper label {
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+.itemWrapper input {
+  width: 6.5rem;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  text-align: center;
+  font-size: 11px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.submitBtn {
+  align-self: flex-end;
+  height: 1.8rem;
+  line-height: 1.8rem;
+  font-size: 12px;
+  padding: 0 0.8rem;
+  margin-left: 0.5rem;
+  border: 1px solid #066da5;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.lightBlue {
+  background: #e6f0ff;
+  border: 1px solid #99bbff;
+  color: #003366;
+  font-weight: bold;
+}
+.lightBlue:hover {
+  background: #cce0ff;
+}

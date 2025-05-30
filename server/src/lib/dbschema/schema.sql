@@ -268,3 +268,38 @@ po_id와 vendor_id에는 외래키 제약을 걸어 데이터 무결성을 확�
 두 이력 테이블 모두 PO 마스터의 주요 정보(vendor_name, deposit_rate, po_date 등)를 복제해 조인 없이 바로 조회할 수 있게 했습니다.
 
 -----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS payroll_tax (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  eid VARCHAR(50) NOT NULL,          -- 직원 ID (employees.eid)
+  name VARCHAR(100) NOT NULL,        -- 직원 이름
+  jcode VARCHAR(20),                 -- 직책 코드
+  jtitle VARCHAR(50),                -- 직책 이름
+  work1 VARCHAR(50),                 -- 근무지(location)
+
+  pdate DATE NOT NULL,               -- 급여 지급일
+  ckno VARCHAR(20),                  -- 체크 번호
+
+  rtime DECIMAL(10,2) DEFAULT 0,     -- Regular Time
+  otime DECIMAL(10,2) DEFAULT 0,     -- Over Time
+  dtime DECIMAL(10,2) DEFAULT 0,     -- Double Time
+
+  fw DECIMAL(10,2) DEFAULT 0,        -- Federal Withholding
+  sse DECIMAL(10,2) DEFAULT 0,       -- Social Security
+  me DECIMAL(10,2) DEFAULT 0,        -- Medicare
+  caw DECIMAL(10,2) DEFAULT 0,       -- California Withholding
+  cade DECIMAL(10,2) DEFAULT 0,      -- California Disability
+
+  adv DECIMAL(10,2) DEFAULT 0,       -- Advance
+  csp DECIMAL(10,2) DEFAULT 0,       -- Child Support
+  dd DECIMAL(10,2) DEFAULT 0,        -- Direct Deposit Fee
+
+  gross DECIMAL(10,2) DEFAULT 0,     -- 총 지급액
+  tax DECIMAL(10,2) DEFAULT 0,       -- 총 공제액
+  net DECIMAL(10,2) DEFAULT 0,       -- 실지급액
+
+  remark VARCHAR(255),               -- 비고
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+  -----------------------------------------------------------

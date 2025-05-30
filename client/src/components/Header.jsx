@@ -11,6 +11,7 @@ import ImportMenu from './adminmenu/ImportMenu';
 import DomesticMenu from './adminmenu/DomesticMenu';
 import MailMenu from './adminmenu/MailMenu';
 import EmployeesMenu from './adminmenu/EmployeesMenu';
+import PayrollMenu from './adminmenu/PayrollMenu';
 import PersonalMenu from './adminmenu/PersonalMenu';
 // import UserMenu
 import UserMenu from './usermenu/UserMenu';
@@ -42,6 +43,7 @@ const Header = () => {
       <DomesticMenu />
       <MailMenu />
       <EmployeesMenu />
+      <PayrollMenu />
       <PersonalMenu />
     </>
   )}
