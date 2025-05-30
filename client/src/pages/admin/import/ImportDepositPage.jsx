@@ -603,8 +603,11 @@ const ImportDepositPage = () => {
 
         {/* 2) Pay Date / Exchange Rate / 버튼 영역 */}
         {/* Pay Date / Exchange Rate / 버튼 영역 */}
-        <div className={`${styles.formRow} ${styles.small}`} style={{ marginTop: '4px' }}>
-          <span style={{ fontWeight: 'bold' }}>Pay Date</span>
+        <div
+          className={`${styles.formRow} ${styles.small}`}
+          style={{ marginTop: '4px', paddingTop: '1rem', paddingBottom: '1.0rem' }}
+        >
+          <label style={{ fontWeight: 'bold' }}>Pay Date</label>
           <input
             type="date"
             value={dpDate}

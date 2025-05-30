@@ -106,7 +106,7 @@ const ImportBalancePage = () => {
     setExtraForm(f => ({ ...f, [name]: value }));
   };
 
-   // 5) Extra Pay Add (임시테이블에 저장)
+  // 5) Extra Pay Add (임시테이블에 저장)
   const handleAddExtra = async () => {
     const { extra_no, po_no, rate_apply, comment, amount } = extraForm;
     if (!extra_no || !po_no || !rate_apply || !amount) {
@@ -215,64 +215,64 @@ const ImportBalancePage = () => {
   };
 
   // 환율 적용 버튼 함수수
-const applyExRate = async () => {
-  if (!bpDate || !exRate) {
-    return alert('Pay Date와 Exchange Rate를 입력하세요');
-  }
+  const applyExRate = async () => {
+    if (!bpDate || !exRate) {
+      return alert('Pay Date와 Exchange Rate를 입력하세요');
+    }
 
-  const updated = records.map(r => {
-    // ✅ Extra Pay 항목 처리
-    if (r.isExtra) {
-      // 환율비적용 케이스: 그대로 유지
-      if ((r.bp_exrate === 1 || r.bp_exrate === "1") && Number(r.bp_amount_rmb) === 0) {
+    const updated = records.map(r => {
+      // ✅ Extra Pay 항목 처리
+      if (r.isExtra) {
+        // 환율비적용 케이스: 그대로 유지
+        if ((r.bp_exrate === 1 || r.bp_exrate === "1") && Number(r.bp_amount_rmb) === 0) {
+          return {
+            ...r,
+            bp_date: cleanDate(bpDate),
+            bp_exrate: 1,
+            bp_amount_usd: r.bp_amount_usd || ''
+          };
+        }
+
+        // ✅ 환율적용된 Extra 항목: 환율 변경 시 다시 계산
+        const rmb = Number(r.bp_amount_rmb) || 0;
+        const usd = (rmb && exRate)
+          ? (rmb / parseFloat(exRate)).toFixed(2)
+          : '';
         return {
           ...r,
           bp_date: cleanDate(bpDate),
-          bp_exrate: 1,
-          bp_amount_usd: r.bp_amount_usd || ''
+          bp_exrate: exRate,
+          bp_amount_rmb: rmb,
+          bp_amount_usd: usd
         };
       }
 
-      // ✅ 환율적용된 Extra 항목: 환율 변경 시 다시 계산
-      const rmb = Number(r.bp_amount_rmb) || 0;
-      const usd = (rmb && exRate)
-        ? (rmb / parseFloat(exRate)).toFixed(2)
-        : '';
+      // ✅ 일반 PO 항목 처리 (import_temp에 있는 값 사용)
+      const tRmb = Number(r.t_amount_rmb) || 0;
+      const dpRmb = Number(r.dp_amount_rmb) || 0;
+      const bpR = tRmb - dpRmb;
+
       return {
         ...r,
         bp_date: cleanDate(bpDate),
         bp_exrate: exRate,
-        bp_amount_rmb: rmb,
-        bp_amount_usd: usd
+        bp_amount_rmb: bpR,
+        bp_amount_usd: exRate ? (bpR / parseFloat(exRate)).toFixed(2) : ''
       };
+    });
+
+    // 화면 업데이트
+    setRecords(updated);
+
+    // 서버 저장
+    try {
+      await axios.post('/api/admin/import/balance/temp/update', {
+        rows: updated
+      }, { withCredentials: true });
+    } catch {
+      alert('서버 저장 실패');
     }
-
-    // ✅ 일반 PO 항목 처리 (import_temp에 있는 값 사용)
-    const tRmb = Number(r.t_amount_rmb) || 0;
-    const dpRmb = Number(r.dp_amount_rmb) || 0;
-    const bpR = tRmb - dpRmb;
-
-    return {
-      ...r,
-      bp_date: cleanDate(bpDate),
-      bp_exrate: exRate,
-      bp_amount_rmb: bpR,
-      bp_amount_usd: exRate ? (bpR / parseFloat(exRate)).toFixed(2) : ''
-    };
-  });
-
-  // 화면 업데이트
-  setRecords(updated);
-
-  // 서버 저장
-  try {
-    await axios.post('/api/admin/import/balance/temp/update', {
-      rows: updated
-    }, { withCredentials: true });
-  } catch {
-    alert('서버 저장 실패');
-  }
-};
+  };
 
 
   // Pay(커밋)
@@ -305,7 +305,7 @@ const applyExRate = async () => {
   // 언마운트 시 temp clear
   useEffect(() => {
     return () => {
-      axios.delete('/api/admin/import/balance/temp/clear').catch(() => {});
+      axios.delete('/api/admin/import/balance/temp/clear').catch(() => { });
     };
   }, []);
 
@@ -316,17 +316,17 @@ const applyExRate = async () => {
 
   // 합계 계산
   useEffect(() => {
-  let sumR = 0, sumU = 0;
-  const list = filtered.length ? filtered : records;
-  list.forEach(r => {
-    const rmb = Number(r.bp_amount_rmb || 0);
-    const usd = parseFloat(r.bp_amount_usd) || 0;
-    if (!isNaN(rmb)) sumR += rmb;
-    if (!isNaN(usd)) sumU += usd;
-  });
-  setTotalRmb(sumR);
-  setTotalUsd(sumU);
-}, [filtered, records]); // ✅ filtered도 의존성에 추가
+    let sumR = 0, sumU = 0;
+    const list = filtered.length ? filtered : records;
+    list.forEach(r => {
+      const rmb = Number(r.bp_amount_rmb || 0);
+      const usd = parseFloat(r.bp_amount_usd) || 0;
+      if (!isNaN(rmb)) sumR += rmb;
+      if (!isNaN(usd)) sumU += usd;
+    });
+    setTotalRmb(sumR);
+    setTotalUsd(sumU);
+  }, [filtered, records]); // ✅ filtered도 의존성에 추가
 
   const handleCommentChange = (id, val) => {
     setComments(c => ({ ...c, [id]: val }));
@@ -404,8 +404,11 @@ const applyExRate = async () => {
           <button type="button" onClick={handleFilteredPdf}>PDF 보기</button>
         </div>
 
-        <div className={`${styles.formRow} ${styles.small}`} style={{ marginTop: 4 }}>
-          <span style={{ fontWeight: 'bold' }}>Pay Date</span>
+        <div
+          className={`${styles.formRow} ${styles.small}`}
+          style={{ marginTop: '4px', paddingTop: '1rem', paddingBottom: '1.0rem' }}
+        >
+          <label style={{ fontWeight: 'bold' }}>Pay Date</label>
           <input type="date" value={bpDate} onChange={e => setBpDate(e.target.value)} style={{ minWidth: '8rem' }} />
           <span style={{ marginLeft: '1rem', fontWeight: 'bold' }}>Exchange Rate</span>
           <input type="number" step="0.0001" value={exRate} onChange={e => setExRate(e.target.value)} style={{ minWidth: '6rem' }} />
@@ -459,15 +462,15 @@ const applyExRate = async () => {
                     : ''
                 }</td>
                 <td>{
-                 r.dp_amount_rmb != null
+                  r.dp_amount_rmb != null
                     ? Number(r.dp_amount_rmb)
-                    .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                      .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                     : ''
-                 }</td>
+                }</td>
                 <td>{
-                 r.bp_amount_rmb != null
+                  r.bp_amount_rmb != null
                     ? Number(r.bp_amount_rmb)
-                    .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                      .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                     : ''
                 }</td>
                 <td>{cleanDate(r.bp_date)}</td>

@@ -89,7 +89,10 @@ button {
   /* 요소 사이 간격 */
   font-size: 11px;
   /* 텍스트 작게 */
-  padding: 0.5rem 0.75rem;
+  padding-top: 1rem;
+  padding-bottom: 0.1rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
   /* 위아래/좌우 패딩 (필요시 조절) */
   background: #fff;
   /* 배경 흰색 */
@@ -108,7 +111,7 @@ button {
   height: 1.6rem;
   line-height: 1.6rem;
   font-size: 11px;
-  padding: 0 0.4rem;
+  padding: 0 0.3rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   white-space: nowrap;
