@@ -130,27 +130,41 @@ const PayrollTaxPage = () => {
     <div className={styles.page}>
       <h2>Pay List</h2>
 
-      {/* 직원 + Reference */}
-      <div className={styles.formRowGroup}>
-        <div className={`${styles.formRow} ${styles.small}`}>
-          <label>Name</label>
-          <select name="name" value={form.name} onChange={handleChange}>
-            <option value="">-- Select Employee --</option>
-            {employees.map(e =>
-              <option key={e.eid} value={e.name}>{e.name}</option>
-            )}
-          </select>
-          <button className={styles.lightBlue}
-            onClick={() => fetchPaylist(form.pdate)}
-          >Reference</button>
-        </div>
-        <div className={`${styles.formRow} ${styles.small}`}>
-          <label>Pay Date</label>
-          <input type="date" name="pdate"
-            value={form.pdate} onChange={handleChange}
-          />
-        </div>
-      </div>
+           {/* ① 첫 번째 줄: 직원 + Reference 버튼만 */}
+    <div className={styles.formRowGroup}>
+       <div
+         className={`${styles.formRow} ${styles.small}`}
+         style={{
+           flexWrap: 'nowrap',   // 한 줄로 고정
+           overflowX: 'auto'     // 공간이 부족할 때만 가로 스크롤
+         }}
+       >
+         <label>Name</label>
+         <select name="name" value={form.name} onChange={handleChange}>
+           <option value="">-- Select Employee --</option>
+           {employees.map(e =>
+             <option key={e.eid} value={e.name}>{e.name}</option>
+           )}
+         </select>
+         <button
+           className={styles.lightBlue}
+           onClick={() => fetchPaylist(form.pdate)}
+         >
+           Reference
+         </button>
+       </div>
+     </div>
+
+     {/* ② 두 번째 줄: Pay Date 만 */}
+     <div className={`${styles.formRow} ${styles.small}`}>
+       <label>Pay Date</label>
+       <input type="date" name="pdate"
+         value={form.pdate} onChange={handleChange}
+       />
+     </div>
+
+
+
 
       {/* 핵심 입력 줄 */}
       <div className={`${styles.formRow} ${styles.small}`} style={{ flexWrap:'wrap' }}>
