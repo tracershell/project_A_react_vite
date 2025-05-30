@@ -367,10 +367,12 @@ const ImportDepositPage = () => {
 
   // table 합계 계산
 
+  // 기존 records만 대상 → 수정 필요
   useEffect(() => {
     let totalRmb = 0, totalUsd = 0;
-    for (const r of records) {
-      // 테이블과 동일 공식으로 즉석 계산
+    const list = filtered.length ? filtered : records;  // ✅ 변경된 부분
+
+    for (const r of list) {
       const t_amount_rmb = r.t_amount_rmb || (Number(r.pcs || 0) * Number(r.cost_rmb || 0));
       const rate =
         r.deposit_rate !== undefined && r.deposit_rate !== null && r.deposit_rate !== ''
@@ -381,9 +383,11 @@ const ImportDepositPage = () => {
 
       if (!isNaN(parseFloat(r.dp_amount_usd))) totalUsd += parseFloat(r.dp_amount_usd) || 0;
     }
+
     setTotalRmb(totalRmb);
     setTotalUsd(totalUsd);
-  }, [records]);
+  }, [filtered, records]); // ✅ 의존성에 filtered 추가
+
 
   // 페이지 언마운트 시 임시 테이블 삭제
   useEffect(() => {
@@ -478,8 +482,8 @@ const ImportDepositPage = () => {
   };
   // ── DP Amount 합계 계산 login
   const dataRows = filtered.length
-  ? filtered.filter(r => r.selected)
-  : records.filter(r => r.selected);
+    ? filtered.filter(r => r.selected)
+    : records.filter(r => r.selected);
   const sumDpRmb = dataRows.reduce((sum, r) => {
     const dp = (r.dp_amount_rmb !== undefined && r.dp_amount_rmb !== null && r.dp_amount_rmb !== '')
       ? Number(r.dp_amount_rmb)
@@ -713,16 +717,14 @@ const ImportDepositPage = () => {
           </tbody>
           <tfoot>
             <tr>
-              {/* DP Amount(RMB) 와 DP Amount(USD) 만 합계 */}
               <td colSpan={9} style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
               <td style={{ fontWeight: 'bold', color: 'darkred' }}>
-                {sumDpRmb.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {totalRmb.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </td>
-              {/* DP Date, DP E.rate 빈 칸 */}
               <td></td>
               <td></td>
               <td style={{ fontWeight: 'bold', color: 'darkred' }}>
-                {sumDpUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {totalUsd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </td>
               <td></td>
             </tr>
