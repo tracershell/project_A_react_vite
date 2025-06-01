@@ -90,7 +90,8 @@ h2 {
 }
 
 .formRow select[name="name"] {
-  min-width: 14rem;
+  min-width: 5rem;
+  /* Name 선택 box size */
 }
 
 .formRow button {
@@ -219,4 +220,41 @@ h2 {
 
 .lightBlue:hover {
   background: #cce0ff;
+}
+
+/* Remark Input 폭 고정 : 15 rem 으로 쓰인 곳 모두 수정*/
+.remarkInput {
+  width: 15rem !important;
+  min-width: 15rem;
+  max-width: 15rem;
+  flex: 0 0 15rem;
+  /* flex-grow를 0으로 설정하여 고정폭 유지 */
+}
+
+/* Name Select 폭 고정 : 15 rem 으로 쓰인 곳 모두 수정 */
+.nameSelect {
+  width: 15rem !important;
+  min-width: 15rem;
+  max-width: 15rem;
+  flex: 0 0 15rem;
+  /* flex-grow: 0, flex-shrink: 0, flex-basis: 5rem */
+}
+
+.workLabel {
+  margin-left: 0.5rem;
+  font-size: 11px;
+  color: #333;
+}
+
+.workValue {
+  display: inline-block;
+  width: 60px;
+  color: #066da5;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.dateSelect {
+  width: 10rem;
+  min-width: 8rem;
 }
