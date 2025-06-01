@@ -131,14 +131,8 @@ const PayrollTaxPage = () => {
       <h2>Pay List</h2>
 
       {/* ① 첫 번째 줄: 직원 + Reference 버튼만 */}
-      <div className={styles.formRowGroup}>
-        <div
-          className={`${styles.formRow} ${styles.small}`}
-          style={{
-            flexWrap: 'nowrap',   // 한 줄로 고정
-            overflowX: 'auto'     // 공간이 부족할 때만 가로 스크롤
-          }}
-        >
+      <div className={`${styles.formRow} ${styles.small}`}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <label>Name</label>
           <select name="name" value={form.name} onChange={handleChange}>
             <option value="">-- Select Employee --</option>
@@ -146,10 +140,7 @@ const PayrollTaxPage = () => {
               <option key={e.eid} value={e.name}>{e.name}</option>
             )}
           </select>
-          <button
-            className={styles.lightBlue}
-            onClick={() => fetchPaylist(form.pdate)}
-          >
+          <button className={styles.lightBlue} onClick={() => fetchPaylist(form.pdate)}>
             Reference
           </button>
         </div>

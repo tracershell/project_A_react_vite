@@ -62,6 +62,21 @@ h2 {
   align-items: center;
 }
 
+.formRow.small label {
+  width: 3rem;
+  /* 👈 예시: 라벨 넓이 고정 */
+  text-align: right;
+  margin-right: 0.5rem;
+}
+
+.formRow.small select,
+.formRow.small button {
+  flex: 0 0 auto;
+  vertical-align: middle;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .formRow select,
 .formRow input,
 .formRow button {
