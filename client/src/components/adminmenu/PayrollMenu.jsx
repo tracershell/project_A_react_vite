@@ -10,7 +10,7 @@ const ImportMenu = () => {
     { label: 'd', link: '/admin/' },
   ];
 
-  return <DropdownMenu title="Import" items={adminItems} />;
+  return <DropdownMenu title="Payroll" items={adminItems} />;
 };
 
 export default ImportMenu;

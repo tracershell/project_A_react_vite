@@ -11,7 +11,7 @@ const DropdownMenu = ({ title, items }) => {
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
-      <button className={styles.dropdownButton}>{title} ▼</button>
+      <button className={styles.dropdownButton}>{title} ⏬</button>
       {open && (
         <div className={styles.dropdownContent}>
           {items.map((item, index) => (
