@@ -151,12 +151,40 @@ h2 {
   margin-right: 0.5rem;
 }
 
+/*
 .groupRow {
   display: flex;
   flex-wrap: nowrap;
   justify-content: flex-start;
   gap: 0.5rem;
   padding: 0 0.5rem;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+*/
+
+/*
+.groupRow {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-evenly; 👈 요소들 사이와 양끝에 균등한 간격 
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+*/
+
+.groupRow {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  /* space-evenly에서 변경 */
+  gap: 0.5rem;
+  padding: 0 0.75rem;
+  /* 입력 요소와 테두리 간 간격을 제어하기 위해 패딩 조정 */
   box-sizing: border-box;
   max-width: 100%;
 }
@@ -248,7 +276,7 @@ h2 {
 
 .workValue {
   display: inline-block;
-  width: 60px;
+  width: 80px;
   color: #066da5;
   font-weight: bold;
   font-size: 11px;

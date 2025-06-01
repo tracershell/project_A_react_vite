@@ -274,7 +274,7 @@ CREATE TABLE IF NOT EXISTS payroll_tax (
   name VARCHAR(100) NOT NULL,        -- 직원 이름
   jcode VARCHAR(20),                 -- 직책 코드
   jtitle VARCHAR(50),                -- 직책 이름
-  work1 VARCHAR(50),                 -- 근무지(location)
+  workl VARCHAR(50),                 -- 근무지(location)
 
   pdate DATE NOT NULL,               -- 급여 지급일
   ckno VARCHAR(20),                  -- 체크 번호

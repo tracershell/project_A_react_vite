@@ -13,7 +13,7 @@ router.get('/employees', async (req, res) => {
     res.json(rows);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error:'직원 목록 조회 실패' });
+    res.status(500).json({ error: '직원 목록 조회 실패' });
   }
 });
 
@@ -26,7 +26,7 @@ router.get('/dates', async (req, res) => {
     res.json(rows);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error:'날짜 조회 실패' });
+    res.status(500).json({ error: '날짜 조회 실패' });
   }
 });
 
@@ -41,24 +41,24 @@ router.get('/', async (req, res) => {
     res.json(rows);
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error:'내역 조회 실패' });
+    res.status(500).json({ error: '내역 조회 실패' });
   }
 });
 
 // 4) 최신 내역 (Reference)
 router.get('/latest', async (req, res) => {
   const { eid } = req.query;
-  if (!eid) return res.json({ success:false, message:'eid 누락' });
+  if (!eid) return res.json({ success: false, message: 'eid 누락' });
   try {
     const [rows] = await db.query(
       'SELECT * FROM payroll_tax WHERE eid=? ORDER BY pdate DESC LIMIT 1',
       [eid]
     );
-    if (!rows.length) return res.json({ success:false, message:'이전 기록 없음' });
-    res.json({ success:true, ...rows[0] });
+    if (!rows.length) return res.json({ success: false, message: '이전 기록 없음' });
+    res.json({ success: true, ...rows[0] });
   } catch (e) {
     console.error(e);
-    res.json({ success:false, message:'조회 실패' });
+    res.json({ success: false, message: '조회 실패' });
   }
 });
 
@@ -74,20 +74,20 @@ router.post('/add', async (req, res) => {
          gross,tax,net,remark
        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       [
-        b.eid,b.name,b.jcode,b.jtitle,b.workl,
-        b.pdate,b.ckno_table,
-        parseFloat(b.rtime)||0,parseFloat(b.otime)||0,parseFloat(b.dtime)||0,
-        parseFloat(b.fw)||0,parseFloat(b.sse)||0,parseFloat(b.me)||0,
-        parseFloat(b.caw)||0,parseFloat(b.cade)||0,
-        parseFloat(b.adv)||0,parseFloat(b.csp)||0,parseFloat(b.dd)||0,
-        parseFloat(b.gross)||0,parseFloat(b.tax)||0,parseFloat(b.net)||0,
+        b.eid, b.name, b.jcode, b.jtitle, b.workl,
+        cleanDate(b.pdate), b.ckno,
+        parseFloat(b.rtime) || 0, parseFloat(b.otime) || 0, parseFloat(b.dtime) || 0,
+        parseFloat(b.fw) || 0, parseFloat(b.sse) || 0, parseFloat(b.me) || 0,
+        parseFloat(b.caw) || 0, parseFloat(b.cade) || 0,
+        parseFloat(b.adv) || 0, parseFloat(b.csp) || 0, parseFloat(b.dd) || 0,
+        parseFloat(b.gross) || 0, parseFloat(b.tax) || 0, parseFloat(b.net) || 0,
         b.remark
       ]
     );
-    res.json({ success:true });
+    res.json({ success: true });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error:'저장 실패' });
+    res.status(500).json({ error: '저장 실패' });
   }
 });
 
@@ -103,21 +103,21 @@ router.post('/update', async (req, res) => {
          gross=?,tax=?,net=?,remark=?
        WHERE ckno=?`,
       [
-        b.eid,b.name,b.jcode,b.jtitle,b.workl,
-        b.pdate,b.ckno_table,
-        parseFloat(b.rtime)||0,parseFloat(b.otime)||0,parseFloat(b.dtime)||0,
-        parseFloat(b.fw)||0,parseFloat(b.sse)||0,parseFloat(b.me)||0,
-        parseFloat(b.caw)||0,parseFloat(b.cade)||0,
-        parseFloat(b.adv)||0,parseFloat(b.csp)||0,parseFloat(b.dd)||0,
-        parseFloat(b.gross)||0,parseFloat(b.tax)||0,parseFloat(b.net)||0,
+        b.eid, b.name, b.jcode, b.jtitle, b.workl,
+        cleanDate(b.pdate), b.ckno,
+        parseFloat(b.rtime) || 0, parseFloat(b.otime) || 0, parseFloat(b.dtime) || 0,
+        parseFloat(b.fw) || 0, parseFloat(b.sse) || 0, parseFloat(b.me) || 0,
+        parseFloat(b.caw) || 0, parseFloat(b.cade) || 0,
+        parseFloat(b.adv) || 0, parseFloat(b.csp) || 0, parseFloat(b.dd) || 0,
+        parseFloat(b.gross) || 0, parseFloat(b.tax) || 0, parseFloat(b.net) || 0,
         b.remark,
         b.ckno
       ]
     );
-    res.json({ success: r.affectedRows>0 });
+    res.json({ success: r.affectedRows > 0 });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error:'수정 실패' });
+    res.status(500).json({ error: '수정 실패' });
   }
 });
 
@@ -126,10 +126,10 @@ router.post('/delete', async (req, res) => {
   const { ckno } = req.body;
   try {
     const [r] = await db.query('DELETE FROM payroll_tax WHERE ckno=?', [ckno]);
-    res.json({ success: r.affectedRows>0 });
+    res.json({ success: r.affectedRows > 0 });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error:'삭제 실패' });
+    res.status(500).json({ error: '삭제 실패' });
   }
 });
 

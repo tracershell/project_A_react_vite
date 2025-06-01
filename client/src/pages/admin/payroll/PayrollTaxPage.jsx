@@ -99,8 +99,78 @@ const PayrollTaxPage = () => {
   };
 
   const handleAdd = async () => {
-    await api.post('/add', form);
-    fetchPaylist(form.pdate);
+    try {
+      await api.post('/add', form);
+      alert('입력 완료');
+
+      // Pay Date는 유지하고, 나머지는 초기화
+      const pdate = form.pdate;
+      setForm({
+        eid: '', name: '', jcode: '', jtitle: '', workl: '',
+        pdate: pdate, ckno: '', rtime: '', otime: '', dtime: '',
+        fw: '', sse: '', me: '', caw: '', cade: '',
+        adv: '', csp: '', dd: '', gross: '', tax: '', net: '', remark: ''
+      });
+
+      fetchPaylist(pdate);
+    } catch (e) {
+      console.error(e);
+      alert('저장 실패');
+    }
+  };
+  // ckno 기반 데이터 선택
+  const handleSelect = () => {
+    const target = paylist.find(p => p.ckno === form.ckno);
+    if (!target) return alert('해당 Check No. 기록이 없습니다.');
+    setForm({ ...target });
+  };
+
+  // ckno 기반 데이터 수정
+  const handleUpdate = async () => {
+    try {
+      await api.post('/update', form);
+      alert('수정되었습니다.');
+      resetFormExceptDate(); // 날짜 제외하고 나머지 초기화
+      fetchPaylist(form.pdate);
+    } catch (e) {
+      console.error(e);
+      alert('수정 실패');
+    }
+  };
+
+  // ckno 기반 데이터 삭제
+  const handleDelete = async () => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    try {
+      await api.post('/delete', { ckno: form.ckno });
+      alert('삭제 완료');
+      resetFormExceptDate();         // ✅ pdate 유지, 나머지 초기화
+      fetchPaylist(form.pdate);      // ✅ 테이블 재조회
+    } catch (e) {
+      console.error(e);
+      alert('삭제 실패');
+    }
+  };
+  // 선택한 행의 데이터를 폼에 채워서 결국 수정 삭제 가능하게 하기 위헤
+  const handleSelectRow = (record) => {
+    setForm({ ...record });
+  };
+
+  // pdate 형식을 잘라내서 YYYY-MM-DD 형식으로 변환
+  const cleanDate = date => {
+    if (!date) return null;
+    return date.split('T')[0]; // '2025-06-06T00:00:00.000Z' → '2025-06-06'
+  };
+
+  // 재사용 가능한 초기화 함수
+  const resetFormExceptDate = () => {
+    const pdate = form.pdate;
+    setForm({
+      eid: '', name: '', jcode: '', jtitle: '', workl: '',
+      pdate, ckno: '', rtime: '', otime: '', dtime: '',
+      fw: '', sse: '', me: '', caw: '', cade: '',
+      adv: '', csp: '', dd: '', gross: '', tax: '', net: '', remark: ''
+    });
   };
 
   return (
@@ -204,15 +274,32 @@ const PayrollTaxPage = () => {
         <span className={styles.workValue}>{form.workl}</span>
       </div>
 
+
+      {/* ✅ Check No. 선택/수정/삭제 영역 추가 */}
+      <div className={`${styles.formRow} ${styles.small}`}>
+        <label style={{ minWidth: '6rem' }}>Check No.</label>
+        <input name="ckno" value={form.ckno} onChange={handleChange} style={{ width: '150px' }} />
+        <button className={styles.lightBlue} onClick={handleSelect}>선택</button>
+        <button className={styles.lightBlue} onClick={handleUpdate}>수정</button>
+        <button className={styles.lightBlue} onClick={handleDelete}>삭제</button>
+      </div>
+
       <h2>Pay Records (Selected Pay Date)</h2>
       <div className={`${styles.formRow} ${styles.small}`}>
         <label style={{ minWidth: '4rem' }}>날짜 선택</label>
-        <select className={styles.dateSelect} value={selectedDate} onChange={e => setSelectedDate(e.target.value)}>
+        <select
+          className={styles.dateSelect}
+          value={selectedDate}
+          onChange={e => setSelectedDate(e.target.value)}
+        >
           <option value="">:: Select Pay Date ::</option>
           {dates.map(d => (
-            <option key={d.pdate} value={d.pdate}>{d.pdate}</option>
+            <option key={d.pdate} value={d.pdate.split('T')[0]}>
+              {d.pdate.split('T')[0]}
+            </option>
           ))}
         </select>
+
       </div>
 
       <div className={styles.tableWrapper}>
@@ -228,7 +315,7 @@ const PayrollTaxPage = () => {
               <tr><td colSpan="19">선택한 날짜에 대한 기록이 없습니다.</td></tr>
             ) : (
               paylist.map(r => (
-                <tr key={r.ckno}>
+                <tr key={r.ckno} onClick={() => handleSelectRow(r)} style={{ cursor: 'pointer' }}>
                   <td>{r.pdate}</td><td>{r.eid}</td><td>{r.name}</td><td>{r.ckno}</td>
                   <td>{r.rtime}</td><td>{r.otime}</td><td>{r.dtime}</td>
                   <td>{r.fw}</td><td>{r.sse}</td><td>{r.me}</td>
