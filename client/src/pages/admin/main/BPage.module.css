@@ -1,0 +1,45 @@
+.page {
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 0.5rem;
+  /* div 로 둘러싸인 요소의 상하 padding */
+  font-size: 12px;
+  /* div 로 둘러싸인 text 의 폰트 크기 */
+}
+
+h2 {
+  margin: 0.5rem 0;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  background: #fff;
+}
+
+.formRow input,
+.formRow button {
+  flex: 1 1 120px;
+  height: 1.5rem;
+  line-height: 1rem;
+  font-size: 12px;
+  /* input box 와 button 안의 font 크기기*/
+  padding: 0 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.formRow.small {
+  font-size: 11px;
+  padding: 0.3rem;
+  /* input, button 의 바깥쪽과 외곽선 사이의 padding */
+  align-items: baseline;
+}

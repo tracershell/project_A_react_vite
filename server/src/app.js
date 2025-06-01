@@ -59,6 +59,7 @@ app.use('/api/log', require('./routes/log'));
 
 app.use('/api/admin/main/bpage', require('./routes/admin/main/bpage'));
 app.use('/api/admin/main/cpage', require('./routes/admin/main/cpage'));
+app.use('/api/admin/main/cpage', require('./routes/admin/main/cpage'));
 app.use('/api/admin/main/fpage', require('./routes/admin/main/fpage'));
 app.use('/api/admin/employees/employeeslistpage', require('./routes/admin/employees/employeeslistpage'));
 app.use('/api/admin/employees/employeesdata', require('./routes/admin/employees/employeesdatapage'));

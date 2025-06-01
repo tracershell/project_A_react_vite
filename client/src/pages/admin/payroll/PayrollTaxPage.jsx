@@ -164,32 +164,206 @@ const PayrollTaxPage = () => {
      </div>
 
 
+  {/* ========================== */}
+  {/* 핵심 입력 줄 (그룹별 박스 처리) */}
+  {/* ========================== */}
+  <div className={`${styles.formRow} ${styles.small}`} style={{ flexWrap: 'nowrap', overflowX: 'auto' }}>
+    {/* ┌────────────── 첫 번째 그룹 ──────────────┐ */}
+    <div className={styles.groupBox}>
+      <label>Check No.</label>
+      <input
+        name="ckno"
+        value={form.ckno}
+        onChange={handleChange}
+        ref={el => inputRefs.current[0] = el}
+        onKeyDown={e => handleKeyDown(e, 0)}
+      />
+    </div>
+    {/* └─────────────────────────────────────────┘ */}
 
-
-      {/* 핵심 입력 줄 */}
-      <div className={`${styles.formRow} ${styles.small}`} style={{ flexWrap:'wrap' }}>
-        {[
-          ['Check No.','ckno'], ['R.T','rtime'], ['O.T','otime'], ['D.T','dtime'],
-          ['FW','fw'], ['SSE','sse'], ['ME','me'],
-          ['CA-W','caw'], ['CA-de','cade'], ['ADV.','adv'], ['C.S','csp'], ['D.D','dd'],
-          ['Gross','gross'], ['Tax','tax'], ['Net','net']
-        ].map(([label,name],i) => (
-          <div key={name} className={styles.itemWrapper}>
-            <label>{label}</label>
-            <input
-              name={name}
-              value={form[name]}
-              onChange={handleChange}
-              readOnly={['gross','tax','net'].includes(name)}
-              ref={el => inputRefs.current[i] = el}
-              onKeyDown={e => handleKeyDown(e,i)}
-            />
-          </div>
-        ))}
-        <button className={styles.submitBtn} onClick={handleAdd}>
-          입력
-        </button>
+    {/* ┌────────────── 두 번째 그룹 ──────────────┐ */}
+    <div className={styles.groupBox}>
+      <div className={styles.groupRow}>
+        <div className={styles.itemWrapper}>
+          <label>R.T</label>
+          <input
+            name="rtime"
+            value={form.rtime}
+            onChange={handleChange}
+            ref={el => inputRefs.current[1] = el}
+            onKeyDown={e => handleKeyDown(e, 1)}
+          />
+        </div>
+        <div className={styles.itemWrapper}>
+          <label>O.T</label>
+          <input
+            name="otime"
+            value={form.otime}
+            onChange={handleChange}
+            ref={el => inputRefs.current[2] = el}
+            onKeyDown={e => handleKeyDown(e, 2)}
+          />
+        </div>
+        <div className={styles.itemWrapper}>
+          <label>D.T</label>
+          <input
+            name="dtime"
+            value={form.dtime}
+            onChange={handleChange}
+            ref={el => inputRefs.current[3] = el}
+            onKeyDown={e => handleKeyDown(e, 3)}
+          />
+        </div>
       </div>
+    </div>
+    {/* └─────────────────────────────────────────┘ */}
+
+    {/* ┌────────────── 세 번째 그룹 ──────────────┐ */}
+    <div className={styles.groupBox}>
+      <div className={styles.groupRow}>
+        <div className={styles.itemWrapper}>
+          <label>FW</label>
+          <input
+            name="fw"
+            value={form.fw}
+            onChange={handleChange}
+            ref={el => inputRefs.current[4] = el}
+            onKeyDown={e => handleKeyDown(e, 4)}
+          />
+        </div>
+        <div className={styles.itemWrapper}>
+          <label>SSE</label>
+          <input
+            name="sse"
+            value={form.sse}
+            onChange={handleChange}
+            ref={el => inputRefs.current[5] = el}
+            onKeyDown={e => handleKeyDown(e, 5)}
+          />
+        </div>
+        <div className={styles.itemWrapper}>
+          <label>ME</label>
+          <input
+            name="me"
+            value={form.me}
+            onChange={handleChange}
+            ref={el => inputRefs.current[6] = el}
+            onKeyDown={e => handleKeyDown(e, 6)}
+          />
+        </div>
+      </div>
+    </div>
+    {/* └─────────────────────────────────────────┘ */}
+
+    {/* ┌────────────── 네 번째 그룹 ──────────────┐ */}
+    <div className={styles.groupBox}>
+      <div className={styles.groupRow}>
+        <div className={styles.itemWrapper}>
+          <label>CA-W</label>
+          <input
+            name="caw"
+            value={form.caw}
+            onChange={handleChange}
+            ref={el => inputRefs.current[7] = el}
+            onKeyDown={e => handleKeyDown(e, 7)}
+          />
+        </div>
+        <div className={styles.itemWrapper}>
+          <label>CA-de</label>
+          <input
+            name="cade"
+            value={form.cade}
+            onChange={handleChange}
+            ref={el => inputRefs.current[8] = el}
+            onKeyDown={e => handleKeyDown(e, 8)}
+          />
+        </div>
+      </div>
+    </div>
+    {/* └─────────────────────────────────────────┘ */}
+
+    {/* ┌────────────── 다섯 번째 그룹 ─────────────┐ */}
+    <div className={styles.groupBox}>
+      <div className={styles.groupRow}>
+        <div className={styles.itemWrapper}>
+          <label>ADV.</label>
+          <input
+            name="adv"
+            value={form.adv}
+            onChange={handleChange}
+            ref={el => inputRefs.current[9] = el}
+            onKeyDown={e => handleKeyDown(e, 9)}
+          />
+        </div>
+        <div className={styles.itemWrapper}>
+          <label>C.S</label>
+          <input
+            name="csp"
+            value={form.csp}
+            onChange={handleChange}
+            ref={el => inputRefs.current[10] = el}
+            onKeyDown={e => handleKeyDown(e, 10)}
+          />
+        </div>
+        <div className={styles.itemWrapper}>
+          <label>D.D</label>
+          <input
+            name="dd"
+            value={form.dd}
+            onChange={handleChange}
+            ref={el => inputRefs.current[11] = el}
+            onKeyDown={e => handleKeyDown(e, 11)}
+          />
+        </div>
+      </div>
+    </div>
+    {/* └─────────────────────────────────────────┘ */}
+
+    {/* ┌────────────── 여섯 번째 그룹 (공백 영역) ──────────────┐ */}
+    <div className={styles.groupBoxEmpty} />
+    {/* └───────────────────────────────────────────────────────┘ */}
+
+    {/* ┌────────────── 일곱 번째 그룹 ─────────────┐ */}
+    <div className={styles.groupBox}>
+      <div className={styles.groupRow}>
+        <div className={styles.itemWrapper}>
+          <label>Gross</label>
+          <input
+            name="gross"
+            value={form.gross}
+            readOnly
+          />
+        </div>
+        <div className={styles.itemWrapper}>
+          <label>Tax</label>
+          <input
+            name="tax"
+            value={form.tax}
+            readOnly
+          />
+        </div>
+        <div className={styles.itemWrapper}>
+          <label>Net</label>
+          <input
+            name="net"
+            value={form.net}
+            readOnly
+          />
+        </div>
+      </div>
+    </div>
+    {/* └─────────────────────────────────────────┘ */}
+
+    {/* ┌────────────── “입력” 버튼 ─────────────┐ */}
+    <button className={styles.submitBtn} onClick={handleAdd}>
+      입력
+    </button>
+    {/* └─────────────────────────────────────────┘ */}
+  </div>
+
+
+
+
 
       {/* Remark + Work Info */}
       <div className={`${styles.formRow} ${styles.small}`}>

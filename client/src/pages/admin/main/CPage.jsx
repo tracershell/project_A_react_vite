@@ -1,102 +1,77 @@
-import React, { useState, useEffect } from 'react';
+// client/src/pages/admin/main/CPage.jsx
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import styles from './CPage.module.css';
 
 const CPage = () => {
-  const [dateValue, setDateValue] = useState('');
-  const [numberValue, setNumberValue] = useState('');
-  const [nameValue, setNameValue] = useState('');
-  const [dataList, setDataList] = useState([]);
-  const [editId, setEditId] = useState(null); // ✅ 수정할 데이터 ID
-
-  // ✅ 데이터 불러오기
-  const fetchData = async () => {
-    const res = await axios.get('/api/admin/main/cpage/list');
-    setDataList(res.data);
-  };
+  const [list, setList] = useState([]);
+  const [selectedId, setSelectedId] = useState('');
+  const [selected, setSelected] = useState({ date_value: '', number_value: '', name_value: '' });
 
   useEffect(() => {
-    fetchData();
+    fetchList();
   }, []);
 
-  // ✅ 저장 또는 수정 처리
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const fetchList = async () => {
     try {
-      if (editId) {
-        await axios.put(`/api/admin/main/cpage/update/${editId}`, {
-          date_value: dateValue,
-          number_value: numberValue,
-          name_value: nameValue,
-        });
-        alert('수정되었습니다.');
-      } else {
-        await axios.post('/api/admin/main/cpage/add', {
-          date_value: dateValue,
-          number_value: numberValue,
-          name_value: nameValue,
-        });
-        alert('저장되었습니다.');
-      }
-      setDateValue('');
-      setNumberValue('');
-      setNameValue('');
-      setEditId(null);
-      fetchData(); // ✅ 목록 새로고침
+      const res = await axios.get('/api/admin/main/cpage/list');
+      setList(res.data);
     } catch (err) {
-      console.error('저장/수정 실패:', err);
-      alert('저장/수정 실패');
+      console.error('불러오기 실패:', err);
     }
   };
 
-  // ✅ 수정 버튼 클릭 시 값 채우기
-  const handleEdit = (item) => {
-    setDateValue(item.date_value);
-    setNumberValue(item.number_value);
-    setNameValue(item.name_value);
-    setEditId(item.id);
+  const handleSelect = (e) => {
+    const id = e.target.value;
+    setSelectedId(id);
+    const entry = list.find(item => item.id == id);
+    if (entry) setSelected(entry);
   };
 
-  // ✅ 삭제 처리
-  const handleDelete = async (id) => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      try {
-        await axios.delete(`/api/admin/main/cpage/delete/${id}`);
-        alert('삭제되었습니다.');
-        fetchData(); // ✅ 삭제 후 목록 새로고침
-      } catch (err) {
-        console.error('삭제 실패:', err);
-        alert('삭제 실패');
-      }
+  const handleDelete = async () => {
+    if (!selectedId) return alert('선택된 항목이 없습니다.');
+    try {
+      await axios.delete(`/api/admin/main/cpage/delete/${selectedId}`);
+      alert('삭제되었습니다.');
+      fetchList();
+      setSelectedId('');
+      setSelected({ date_value: '', number_value: '', name_value: '' });
+    } catch (err) {
+      console.error('삭제 실패:', err);
+      alert('삭제 실패');
     }
   };
 
-  // ✅ 목록 강제 조회 버튼
-  const handleReload = () => {
-    fetchData();
+  const handleUpdate = async () => {
+    if (!selectedId) return alert('선택된 항목이 없습니다.');
+    try {
+      await axios.put(`/api/admin/main/cpage/update/${selectedId}`, selected);
+      alert('수정되었습니다.');
+      fetchList();
+    } catch (err) {
+      console.error('수정 실패:', err);
+      alert('수정 실패');
+    }
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>C Page - DB 입력/수정/삭제</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '300px' }}>
-        <input type="date" value={dateValue} onChange={(e) => setDateValue(e.target.value)} required />
-        <input type="number" value={numberValue} onChange={(e) => setNumberValue(e.target.value)} placeholder="숫자 입력" required />
-        <input type="text" value={nameValue} onChange={(e) => setNameValue(e.target.value)} placeholder="이름 입력" required />
-        <button type="submit">{editId ? '수정' : '저장'}</button>
-      </form>
-
-      <button onClick={handleReload} style={{ marginTop: '10px' }}>🔄 목록 새로고침</button>
-
-      <h3>데이터 목록</h3>
-      <ul>
-        {dataList.map((item) => (
-          <li key={item.id}>
-            {item.date_value} | {item.number_value} | {item.name_value}
-            <button onClick={() => handleEdit(item)} style={{ marginLeft: '10px' }}>수정</button>
-            <button onClick={() => handleDelete(item.id)} style={{ marginLeft: '5px' }}>삭제</button>
-          </li>
-        ))}
-      </ul>
+    <div className={styles.page}>
+      <h2>C Page - DB 선택</h2>
+      <div className={`${styles.formRow} ${styles.small}`}>
+        <select value={selectedId} onChange={handleSelect}>
+          <option value="">선택</option>
+          {list.map(item => (
+            <option key={item.id} value={item.id}>
+              {item.name_value} ({item.date_value})
+            </option>
+          ))}
+        </select>
+        <input type="date" value={selected.date_value} onChange={(e) => setSelected({ ...selected, date_value: e.target.value })} />
+        <input type="number" value={selected.number_value} onChange={(e) => setSelected({ ...selected, number_value: e.target.value })} />
+        <input type="text" value={selected.name_value} onChange={(e) => setSelected({ ...selected, name_value: e.target.value })} />
+        <button type="button" onClick={handleUpdate}>수정</button>
+        <button type="button" onClick={handleDelete}>삭제</button>
+      </div>
     </div>
   );
 };

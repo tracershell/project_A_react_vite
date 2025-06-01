@@ -1,0 +1,69 @@
+/* client/src/pages/admin/main/APage.module.css */
+
+.page {
+  /* <div className = {styles.page}> 에 적용되는 스타일 </div> */
+  background: #f5f7fa;
+  /* 엷은 회색의 background 색 </div>;   */
+  color: #333;
+  /* 진한 회색의 font 색 */
+  font-family: Arial, sans-serif;
+  /* Arial 폰트 사용,  */
+  padding: 0.5rem;
+  /* div 로 둘러싸인 요소의 상하 padding */
+  font-size: 12px;
+  /* div 로 둘러싸인 text 의 폰트 크기 */
+}
+
+h2 {
+  margin: 0.5rem 0;
+}
+
+.formRow {
+  display: flex;
+  /* 자식 요소들을 가로 방향으로 나열 */
+  flex-wrap: nowrap;
+  /* 줄바꿈 금지 (한 줄에 유지) */
+  align-items: center;
+  /* 세로 정렬: 가운데 정렬 */
+  gap: 0.5rem;
+  /* 자식 요소들 사이 간격 (약 8px) */
+  padding: 0.75rem;
+  /* 내부 여백: 모든 방향에 약 12px */
+  border: 1px solid #ccc;
+  /* 회색 테두리 */
+  border-radius: 4px;
+  /* 모서리 둥글게 */
+  margin-bottom: 12px;
+  /* 아래 여백 (다음 줄과 간격) */
+  background: #fff;
+  /* 배경 흰색 */
+}
+
+
+.formRow input,
+.formRow button {
+  flex: 1 1 120px;
+  /* 부족하면 늘어나고: 1, 공간이 부족하면 줄어듬 : 1, 자식 요소가 기본 값 최소 120px 너비를 가지도록 설정 */
+  height: 1.5rem;
+  /* input, button 요소의 높이: 약 24px */
+  line-height: 1rem;
+  /* 텍스트 줄간격 : 텍스트 요요소 이외의 text 의 줄 높이: 약 16px, 텍스트가 세로 중앙에 위치하도록 설정 */
+  font-size: 12px;
+  /* input box 와 button 안의 font 크기기*/
+  padding: 0 0.5rem;
+  /* 좌우 여백: 약 8px */
+  border: 1px solid #ccc;
+  /* 회색 테두리 */
+  border-radius: 4px;
+  /* input, button 요소의 테투리 모서리 둥글게 */
+  white-space: nowrap;
+  /* input, button 요소가 좁아도 줄바꿈 방지 */
+}
+
+
+.formRow.small {
+  font-size: 11px;
+  padding: 0.3rem;
+  /* input, button 의 바깥쪽과 외곽선 사이의 padding */
+  align-items: baseline;
+}
