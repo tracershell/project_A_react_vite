@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 
 const generatePayrollTaxPDF = async (res, records, info = {}) => {
-  const fontPath = path.join(__dirname, '../../../../public/fonts/NotoSansKR-Regular.ttf');
+  const fontPath = path.join(__dirname, '../../public/fonts/NotoSansKR-Regular.ttf');
   if (!fs.existsSync(fontPath)) return res.status(500).send('폰트 파일이 존재하지 않습니다.');
 
   const doc = new PDFDocument({ margin: 30, size: 'letter', layout: 'landscape' });

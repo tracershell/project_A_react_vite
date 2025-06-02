@@ -8,6 +8,7 @@
     "build": "tsc"
   },
   "dependencies": {
+    "@fast-csv/format": "^5.0.2",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "connect-redis": "^6.1.3",

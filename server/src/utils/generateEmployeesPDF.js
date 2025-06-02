@@ -58,13 +58,21 @@ const generateEmployeesPDF = async (res, records, title) => {
     ];
 
     row.forEach((cell, i) => {
-      doc.rect(x, y, colWidths[i], rowHeight).stroke();
-      doc.text(cell !== undefined && cell !== null ? String(cell) : '', x + 2, y + 5, {
-        width: colWidths[i] - 4,
-        align: 'center',
-      });
-      x += colWidths[i];
-    });
+  doc.rect(x, y, colWidths[i], rowHeight).stroke();
+  doc.text(
+    cell !== undefined && cell !== null
+      ? (['sick', 'vac', 'zip'].includes(headers[i].toLowerCase()) && !isNaN(cell)
+          ? Number(cell).toLocaleString('en-US', { minimumFractionDigits: 2 })
+          : String(cell))
+      : '',
+    x + 2,
+    y + 5,
+    { width: colWidths[i] - 4, align: 'center' }
+  );
+  x += colWidths[i];
+});
+
+
     y += rowHeight;
 
     // Check for page break

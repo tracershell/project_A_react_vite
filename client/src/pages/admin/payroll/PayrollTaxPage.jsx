@@ -27,6 +27,10 @@ const PayrollTaxPage = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const inputRefs = useRef([]);
 
+  const [startCheckNo, setStartCheckNo] = useState('');
+  const [endCheckNo, setEndCheckNo] = useState('');
+
+
   useEffect(() => {
     fetchEmployees();
     fetchDates();
@@ -185,6 +189,44 @@ const PayrollTaxPage = () => {
     });
   };
 
+    // 새로운 코드: PDF View 버튼 클릭 핸들러
+  const handlePdfView = () => {
+    if (!selectedDate) {
+      alert('먼저 날짜를 선택해 주세요.');
+      return;
+    }
+    // 브라우저에서 인라인으로 PDF 보기
+    window.open(
+      `/api/admin/payroll/payrolltax/pdf?pdate=${selectedDate}`,
+      '_blank'
+    );
+  };
+
+  // 새로운 코드: CSV Export 버튼 클릭 핸들러
+  const handleCsvExport = () => {
+    if (!selectedDate) {
+      alert('먼저 날짜를 선택해 주세요.');
+      return;
+    }
+    // 브라우저에서 CSV 다운로드
+    window.location.href = `/api/admin/payroll/payrolltax/csv-export?pdate=${selectedDate}`;
+  };
+
+  const handleFormButton = () => {
+  if (!startCheckNo || !endCheckNo) {
+    return alert(' 시작 및 끝의 Check No.를 모두 입력해 주세요');
+  }
+
+  // 여기에 form 관련 처리 로직 추가
+  console.log('Form Button Clicked:', { selectedDate, startCheckNo, endCheckNo });
+};
+
+const handleSearchAudit = () => {
+  // 예: '/admin/payroll/audit-search' 로 이동
+  navigate('/admin/payroll/audit-search');
+};
+
+
   return (
     <div className={styles.page}>
       <h2>Pay List</h2>
@@ -313,7 +355,57 @@ const PayrollTaxPage = () => {
           ))}
         </select>
 
+        {/* ▼ 추가: PDF 보기 버튼 */}
+        <button
+          className={styles.lightBlue}
+          onClick={handlePdfView}
+          style={{ marginLeft: '0.5rem' }}
+        >
+          PDF 보기
+        </button>
+
+        {/* ▼ 추가: CSV 저장 버튼 */}
+        <button
+          className={styles.lightBlue}
+          onClick={handleCsvExport}
+          style={{ marginLeft: '0.5rem' }}
+        >
+          CSV 저장
+        </button>
+
       </div>
+      <div className={styles.formRow}>
+  <label>Start Check No.</label>
+  <input
+    type="text"
+    value={startCheckNo}
+    onChange={e => setStartCheckNo(e.target.value)}
+    style={{ width: '100px', marginRight: '0.5rem' }}
+  />
+
+  <label>End Check No.</label>
+  <input
+    type="text"
+    value={endCheckNo}
+    onChange={e => setEndCheckNo(e.target.value)}
+    style={{ width: '100px', marginRight: '0.5rem' }}
+  />
+
+  <button className={styles.lightBlue} onClick={handleFormButton}>
+    Form
+  </button>
+</div>
+
+<div className={styles.formRow}> 
+  <button className={styles.lightBlue} onClick={handleSearchAudit} >
+  Search For Audit
+</button>
+
+</div>
+
+
+
+
 
       <div className={styles.tableWrapper}>
         <table className={styles.payTable}>

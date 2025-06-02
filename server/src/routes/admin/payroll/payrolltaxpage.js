@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
+const generatePayrollTaxPDF = require('../../../utils/generatePayrollTaxPDF');
+const generatePayrollTaxCSV = require('../../../utils/generatePayrollTaxCSV');
 
 // 파일 상단 또는 내부에 정의
 const cleanDate = (date) => {
@@ -149,26 +151,48 @@ router.post('/delete', async (req, res) => {
 });
 
 
-// ✅ 7. PDF Export Placeholder
-router.get('/pdf', (req, res) => {
-  // TODO: pdfkit 으로 구현 예정
-  res.send('PDF 출력 예정');
+
+// 8) PDF 보기 (인라인) 또는 PDF 다운로드
+//    요청 경로에 "/pdf" 혹은 "/pdfdownload" 가 포함되면 attachment/inline을 결정합니다.
+router.get(['/pdf', '/pdfdownload'], async (req, res) => {
+  const { pdate } = req.query;
+  if (!pdate) {
+    return res.status(400).send('pdate 쿼리 파라미터가 필요합니다.');
+  }
+
+  try {
+    // 해당 날짜의 모든 레코드를 조회
+    const [records] = await db.query(
+      'SELECT * FROM payroll_tax WHERE pdate = ? ORDER BY ckno ASC',
+      [pdate]
+    );
+    if (records.length === 0) {
+      return res.status(404).send('해당 날짜의 데이터가 없습니다.');
+    }
+
+    // PDF 생성 유틸 함수 호출
+    // generatePayrollTaxPDF(res, records, isDownload, pdate)
+    const isDownload = req.path.includes('download');
+    await generatePayrollTaxPDF(res, records, { pdate, isDownload });
+  } catch (err) {
+    console.error('PDF 생성 오류:', err);
+    res.status(500).send('PDF 생성 중 오류가 발생했습니다: ' + err.message);
+  }
 });
 
-
-router.get('/pdf', async (req, res) => {
+// 9) CSV 저장
+router.get('/csv-export', async (req, res) => {
   const { pdate } = req.query;
   if (!pdate) return res.status(400).send('pdate 쿼리 파라미터가 필요합니다.');
 
   try {
-    const [records] = await db.query('SELECT * FROM payroll_tax WHERE pdate = ? ORDER BY ckno', [pdate]);
-    if (records.length === 0) return res.status(404).send('해당 날짜의 데이터가 없습니다.');
+    const [records] = await db.query('SELECT * FROM payroll_tax WHERE pdate = ? ORDER BY id ASC', [pdate]);
+    if (!records.length) return res.status(404).send('해당 날짜 데이터 없음');
 
-    await generatePayrollTaxPDF(res, records, { pdate });
+    await generatePayrollTaxCSV(res, records);
   } catch (err) {
-    console.error('PDF 출력 오류:', err);
-    res.status(500).send('PDF 출력 중 오류가 발생했습니다.');
+    console.error('CSV 생성 오류:', err);
+    res.status(500).send('CSV 생성 중 오류가 발생했습니다: ' + err.message);
   }
 });
-
 module.exports = router;
