@@ -99,6 +99,13 @@ const PayrollTaxPage = () => {
   };
 
   const handleAdd = async () => {
+
+      // name 또는 pdate가 비어 있으면 메시지 출력 후 함수 종료
+  if (!form.name || !form.pdate) {
+    alert('필수 자료 넣어 주세요');
+    return;
+  }
+
     try {
       await api.post('/add', form);
       alert('입력 완료');
@@ -114,9 +121,14 @@ const PayrollTaxPage = () => {
 
       fetchPaylist(pdate);
     } catch (e) {
+      // ✅ 이 조건문으로 정확히 분기
+    if (e.response?.status === 400 && e.response?.data?.message) {
+      alert(e.response.data.message);  // 👉 중복 메시지 출력
+    } else {
       console.error(e);
       alert('저장 실패');
     }
+  }
   };
   // ckno 기반 데이터 선택
   const handleSelect = () => {
@@ -260,6 +272,7 @@ const PayrollTaxPage = () => {
         </div>
 
         <button className={styles.submitBtn} onClick={handleAdd}>입력</button>
+        <button className={styles.lightBlue} onClick={resetFormExceptDate}>초기화</button>
       </div>
 
       {/* Remark + Work Info */}

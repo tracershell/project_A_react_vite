@@ -3,6 +3,12 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
 
+// 파일 상단 또는 내부에 정의
+const cleanDate = (date) => {
+  if (!date) return null;
+  return date.split('T')[0]; // '2025-06-06T00:00:00.000Z' → '2025-06-06'
+};
+
 // 1) 직원 목록
 router.get('/employees', async (req, res) => {
   try {
@@ -64,8 +70,17 @@ router.get('/latest', async (req, res) => {
 
 // 5) 추가
 router.post('/add', async (req, res) => {
-  const b = req.body;
+  const b = req.body;  
   try {
+    // ✅ 1. Check 중복 여부
+    const [dupe] = await db.query(
+      'SELECT COUNT(*) AS count FROM payroll_tax WHERE ckno = ?',
+      [b.ckno]
+    );
+    if (dupe[0].count > 0) {
+      return res.status(400).json({ success: false, message: 'Check 번호가 중복되었습니다.' });
+    }
+    // ✅ 2. Insert 진행
     await db.query(
       `INSERT INTO payroll_tax (
          eid,name,jcode,jtitle,workl,
