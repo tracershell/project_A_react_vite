@@ -233,18 +233,39 @@ const PayrollTaxPage = () => {
     <div className={styles.page}>
       <h2>Pay List</h2>
 
-      <div className={`${styles.formRow} ${styles.small}`}>
-        <label>Name</label>
-        <select name="name" value={form.name} onChange={handleChange} className={styles.nameSelect}>
-          <option value="">-- Select Employee --</option>
-          {employees.map(e =>
-            <option key={e.eid} value={e.name}>{e.name}</option>
-          )}
-        </select>
-        <button className={styles.lightBlue} onClick={() => fetchPaylist(form.pdate)}>Reference</button>
-        <label>Pay Date</label>
-        <input type="date" name="pdate" value={form.pdate} onChange={handleChange} />
+      {/* Name + Select + Reference + PayDate → 한 줄에 두 개 box로 분리 */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '12px' }}>
+        {/* Box 1: Name + Select + Reference */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: '0 0 auto' }}>
+          <label>Name</label>
+          <select
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            className={styles.nameSelect}
+          >
+            <option value="">-- Select Employee --</option>
+            {employees.map(e => (
+              <option key={e.eid} value={e.name}>{e.name}</option>
+            ))}
+          </select>
+          <button className={styles.lightBlue} onClick={() => fetchPaylist(form.pdate)}>
+            Reference
+          </button>
+        </div>
+
+        {/* Box 2: Pay Date */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: '0 0 auto' }}>
+          <label>Pay Date</label>
+          <input
+            type="date"
+            name="pdate"
+            value={form.pdate}
+            onChange={handleChange}
+          />
+        </div>
       </div>
+
 
 
       <div className={styles.formRow}>
