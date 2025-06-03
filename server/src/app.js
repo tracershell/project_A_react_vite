@@ -77,6 +77,8 @@ app.use('/api/admin/import/extra', require('./routes/admin/import/importextraite
 
 app.use('/api/admin/payroll/payrolltax', require('./routes/admin/payroll/payrolltaxpage'));
 app.use('/api/admin/payroll/payrolltaxaudit', require('./routes/admin/payroll/payrolltaxauditpage'));
+app.use('/api/admin/payroll/payrollindividual', require('./routes/admin/payroll/payrollindividualpage'));
+app.use('/api/admin/payroll/payrollclassification', require('./routes/admin/payroll/payrollclassificationpage'));
 
 //app.use('/api/admin/import/extra/pdf', require('./routes/admin/import/import_extra_pdf'));
 

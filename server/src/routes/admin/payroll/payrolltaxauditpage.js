@@ -31,11 +31,25 @@ router.get(['/pdf', '/pdfdownload'], async (req, res) => {
   if (!start || !end) return res.status(400).send('시작일과 종료일이 필요합니다.');
 
   try {
-    const [records] = await db.query(
-      `SELECT eid, name, jtitle, jcode, gross, rtime, otime, dtime 
-       FROM payroll_tax WHERE pdate BETWEEN ? AND ? ORDER BY name`,
-      [start, end]
-    );
+    
+       // ✂ pdate, ckno, remark 원본에서 SELECT 하도록 추가
+   const [rows] = await db.query(
+     `SELECT eid,
+             name,
+             jtitle,
+             jcode,
+             gross,
+             rtime,
+             otime,
+             dtime,
+             pdate,      -- Pay Date
+             ckno,       -- Check No.
+             remark      -- Remark
+      FROM payroll_tax
+      WHERE pdate BETWEEN ? AND ?
+      ORDER BY name, pdate ASC`,
+     [start, end]
+   );
 
     const grouped = {};
     for (const row of records) {
@@ -54,11 +68,13 @@ router.get(['/pdf', '/pdfdownload'], async (req, res) => {
 // ✅ 3) 기간 내 payroll_tax 데이터를 그대로 반환하는 API
 router.get('/audit-result', async (req, res) => {
   const { start, end } = req.query;
-  if (!start || !end) return res.status(400).send('시작일과 종료일이 필요합니다.');
+  if (!start || !end) {
+  return res.status(400).json({ error: '시작일과 종료일이 필요합니다.' });
+}
 
   try {
     const [rows] = await db.query(
-      `SELECT eid, name, jtitle, jcode, gross, rtime, otime, dtime
+      `SELECT eid, name, jtitle, jcode, gross, rtime, otime, dtime, pdate, ckno, remark
        FROM payroll_tax
        WHERE pdate BETWEEN ? AND ?
        ORDER BY name`,

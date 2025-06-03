@@ -6,8 +6,8 @@ import PrivateRoute from '../PrivateRoute';
 
 import PayrollTaxPage from '../../pages/admin/payroll/PayrollTaxPage';
 import PayrollTaxAuditPage from '../../pages/admin/payroll/PayrollTaxAuditPage';
-
-
+import PayrollIndividualPage from '../../pages/admin/payroll/PayrollIndividualPage';
+import PayrollClassificationPage from '../../pages/admin/payroll/PayrollClassificationPage';
 
 const adminPayrollRoutes = [
   <Route
@@ -26,6 +26,26 @@ const adminPayrollRoutes = [
     element={
       <PrivateRoute role="admin">
         <PayrollTaxAuditPage />
+      </PrivateRoute>
+    }
+  />,
+
+  <Route
+    key="payroll-individual"
+    path="payroll/taxaudit/individual"
+    element={
+      <PrivateRoute role="admin">
+        <PayrollIndividualPage />
+      </PrivateRoute>
+    }
+  />,
+
+  <Route
+    key="payroll-classification"
+    path="payroll/taxaudit/classification"
+    element={
+      <PrivateRoute role="admin">
+        <PayrollClassificationPage />
       </PrivateRoute>
     }
   />,
