@@ -1,3 +1,5 @@
+// client/src/pages/admin/payroll/PayrollTaxPage.jsx
+
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import styles from './PayrollTaxPage.module.css';
@@ -223,7 +225,7 @@ const PayrollTaxPage = () => {
 
   const handleSearchAudit = () => {
     // 예: '/admin/payroll/audit-search' 로 이동
-    navigate('/admin/payroll/audit-search');
+    navigate('/admin/payroll/taxaudit/audit-search');
   };
 
 
