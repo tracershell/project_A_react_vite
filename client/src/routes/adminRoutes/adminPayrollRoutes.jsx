@@ -22,7 +22,7 @@ const adminPayrollRoutes = [
 
   <Route
     key="payroll-taxaudit"
-    path="payroll/taxaudit"
+    path="payroll/taxaudit/audit-search"
     element={
       <PrivateRoute role="admin">
         <PayrollTaxAuditPage />

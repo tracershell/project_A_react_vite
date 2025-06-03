@@ -4,6 +4,7 @@ const router = express.Router();
 const db = require('../../../lib/db');
 const generatePayrollTaxPDF = require('../../../utils/generatePayrollTaxPDF');
 const generatePayrollTaxCSV = require('../../../utils/generatePayrollTaxCSV');
+const generatePayrollFormPDF = require('../../../utils/generatePayrollFormPDF');
 
 // 파일 상단 또는 내부에 정의
 const cleanDate = (date) => {
@@ -195,4 +196,24 @@ router.get('/csv-export', async (req, res) => {
     res.status(500).send('CSV 생성 중 오류가 발생했습니다: ' + err.message);
   }
 });
+
+router.get('/formpdf', async (req, res) => {
+  const { start, end } = req.query;
+  if (!start || !end) return res.status(400).send('Check No 범위가 필요합니다.');
+
+  try {
+    const [records] = await db.query(
+      'SELECT ckno, pdate, name, gross FROM payroll_tax WHERE CAST(ckno AS UNSIGNED) >= ? AND CAST(ckno AS UNSIGNED) <= ? ORDER BY CAST(ckno AS UNSIGNED) ASC',
+      [start, end]
+    );
+
+    await generatePayrollFormPDF(res, records, { startCkno: start, endCkno: end });
+  } catch (err) {
+    console.error('Form PDF 생성 오류:', err);
+    res.status(500).send('PDF 생성 오류: ' + err.message);
+  }
+});
+
+
+
 module.exports = router;

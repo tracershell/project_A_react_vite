@@ -51,4 +51,25 @@ router.get(['/pdf', '/pdfdownload'], async (req, res) => {
   }
 });
 
+// ✅ 3) 기간 내 payroll_tax 데이터를 그대로 반환하는 API
+router.get('/audit-result', async (req, res) => {
+  const { start, end } = req.query;
+  if (!start || !end) return res.status(400).send('시작일과 종료일이 필요합니다.');
+
+  try {
+    const [rows] = await db.query(
+      `SELECT eid, name, jtitle, jcode, gross, rtime, otime, dtime
+       FROM payroll_tax
+       WHERE pdate BETWEEN ? AND ?
+       ORDER BY name`,
+      [start, end]
+    );
+    res.json(rows); // ✅ 프론트로 전달
+  } catch (e) {
+    console.error('기간별 데이터 조회 오류:', e);
+    res.status(500).json({ error: '조회 실패' });
+  }
+});
+
+
 module.exports = router;

@@ -214,19 +214,26 @@ const PayrollTaxPage = () => {
     window.location.href = `/api/admin/payroll/payrolltax/csv-export?pdate=${selectedDate}`;
   };
 
-  const handleFormButton = () => {
-    if (!startCheckNo || !endCheckNo) {
-      return alert(' 시작 및 끝의 Check No.를 모두 입력해 주세요');
-    }
-
-    // 여기에 form 관련 처리 로직 추가
-    console.log('Form Button Clicked:', { selectedDate, startCheckNo, endCheckNo });
-  };
+  
 
   const handleSearchAudit = () => {
-    // 예: '/admin/payroll/audit-search' 로 이동
+    // 예: '/admin/payroll/taxaudit/audit-search' 로 이동
     navigate('/admin/payroll/taxaudit/audit-search');
   };
+
+const handleFormButton = () => {
+  if (!startCheckNo || !endCheckNo) {
+    return alert(' 시작 및 끝의 Check No.를 모두 입력해 주세요');
+  }
+
+  // ✅ 포맷 적용된 Form PDF 출력
+  window.open(
+    `/api/admin/payroll/payrolltax/formpdf?start=${startCheckNo}&end=${endCheckNo}`,
+    '_blank'
+  );
+};
+
+
 
 
   return (

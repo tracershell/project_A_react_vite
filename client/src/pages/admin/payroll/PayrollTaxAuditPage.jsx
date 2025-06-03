@@ -34,8 +34,8 @@ const PayrollTaxAuditPage = () => {
         <label>End</label>
         <input type="date" value={end} onChange={e => setEnd(e.target.value)} />
         <button className={styles.lightBlue} onClick={fetchAudit}>🔍 검색</button>
-        <button className={styles.lightBlue} onClick={() => navigate('/admin/payroll/payrolltax')}>🔙 돌아가기</button>
-
+        <button className={styles.lightBlue} onClick={() => navigate(-1)}>🔙 돌아가기</button>
+        
         <form action="/api/admin/payroll/payrolltaxaudit/pdf" method="get" target="_blank" style={{ display: 'inline' }}>
           <input type="hidden" name="start" value={start} />
           <input type="hidden" name="end" value={end} />
