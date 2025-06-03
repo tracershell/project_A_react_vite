@@ -104,11 +104,11 @@ const PayrollTaxPage = () => {
 
   const handleAdd = async () => {
 
-      // name 또는 pdate가 비어 있으면 메시지 출력 후 함수 종료
-  if (!form.name || !form.pdate) {
-    alert('필수 자료 넣어 주세요');
-    return;
-  }
+    // name 또는 pdate가 비어 있으면 메시지 출력 후 함수 종료
+    if (!form.name || !form.pdate) {
+      alert('필수 자료 넣어 주세요');
+      return;
+    }
 
     try {
       await api.post('/add', form);
@@ -126,13 +126,13 @@ const PayrollTaxPage = () => {
       fetchPaylist(pdate);
     } catch (e) {
       // ✅ 이 조건문으로 정확히 분기
-    if (e.response?.status === 400 && e.response?.data?.message) {
-      alert(e.response.data.message);  // 👉 중복 메시지 출력
-    } else {
-      console.error(e);
-      alert('저장 실패');
+      if (e.response?.status === 400 && e.response?.data?.message) {
+        alert(e.response.data.message);  // 👉 중복 메시지 출력
+      } else {
+        console.error(e);
+        alert('저장 실패');
+      }
     }
-  }
   };
   // ckno 기반 데이터 선택
   const handleSelect = () => {
@@ -189,7 +189,7 @@ const PayrollTaxPage = () => {
     });
   };
 
-    // 새로운 코드: PDF View 버튼 클릭 핸들러
+  // 새로운 코드: PDF View 버튼 클릭 핸들러
   const handlePdfView = () => {
     if (!selectedDate) {
       alert('먼저 날짜를 선택해 주세요.');
@@ -213,18 +213,18 @@ const PayrollTaxPage = () => {
   };
 
   const handleFormButton = () => {
-  if (!startCheckNo || !endCheckNo) {
-    return alert(' 시작 및 끝의 Check No.를 모두 입력해 주세요');
-  }
+    if (!startCheckNo || !endCheckNo) {
+      return alert(' 시작 및 끝의 Check No.를 모두 입력해 주세요');
+    }
 
-  // 여기에 form 관련 처리 로직 추가
-  console.log('Form Button Clicked:', { selectedDate, startCheckNo, endCheckNo });
-};
+    // 여기에 form 관련 처리 로직 추가
+    console.log('Form Button Clicked:', { selectedDate, startCheckNo, endCheckNo });
+  };
 
-const handleSearchAudit = () => {
-  // 예: '/admin/payroll/audit-search' 로 이동
-  navigate('/admin/payroll/audit-search');
-};
+  const handleSearchAudit = () => {
+    // 예: '/admin/payroll/audit-search' 로 이동
+    navigate('/admin/payroll/audit-search');
+  };
 
 
   return (
@@ -240,12 +240,10 @@ const handleSearchAudit = () => {
           )}
         </select>
         <button className={styles.lightBlue} onClick={() => fetchPaylist(form.pdate)}>Reference</button>
-      </div>
-
-      <div className={`${styles.formRow} ${styles.small}`}>
         <label>Pay Date</label>
         <input type="date" name="pdate" value={form.pdate} onChange={handleChange} />
       </div>
+
 
       <div className={styles.formRow}>
         <div className={`${styles.groupBox} ${styles.groupCheck}`}>
@@ -318,94 +316,91 @@ const handleSearchAudit = () => {
       </div>
 
       {/* Remark + Work Info */}
-      <div className={`${styles.formRow} ${styles.small}`}>
-        <label>Remark</label>
-        <input name="remark" value={form.remark} onChange={handleChange} className={styles.remarkInput} />
-        <span className={styles.workLabel}>W.code:</span>
-        <span className={styles.workValue}>{form.jcode}</span>
-        <span className={styles.workLabel}>W.title:</span>
-        <span className={styles.workValue}>{form.jtitle}</span>
-        <span className={styles.workLabel}>W.location:</span>
-        <span className={styles.workValue}>{form.workl}</span>
-      </div>
+      {/* ✅ Remark + Check No. 두 줄 → 한 줄에 나란히 */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '12px' }}>
+        {/* Box 1: Remark + W.code 등 */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: 1 }}>
+          <label>Remark</label>
+          <input
+            name="remark"
+            value={form.remark}
+            onChange={handleChange}
+            className={styles.remarkInput}
+          />
+          <span className={styles.workLabel}>W.code:</span>
+          <span className={styles.workValue}>{form.jcode}</span>
+          <span className={styles.workLabel}>W.title:</span>
+          <span className={styles.workValue}>{form.jtitle}</span>
+          <span className={styles.workLabel}>W.location:</span>
+          <span className={styles.workValue}>{form.workl}</span>
+        </div>
 
-
-      {/* ✅ Check No. 선택/수정/삭제 영역 추가 */}
-      <div className={`${styles.formRow} ${styles.small}`}>
-        <label style={{ minWidth: '6rem' }}>Check No.</label>
-        <input name="ckno" value={form.ckno} onChange={handleChange} style={{ width: '150px' }} />
-        <button className={styles.lightBlue} onClick={handleSelect}>선택</button>
-        <button className={styles.lightBlue} onClick={handleUpdate}>수정</button>
-        <button className={styles.lightBlue} onClick={handleDelete}>삭제</button>
+        {/* Box 2: Check No. 입력 + 버튼 */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: '0 0 auto' }}>
+          <label style={{ minWidth: '6rem' }}>Check No.</label>
+          <input
+            name="ckno"
+            value={form.ckno}
+            onChange={handleChange}
+            style={{ width: '150px' }}
+          />
+          <button className={styles.lightBlue} onClick={handleSelect}>선택</button>
+          <button className={styles.lightBlue} onClick={handleUpdate}>수정</button>
+          <button className={styles.lightBlue} onClick={handleDelete}>삭제</button>
+        </div>
       </div>
 
       <h2>Pay Records (Selected Pay Date)</h2>
-      <div className={`${styles.formRow} ${styles.small}`}>
-        <label style={{ minWidth: '4rem' }}>날짜 선택</label>
-        <select
-          className={styles.dateSelect}
-          value={selectedDate}
-          onChange={e => setSelectedDate(e.target.value)}
-        >
-          <option value="">:: Select Pay Date ::</option>
-          {dates.map(d => (
-            <option key={d.pdate} value={d.pdate.split('T')[0]}>
-              {d.pdate.split('T')[0]}
-            </option>
-          ))}
-        </select>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '12px' }}>
+        {/* Box 1: 날짜 선택 + PDF + CSV */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: 1 }}>
+          <label style={{ minWidth: '4rem' }}>날짜 선택</label>
+          <select
+            className={styles.dateSelect}
+            value={selectedDate}
+            onChange={e => setSelectedDate(e.target.value)}
+          >
+            <option value="">:: Select Pay Date ::</option>
+            {dates.map(d => (
+              <option key={d.pdate} value={d.pdate.split('T')[0]}>
+                {d.pdate.split('T')[0]}
+              </option>
+            ))}
+          </select>
+          <button className={styles.lightBlue} onClick={handlePdfView}>PDF 보기</button>
+          <button className={styles.lightBlue} onClick={handleCsvExport}>CSV 저장</button>
+        </div>
 
-        {/* ▼ 추가: PDF 보기 버튼 */}
-        <button
-          className={styles.lightBlue}
-          onClick={handlePdfView}
-          style={{ marginLeft: '0.5rem' }}
-        >
-          PDF 보기
-        </button>
+        {/* Box 2: Start Check No / End Check No / Form */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: 1.2 }}>
+          <label style={{ whiteSpace: 'nowrap', minWidth: '7rem' }}>Start Check No.</label>
+          <input
+            type="text"
+            value={startCheckNo}
+            onChange={e => setStartCheckNo(e.target.value)}
+            style={{ width: '100px', marginRight: '0.5rem' }}
+          />
 
-        {/* ▼ 추가: CSV 저장 버튼 */}
-        <button
-          className={styles.lightBlue}
-          onClick={handleCsvExport}
-          style={{ marginLeft: '0.5rem' }}
-        >
-          CSV 저장
-        </button>
+          <label style={{ whiteSpace: 'nowrap', minWidth: '7rem' }}>End Check No.</label>
+          <input
+            type="text"
+            value={endCheckNo}
+            onChange={e => setEndCheckNo(e.target.value)}
+            style={{ width: '100px', marginRight: '0.5rem' }}
+          />
 
+          <button className={styles.lightBlue} onClick={handleFormButton}>
+            Form
+          </button>
+        </div>
+
+        {/* Box 3: Search For Audit */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: '0 0 auto' }}>
+          <button className={styles.lightBlue} onClick={handleSearchAudit}>
+            Search For Audit
+          </button>
+        </div>
       </div>
-      <div className={styles.formRow}>
-  <label>Start Check No.</label>
-  <input
-    type="text"
-    value={startCheckNo}
-    onChange={e => setStartCheckNo(e.target.value)}
-    style={{ width: '100px', marginRight: '0.5rem' }}
-  />
-
-  <label>End Check No.</label>
-  <input
-    type="text"
-    value={endCheckNo}
-    onChange={e => setEndCheckNo(e.target.value)}
-    style={{ width: '100px', marginRight: '0.5rem' }}
-  />
-
-  <button className={styles.lightBlue} onClick={handleFormButton}>
-    Form
-  </button>
-</div>
-
-<div className={styles.formRow}> 
-  <button className={styles.lightBlue} onClick={handleSearchAudit} >
-  Search For Audit
-</button>
-
-</div>
-
-
-
-
 
       <div className={styles.tableWrapper}>
         <table className={styles.payTable}>

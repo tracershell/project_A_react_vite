@@ -109,6 +109,84 @@ h2 {
   margin-bottom: 0;
 }
 
+.formRow button.submitBtn {
+  align-self: center;
+  /* ✅ 수직 가운데 정렬 */
+  margin: 0;
+}
+
+.formMultiRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+.formMultiRow .small {
+  font-size: 11px;
+  padding: 0.75rem 0.75rem 0.75rem;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.formMultiRow .small label {
+  width: 3rem;
+  /* 👈 예시: 라벨 넓이 고정 */
+  text-align: right;
+  margin-right: 0.5rem;
+}
+
+.formMultiRow .small select,
+.formMultiRow .small button {
+  flex: 0 0 auto;
+  vertical-align: middle;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.formMultiRow select,
+.formMultiRow input,
+.formMultiRow button {
+  height: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.formMultiRow select[name="name"] {
+  min-width: 5rem;
+  /* Name 선택 box size */
+}
+
+.formMultiRow button {
+  border: 1px solid #066da5;
+  background: #fff;
+  cursor: pointer;
+  padding: 0 0.5rem;
+}
+
+.formMultiRow Group {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0;
+}
+
+.formMultiRow button.submitBtn {
+  align-self: center;
+  /* ✅ 수직 가운데 정렬 */
+  margin: 0;
+}
+
 .itemWrapper {
   display: flex;
   flex-direction: column;
@@ -226,11 +304,6 @@ h2 {
   cursor: pointer;
 }
 
-.formRow button.submitBtn {
-  align-self: center;
-  /* ✅ 수직 가운데 정렬 */
-  margin: 0;
-}
 
 .submitBtn:hover {
   background: #e6f0ff;
@@ -276,7 +349,7 @@ h2 {
 
 .workValue {
   display: inline-block;
-  width: 80px;
+  width: 160px;
   color: #066da5;
   font-weight: bold;
   font-size: 11px;
@@ -285,4 +358,8 @@ h2 {
 .dateSelect {
   width: 10rem;
   min-width: 8rem;
+}
+
+.nowrapLabel {
+  white-space: nowrap;
 }
