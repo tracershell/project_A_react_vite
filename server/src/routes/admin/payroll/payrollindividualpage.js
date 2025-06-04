@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
 const generateAuditIndividualPDF = require('../../../utils/generateAuditIndividualPDF'); // ✅ 상단에 추가
-
+const generatePayrollIndividualCSV = require('../../../utils/generatePayrollIndividualCSV'); 
 
 // ✅ 날짜 형식 정리 함수
 const cleanDate = (date) => {
@@ -59,6 +59,38 @@ router.post('/pdf/individual', async (req, res) => {
   } catch (err) {
     console.error('개인별 PDF 생성 오류:', err);
     res.status(500).send('PDF 생성 중 오류 발생');
+  }
+});
+
+
+ // CSV 저장용 라우트 추가
+ // GET /api/admin/payroll/payrollindividual/csv?start=YYYY-MM-DD&end=YYYY-MM-DD
+ 
+router.get('/csv', async (req, res) => {
+  const { start, end } = req.query;
+  if (!start || !end) {
+    return res.status(400).send('시작일(start)과 종료일(end) 쿼리가 필요합니다.');
+  }
+
+  try {
+    // 1) 기간 내 payrecords 모두 조회
+    const [rows] = await db.query(
+      `SELECT eid, name, jtitle, jcode, gross, rtime, otime, dtime, pdate, ckno, remark
+       FROM payroll_tax
+       WHERE pdate BETWEEN ? AND ?
+       ORDER BY name, pdate ASC`,
+      [start, end]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).send('해당 기간에 데이터가 없습니다.');
+    }
+
+    // 2) CSV 생성 함수에 넘기기
+    await generatePayrollIndividualCSV(res, rows);
+  } catch (err) {
+    console.error('개인별 CSV 생성 오류:', err);
+    res.status(500).send('CSV 생성 중 오류가 발생했습니다: ' + err.message);
   }
 });
 

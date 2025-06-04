@@ -66,6 +66,17 @@ const handleViewPDF = async () => {
   }
 };
 
+  // ✅ CSV 다운로드 함수형(onClick) 방식
+  const handleCsvDownload = () => {
+    if (!start || !end) {
+      alert('시작일과 종료일을 입력한 후에 시도해주세요.');
+      return;
+    }
+    // 새 탭/창으로 CSV 엔드포인트를 호출 → 다운로드 시작
+    window.open(`/api/admin/payroll/payrollindividual/csv?start=${start}&end=${end}`, '_blank');
+  };
+
+
   return (
     <div className={styles.page}>
       <h2>View by Individual</h2>
@@ -88,11 +99,15 @@ const handleViewPDF = async () => {
        >
          📄 PDF 보기
        </button>
-        <form action="/api/admin/payroll/payrolltaxaudit/pdfdownload" method="get" target="_blank" style={{ display: 'inline', marginLeft: '5px' }}>
-          <input type="hidden" name="start" value={start} />
-          <input type="hidden" name="end" value={end} />
-          <button type="submit" className={styles.lightBlue}>💾 CSV 저장</button>
-        </form>
+        {/* ✅ CSV 저장을 함수형(onClick)으로 처리 */}
+        <button
+          type="button"
+          className={styles.lightBlue}
+          onClick={handleCsvDownload}  // 함수 호출
+          style={{ display: 'inline', marginLeft: '5px' }}
+        >
+          💾 CSV 저장
+        </button>
       </div>
 
       {/* 개인별 테이블 */}
