@@ -21,7 +21,7 @@ const generateAuditIndividualPDF = async (res, payrecords, start, end) => {
   doc.pipe(res);
 
   // 헤더 타이틀
-  doc.fontSize(12).text('Payroll Audit by Individual', { align: 'center' });
+  doc.fontSize(12).text('Wages by Individual', { align: 'center' });
   doc.moveDown(0.5);
   doc.fontSize(8).text(`Period: ${start} ~ ${end}`, { align: 'left' });
   doc.moveDown(1);

@@ -46,6 +46,31 @@ const PayrollClassificationPage = () => {
   }
 };
 
+// “PDF 보기” 버튼 클릭 시: POST로 payrecords, start, end 전송 → blob 응답 → 새 탭에 표시
+  const handleViewPDF = async () => {
+    try {
+      const payload = { start, end, payrecords };
+      const res = await axios.post(
+        '/api/admin/payroll/payrollclassification/pdf/classification',
+        payload,
+        { responseType: 'blob' }
+      );
+      const pdfUrl = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+      window.open(pdfUrl);
+    } catch (err) {
+      alert('PDF 생성 실패: ' + (err.response?.data || '오류'));
+    }
+  };
+
+  // “CSV 저장” 버튼 클릭 시: GET → 새 탭/창에서 CSV 요청
+  const handleCsvDownload = () => {
+    if (!start || !end) {
+      alert('시작일과 종료일을 입력한 후에 시도해주세요.');
+      return;
+    }
+    window.open(`/api/admin/payroll/payrollclassification/csv?start=${start}&end=${end}`, '_blank');
+  };
+
   return (
     <div className={styles.page}>
       <h2>View by Classification</h2>
@@ -57,6 +82,22 @@ const PayrollClassificationPage = () => {
         <input type="date" value={end} onChange={e => setEnd(e.target.value)} />
         <button className={styles.lightBlue} onClick={fetchAudit}>🔍 검색</button>
         <button className={styles.lightBlue} onClick={() => navigate(-1)}>🔙 돌아가기</button>
+        <button
+          type="button"
+          className={styles.lightBlue}
+          onClick={handleViewPDF}
+          style={{ display: 'inline' }}
+        >
+          📄 PDF 보기
+        </button>
+        <button
+          type="button"
+          className={styles.lightBlue}
+          onClick={handleCsvDownload}
+          style={{ display: 'inline', marginLeft: '5px' }}
+        >
+          💾 CSV 저장
+        </button>
       </div>
 
       <div className={styles.groupBox} style={{ border: '1px solid #ccc', padding: '0.75rem 1rem', marginBottom: '1rem' }}>
