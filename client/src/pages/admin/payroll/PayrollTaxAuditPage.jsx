@@ -15,61 +15,90 @@ const PayrollTaxAuditPage = () => {
 
 
   const fetchAudit = async () => {
-  try {
-    const { data } = await axios.get('/api/admin/payroll/payrolltaxaudit/audit-result', {
-      params: { start, end }
-    });
-    console.log("✅ payrecords 결과:", data);
-    setPayrecords(data);
-  } catch (err) {
-    const msg = err.response?.data?.error || '알 수 없는 오류가 발생했습니다.';
-    alert(`⚠️ ${msg}`);
-  }
-};
+    try {
+      const { data } = await axios.get('/api/admin/payroll/payrolltaxaudit/audit-result', {
+        params: { start, end }
+      });
+      console.log("✅ payrecords 결과:", data);
+      setPayrecords(data);
+    } catch (err) {
+      const msg = err.response?.data?.error || '알 수 없는 오류가 발생했습니다.';
+      alert(`⚠️ ${msg}`);
+    }
+  };
+
+
+  const handleAllPdf = async () => {
+    if (!start || !end) {
+      alert('시작일과 종료일을 입력해주세요.');
+      return;
+    }
+
+    try {
+      const payload = { start, end };  // ✅ 날짜 전송
+
+      const response = await axios.post(
+        '/api/admin/payroll/payrolltaxaudit/pdf/all',  // ✅ 기존 GET → POST로 변경
+        payload,
+        { responseType: 'blob' }                        // ✅ PDF 파일로 응답
+      );
+
+      const pdfUrl = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      window.open(pdfUrl);  // ✅ 새 창에서 PDF 열기
+
+    } catch (err) {
+      const msg = err.response?.data?.error || 'PDF 생성 오류';
+      alert(`⚠️ ${msg}`);
+    }
+  };
+
 
   return (
     <div className={styles.page}>
       <h2>Payroll Tax Audit</h2>
 
       {/* 검색 조건 입력 */}
-      <div className={`${styles.formRow} ${styles.small}`}>
-        <label>Start</label>
-        <input type="date" value={start} onChange={e => setStart(e.target.value)} />
-        <label>End</label>
-        <input type="date" value={end} onChange={e => setEnd(e.target.value)} />
-        <button className={styles.lightBlue} onClick={fetchAudit}>🔍 검색</button>
-        <button className={styles.lightBlue} onClick={() => navigate(-1)}>🔙 돌아가기</button>
-        <button
-  className={styles.lightBlue}
-  onClick={() =>
-    navigate('/admin/payroll/taxaudit/individual', {
-      state: { start, end, payrecords } // ✅ 상태로 start/end/payrecords 전달
-    })
-  }
->
-  👤 개인별 보기
-</button>
-<button
-  className={styles.lightBlue}
-  onClick={() =>
-    navigate('/admin/payroll/taxaudit/classification', {
-      state: { start, end, payrecords }
-    })
-  }
->
-  🗂️ 분류별 보기
-</button>
-        
-        <form action="/api/admin/payroll/payrolltaxaudit/pdf" method="get" target="_blank" style={{ display: 'inline' }}>
-          <input type="hidden" name="start" value={start} />
-          <input type="hidden" name="end" value={end} />
-          <button type="submit" className={styles.lightBlue}>📄 AUDIT 보기</button>
-        </form>
-        <form action="/api/admin/payroll/payrolltaxaudit/pdfdownload" method="get" target="_blank" style={{ display: 'inline', marginLeft: '5px' }}>
-          <input type="hidden" name="start" value={start} />
-          <input type="hidden" name="end" value={end} />
-          <button type="submit" className={styles.lightBlue}>💾 CSV 저장</button>
-        </form>
+      {/* 한 줄에 두 개의 border box 구성 */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '12px' }}>
+        {/* Box 1: 날짜 선택 + 검색 + 돌아가기 + PDF + CSV */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: 1 }}>
+          <label>Start</label>
+          <input type="date" value={start} onChange={e => setStart(e.target.value)} />
+          <label>End</label>
+          <input type="date" value={end} onChange={e => setEnd(e.target.value)} />
+          <button className={styles.lightBlue} onClick={fetchAudit}>🔍 검색</button>
+          <button className={styles.lightBlue} onClick={() => navigate(-1)}>🔙 돌아가기</button>
+          <button className={styles.lightBlue} onClick={handleAllPdf}>📄 전체 PDF</button>
+          <form action="/api/admin/payroll/payrolltaxaudit/pdfdownload" method="get" target="_blank" style={{ display: 'inline', marginLeft: '5px' }}>
+            <input type="hidden" name="start" value={start} />
+            <input type="hidden" name="end" value={end} />
+            <button type="submit" className={styles.lightBlue}>💾 CSV 저장</button>
+          </form>
+        </div>
+
+        {/* Box 2: 개인별 보기 + 분류별 보기 */}
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: '0 0 auto' }}>
+          <button
+            className={styles.lightBlue}
+            onClick={() =>
+              navigate('/admin/payroll/taxaudit/individual', {
+                state: { start, end, payrecords }
+              })
+            }
+          >
+            👤 개인별 보기
+          </button>
+          <button
+            className={styles.lightBlue}
+            onClick={() =>
+              navigate('/admin/payroll/taxaudit/classification', {
+                state: { start, end, payrecords }
+              })
+            }
+          >
+            🗂️ 분류별 보기
+          </button>
+        </div>
       </div>
 
       {/* 결과 테이블 */}
@@ -77,7 +106,7 @@ const PayrollTaxAuditPage = () => {
         <table className={styles.payTable}>
           <thead>
             <tr>
-             {['Pay Date', 'Check No', 'EID', 'Name', 'J.Title', 'J.Code', 'Wages', 'R.Time', 'O.Time', 'D.Time', 'Remark'].map(h => (
+              {['Pay Date', 'Check No', 'EID', 'Name', 'J.Title', 'J.Code', 'Wages', 'R.Time', 'O.Time', 'D.Time', 'Remark'].map(h => (
                 <th key={h}>{h}</th>
               ))}
             </tr>
