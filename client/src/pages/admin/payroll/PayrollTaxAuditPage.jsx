@@ -138,10 +138,30 @@ const totals = useMemo(() => {
                   <td>{r.name}</td>
                   <td>{r.jtitle}</td>
                   <td>{r.jcode}</td>
-                  <td>{Number(r.gross).toFixed(2)}</td>
-                  <td>{Number(r.rtime).toFixed(2)}</td>
-                  <td>{Number(r.otime).toFixed(2)}</td>
-                  <td>{Number(r.dtime).toFixed(2)}</td>
+                  <td>
+                    {Number(r.gross).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.rtime).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.otime).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.dtime).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
                   <td>{r.remark}</td>
                 </tr>
               ))
@@ -150,10 +170,30 @@ const totals = useMemo(() => {
           <tfoot>
   <tr>
     <td colSpan="6" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
-    <td>{totals.gross.toFixed(2)}</td>     {/* ✅ Wages 합계 */}
-    <td>{totals.rtime.toFixed(2)}</td>     {/* ✅ R.Time 합계 */}
-    <td>{totals.otime.toFixed(2)}</td>     {/* ✅ O.Time 합계 */}
-    <td>{totals.dtime.toFixed(2)}</td>     {/* ✅ D.Time 합계 */}
+    <td>
+      {totals.gross.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td>
+      {totals.rtime.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td>
+      {totals.otime.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td>
+      {totals.dtime.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
     <td></td>
   </tr>
 </tfoot>

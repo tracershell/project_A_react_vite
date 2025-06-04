@@ -477,20 +477,90 @@ const totals = useMemo(() => {
         <td>{r.eid}</td>
         <td>{r.name}</td>
         <td>{r.ckno}</td>
-        <td>{Number(r.rtime).toFixed(2)}</td>
-        <td>{Number(r.otime).toFixed(2)}</td>
-        <td>{Number(r.dtime).toFixed(2)}</td>
-        <td>{Number(r.fw).toFixed(2)}</td>
-        <td>{Number(r.sse).toFixed(2)}</td>
-        <td>{Number(r.me).toFixed(2)}</td>
-        <td>{Number(r.caw).toFixed(2)}</td>
-        <td>{Number(r.cade).toFixed(2)}</td>
-        <td>{Number(r.adv).toFixed(2)}</td>
-        <td>{Number(r.csp).toFixed(2)}</td>
-        <td>{Number(r.dd).toFixed(2)}</td>
-        <td>{Number(r.gross).toFixed(2)}</td>
-        <td>{Number(r.tax).toFixed(2)}</td>
-        <td>{Number(r.net).toFixed(2)}</td>
+        <td>
+          {Number(r.rtime).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.otime).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.dtime).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.fw).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.sse).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.me).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.caw).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.cade).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.adv).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.csp).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.dd).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.gross).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.tax).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
+        <td>
+          {Number(r.net).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
+        </td>
         <td>{r.remark}</td>
       </tr>
     ))
@@ -499,24 +569,93 @@ const totals = useMemo(() => {
 
           <tfoot>
   <tr>
-    <td colSpan="4" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.rtime.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.otime.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.dtime.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.fw.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.sse.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.me.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.caw.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.cade.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.adv.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.csp.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.dd.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.gross.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.tax.toFixed(2)}</td>
-    <td style={{ fontWeight: 'bold' }}>{totals.net.toFixed(2)}</td>
-    <td></td>
-  </tr>
-</tfoot>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.rtime.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.otime.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.dtime.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.fw.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.sse.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.me.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.caw.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.cade.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.adv.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.csp.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.dd.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.gross.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.tax.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+    <td style={{ fontWeight: 'bold' }}>
+      {totals.net.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
+    </td>
+     <td></td>
+   </tr>
+ </tfoot>
         </table>
       </div>
     </div>

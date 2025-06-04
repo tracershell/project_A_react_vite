@@ -149,10 +149,30 @@ const PayrollClassificationPage = () => {
                     <td>{r.eid}</td>
                     <td>{r.name}</td>
                     <td>{r.jtitle}</td>
-                    <td>{Number(r.gross).toFixed(2)}</td>
-                    <td>{Number(r.rtime).toFixed(2)}</td>
-                    <td>{Number(r.otime).toFixed(2)}</td>
-                    <td>{Number(r.dtime).toFixed(2)}</td>
+                    <td>
+                      {Number(r.gross).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td>
+                      {Number(r.rtime).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td>
+                      {Number(r.otime).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td>
+                      {Number(r.dtime).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
                     <td>{r.remark}</td>
                   </tr>
                 ))}
@@ -161,10 +181,30 @@ const PayrollClassificationPage = () => {
               <tfoot>
                 <tr>
                   <td colSpan="5" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
-                  <td style={{ fontWeight: 'bold' }}>{wagesSum.toFixed(2)}</td>
-                  <td style={{ fontWeight: 'bold' }}>{rtimeSum.toFixed(2)}</td>
-                  <td style={{ fontWeight: 'bold' }}>{otimeSum.toFixed(2)}</td>
-                  <td style={{ fontWeight: 'bold' }}>{dtimeSum.toFixed(2)}</td>
+                  <td style={{ fontWeight: 'bold' }}>
+                    {wagesSum.toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td style={{ fontWeight: 'bold' }}>
+                    {rtimeSum.toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td style={{ fontWeight: 'bold' }}>
+                    {otimeSum.toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td style={{ fontWeight: 'bold' }}>
+                    {dtimeSum.toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
                   <td></td>
                 </tr>
               </tfoot>

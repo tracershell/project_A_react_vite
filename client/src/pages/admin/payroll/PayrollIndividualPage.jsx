@@ -148,10 +148,30 @@ const handleViewPDF = async () => {
                   <tr key={i}>
                     <td>{r.pdate?.split('T')[0]}</td>
                     <td>{r.ckno}</td>
-                    <td>{Number(r.gross).toFixed(2)}</td>
-                    <td>{Number(r.rtime).toFixed(2)}</td>
-                    <td>{Number(r.otime).toFixed(2)}</td>
-                    <td>{Number(r.dtime).toFixed(2)}</td>
+                    <td>
+     {Number(r.gross).toLocaleString('en-US', {
+       minimumFractionDigits: 2,
+       maximumFractionDigits: 2,
+     })}
+   </td>
+   <td>
+     {Number(r.rtime).toLocaleString('en-US', {
+       minimumFractionDigits: 2,
+       maximumFractionDigits: 2,
+     })}
+   </td>
+   <td>
+     {Number(r.otime).toLocaleString('en-US', {
+       minimumFractionDigits: 2,
+       maximumFractionDigits: 2,
+     })}
+   </td>
+   <td>
+     {Number(r.dtime).toLocaleString('en-US', {
+       minimumFractionDigits: 2,
+       maximumFractionDigits: 2,
+     })}
+   </td>
                     <td>{r.remark}</td>
                   </tr>
                 ))}
@@ -160,10 +180,30 @@ const handleViewPDF = async () => {
               <tfoot>
                 <tr>
                   <td colSpan="2" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
-                  <td style={{ fontWeight: 'bold' }}>{wagesSum.toFixed(2)}</td>
-                  <td style={{ fontWeight: 'bold' }}>{rtimeSum.toFixed(2)}</td>
-                  <td style={{ fontWeight: 'bold' }}>{otimeSum.toFixed(2)}</td>
-                  <td style={{ fontWeight: 'bold' }}>{dtimeSum.toFixed(2)}</td>
+                  <td style={{ fontWeight: 'bold' }}>
+     {Number(wagesSum.toFixed(2)).toLocaleString('en-US', {
+       minimumFractionDigits: 2,
+       maximumFractionDigits: 2,
+     })}
+   </td>
+   <td style={{ fontWeight: 'bold' }}>
+     {Number(rtimeSum.toFixed(2)).toLocaleString('en-US', {
+       minimumFractionDigits: 2,
+       maximumFractionDigits: 2,
+     })}
+   </td>
+   <td style={{ fontWeight: 'bold' }}>
+     {Number(otimeSum.toFixed(2)).toLocaleString('en-US', {
+       minimumFractionDigits: 2,
+       maximumFractionDigits: 2,
+     })}
+   </td>
+   <td style={{ fontWeight: 'bold' }}>
+     {Number(dtimeSum.toFixed(2)).toLocaleString('en-US', {
+       minimumFractionDigits: 2,
+       maximumFractionDigits: 2,
+     })}
+   </td>
                   <td></td>
                 </tr>
               </tfoot>
