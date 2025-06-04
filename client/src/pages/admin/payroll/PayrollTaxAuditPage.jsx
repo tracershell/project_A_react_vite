@@ -5,6 +5,7 @@ import axios from 'axios';
 import styles from './PayrollTaxPage.module.css';
 // 1️⃣ useNavigate() 활용한 페이지 이동
 import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';  // ✅ 상단 import에 추가
 
 const PayrollTaxAuditPage = () => {
   const navigate = useNavigate();
@@ -51,6 +52,20 @@ const PayrollTaxAuditPage = () => {
       alert(`⚠️ ${msg}`);
     }
   };
+
+  // ✅ payrecords 변경될 때마다 합계를 다시 계산
+const totals = useMemo(() => {
+  return payrecords.reduce(
+    (acc, r) => {
+      acc.gross += Number(r.gross) || 0;
+      acc.rtime += Number(r.rtime) || 0;
+      acc.otime += Number(r.otime) || 0;
+      acc.dtime += Number(r.dtime) || 0;
+      return acc;
+    },
+    { gross: 0, rtime: 0, otime: 0, dtime: 0 }
+  );
+}, [payrecords]);
 
 
   return (
@@ -132,6 +147,18 @@ const PayrollTaxAuditPage = () => {
               ))
             )}
           </tbody>
+          <tfoot>
+  <tr>
+    <td colSpan="6" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
+    <td>{totals.gross.toFixed(2)}</td>     {/* ✅ Wages 합계 */}
+    <td>{totals.rtime.toFixed(2)}</td>     {/* ✅ R.Time 합계 */}
+    <td>{totals.otime.toFixed(2)}</td>     {/* ✅ O.Time 합계 */}
+    <td>{totals.dtime.toFixed(2)}</td>     {/* ✅ D.Time 합계 */}
+    <td></td>
+  </tr>
+</tfoot>
+
+
         </table>
       </div>
     </div>

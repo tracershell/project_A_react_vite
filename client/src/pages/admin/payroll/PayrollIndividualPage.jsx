@@ -51,6 +51,21 @@ const PayrollTaxAuditPage = () => {
   }
 };
 
+const handleViewPDF = async () => {
+  try {
+    const payload = { start, end, payrecords };  // ✅ 서버로 전송할 데이터
+    const res = await axios.post(
+      '/api/admin/payroll/payrollindividual/pdf/individual',
+      payload,
+      { responseType: 'blob' }
+    );
+    const pdfUrl = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+    window.open(pdfUrl);
+  } catch (err) {
+    alert('PDF 생성 실패: ' + (err.response?.data || '오류'));
+  }
+};
+
   return (
     <div className={styles.page}>
       <h2>View by Individual</h2>
@@ -65,11 +80,14 @@ const PayrollTaxAuditPage = () => {
         <button className={styles.lightBlue} onClick={() => navigate(-1)}>🔙 돌아가기</button>
 
         {/* PDF/CSV 버튼 */}
-        <form action="/api/admin/payroll/payrolltaxaudit/pdf" method="get" target="_blank" style={{ display: 'inline' }}>
-          <input type="hidden" name="start" value={start} />
-          <input type="hidden" name="end" value={end} />
-          <button type="submit" className={styles.lightBlue}>📄 PDF 보기</button>
-        </form>
+        <button
+         type="button"
+         className={styles.lightBlue}
+         onClick={handleViewPDF}  // ✨ 수정: handleViewPDF에서 POST 요청 수행
+         style={{ display: 'inline' }}
+       >
+         📄 PDF 보기
+       </button>
         <form action="/api/admin/payroll/payrolltaxaudit/pdfdownload" method="get" target="_blank" style={{ display: 'inline', marginLeft: '5px' }}>
           <input type="hidden" name="start" value={start} />
           <input type="hidden" name="end" value={end} />

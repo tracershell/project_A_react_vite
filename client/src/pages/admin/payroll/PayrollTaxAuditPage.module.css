@@ -142,3 +142,7 @@ h2 {
   white-space: nowrap;
 }
 
+.payTable tfoot td {
+  background: #f0f0f0;
+  font-weight: bold;
+}

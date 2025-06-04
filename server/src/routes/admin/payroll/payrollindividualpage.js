@@ -3,6 +3,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
+const generateAuditIndividualPDF = require('../../../utils/generateAuditIndividualPDF'); // ✅ 상단에 추가
+
 
 // ✅ 날짜 형식 정리 함수
 const cleanDate = (date) => {
@@ -44,5 +46,22 @@ router.get('/audit-result', async (req, res) => {
     res.status(500).json({ error: '서버 오류로 데이터를 불러오지 못했습니다.' });
   }
 });
+
+// ✅ 개인별 PDF 생성 라우트 추가
+router.post('/pdf/individual', async (req, res) => {
+  const { start, end, payrecords } = req.body;
+  if (!start || !end || !Array.isArray(payrecords) || payrecords.length === 0) {
+    return res.status(400).send('유효한 데이터가 필요합니다.');
+  }
+
+  try {
+    await generateAuditIndividualPDF(res, payrecords, start, end); // ✅ PDF 생성
+  } catch (err) {
+    console.error('개인별 PDF 생성 오류:', err);
+    res.status(500).send('PDF 생성 중 오류 발생');
+  }
+});
+
+
 
 module.exports = router;
