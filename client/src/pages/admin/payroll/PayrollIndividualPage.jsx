@@ -118,39 +118,59 @@ const handleViewPDF = async () => {
         <span style={{ color: '#007bff', fontWeight: 'bold' }}>{end}</span>
       </div>
 
-      {grouped.map((group, idx) => (
-        <div key={idx} style={{ marginBottom: '2rem' }}>
-          <div>
-            <strong>EID:</strong> {group.info.eid}
-            <strong style={{ marginLeft: '1rem' }}>Name:</strong> {group.info.name}
-            <strong style={{ marginLeft: '1rem' }}>Job Title:</strong> {group.info.jtitle}
-            <strong style={{ marginLeft: '1rem' }}>Job Code:</strong> {group.info.jcode}
-          </div>
+       {grouped.map((group, idx) => {
+        // ✅ 각 그룹(rows[])별 합계 계산
+        const wagesSum = group.rows.reduce((sum, r) => sum + (Number(r.gross) || 0), 0);
+        const rtimeSum = group.rows.reduce((sum, r) => sum + (Number(r.rtime) || 0), 0);
+        const otimeSum = group.rows.reduce((sum, r) => sum + (Number(r.otime) || 0), 0);
+        const dtimeSum = group.rows.reduce((sum, r) => sum + (Number(r.dtime) || 0), 0);
 
-          <table className={styles.payTable} style={{ marginTop: '0.5rem' }}>
-            <thead>
-              <tr>
-                {['Date', 'Check No', 'Wages', 'RTime', 'O.Time', 'D.Time', 'Remark'].map(h => (
-                  <th key={h}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {group.rows.map((r, i) => (
-                <tr key={i}>
-                  <td>{r.pdate?.split('T')[0]}</td>
-                  <td>{r.ckno}</td>
-                  <td>{Number(r.gross).toFixed(2)}</td>
-                  <td>{Number(r.rtime).toFixed(2)}</td>
-                  <td>{Number(r.otime).toFixed(2)}</td>
-                  <td>{Number(r.dtime).toFixed(2)}</td>
-                  <td>{r.remark}</td>
+        return (
+          <div key={idx} style={{ marginBottom: '2rem' }}>
+            {/* 그룹 정보 (EID / Name / Job Title / Job Code) */}
+            <div>
+              <strong>EID:</strong> {group.info.eid}
+              <strong style={{ marginLeft: '1rem' }}>Name:</strong> {group.info.name}
+              <strong style={{ marginLeft: '1rem' }}>Job Title:</strong> {group.info.jtitle}
+              <strong style={{ marginLeft: '1rem' }}>Job Code:</strong> {group.info.jcode}
+            </div>
+
+            <table className={styles.payTable} style={{ marginTop: '0.5rem' }}>
+              <thead>
+                <tr>
+                  {['Date', 'Check No', 'Wages', 'RTime', 'O.Time', 'D.Time', 'Remark'].map(h => (
+                    <th key={h}>{h}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ))}
+              </thead>
+              <tbody>
+                {group.rows.map((r, i) => (
+                  <tr key={i}>
+                    <td>{r.pdate?.split('T')[0]}</td>
+                    <td>{r.ckno}</td>
+                    <td>{Number(r.gross).toFixed(2)}</td>
+                    <td>{Number(r.rtime).toFixed(2)}</td>
+                    <td>{Number(r.otime).toFixed(2)}</td>
+                    <td>{Number(r.dtime).toFixed(2)}</td>
+                    <td>{r.remark}</td>
+                  </tr>
+                ))}
+              </tbody>
+              {/* ✅ 그룹별 합계 행 추가 */}
+              <tfoot>
+                <tr>
+                  <td colSpan="2" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
+                  <td style={{ fontWeight: 'bold' }}>{wagesSum.toFixed(2)}</td>
+                  <td style={{ fontWeight: 'bold' }}>{rtimeSum.toFixed(2)}</td>
+                  <td style={{ fontWeight: 'bold' }}>{otimeSum.toFixed(2)}</td>
+                  <td style={{ fontWeight: 'bold' }}>{dtimeSum.toFixed(2)}</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        );
+      })}
     </div>
   );
 };

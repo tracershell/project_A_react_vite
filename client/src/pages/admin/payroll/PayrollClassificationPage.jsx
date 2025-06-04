@@ -107,41 +107,74 @@ const PayrollClassificationPage = () => {
         <span style={{ color: '#007bff', fontWeight: 'bold' }}>{end}</span>
       </div>
 
-      {grouped.map((group, idx) => (
-        <div key={idx} style={{ marginBottom: '2rem' }}>
-          <div>
-            <strong>Job Code:</strong> {group.code}            
-          </div>
+      {grouped.map((group, idx) => {
+        // ✅ 해당 그룹(rows[])에서 합계 계산
+        const wagesSum = group.rows.reduce((sum, r) => sum + (Number(r.gross) || 0), 0);
+        const rtimeSum = group.rows.reduce((sum, r) => sum + (Number(r.rtime) || 0), 0);
+        const otimeSum = group.rows.reduce((sum, r) => sum + (Number(r.otime) || 0), 0);
+        const dtimeSum = group.rows.reduce((sum, r) => sum + (Number(r.dtime) || 0), 0);
 
-          <table className={styles.payTable} style={{ marginTop: '0.5rem' }}>
-            <thead>
-              <tr>
-                {['Pay Date', 'Check No', 'EID', 'Name', 'J.Title', 'Wages', 'R.Time', 'O.Time', 'D.Time', 'Remark'].map(h => (
-                  <th key={h}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {group.rows.map((r, i) => (
-                <tr key={i}>
-                  <td>{r.pdate?.split('T')[0]}</td>
-                  <td>{r.ckno}</td>
-                  <td>{r.eid}</td>
-                  <td>{r.name}</td>
-                  <td>{r.jtitle}</td>                  
-                  <td>{Number(r.gross).toFixed(2)}</td>
-                  <td>{Number(r.rtime).toFixed(2)}</td>
-                  <td>{Number(r.otime).toFixed(2)}</td>
-                  <td>{Number(r.dtime).toFixed(2)}</td>
-                  <td>{r.remark}</td>
+        return (
+          <div key={idx} style={{ marginBottom: '2rem' }}>
+            {/* 그룹 정보 (Job Code) */}
+            <div>
+              <strong>Job Code:</strong> {group.code}
+              <strong style={{ marginLeft: '1rem' }}>Job Title:</strong> {group.title}
+            </div>
+
+            <table className={styles.payTable} style={{ marginTop: '0.5rem' }}>
+              <thead>
+                <tr>
+                  {[
+                    'Pay Date',
+                    'Check No',
+                    'EID',
+                    'Name',
+                    'J.Title',
+                    'Wages',
+                    'R.Time',
+                    'O.Time',
+                    'D.Time',
+                    'Remark'
+                  ].map(h => (
+                    <th key={h}>{h}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ))}
+              </thead>
+              <tbody>
+                {group.rows.map((r, i) => (
+                  <tr key={i}>
+                    <td>{r.pdate?.split('T')[0]}</td>
+                    <td>{r.ckno}</td>
+                    <td>{r.eid}</td>
+                    <td>{r.name}</td>
+                    <td>{r.jtitle}</td>
+                    <td>{Number(r.gross).toFixed(2)}</td>
+                    <td>{Number(r.rtime).toFixed(2)}</td>
+                    <td>{Number(r.otime).toFixed(2)}</td>
+                    <td>{Number(r.dtime).toFixed(2)}</td>
+                    <td>{r.remark}</td>
+                  </tr>
+                ))}
+              </tbody>
+              {/* ✅ 그룹별 합계 행 추가 */}
+              <tfoot>
+                <tr>
+                  <td colSpan="5" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
+                  <td style={{ fontWeight: 'bold' }}>{wagesSum.toFixed(2)}</td>
+                  <td style={{ fontWeight: 'bold' }}>{rtimeSum.toFixed(2)}</td>
+                  <td style={{ fontWeight: 'bold' }}>{otimeSum.toFixed(2)}</td>
+                  <td style={{ fontWeight: 'bold' }}>{dtimeSum.toFixed(2)}</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        );
+      })}
     </div>
   );
 };
+
 
 export default PayrollClassificationPage;

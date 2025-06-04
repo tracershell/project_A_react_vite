@@ -1,6 +1,6 @@
 // client/src/pages/admin/payroll/PayrollTaxPage.jsx
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
 import styles from './PayrollTaxPage.module.css';
 import { useNavigate } from 'react-router-dom';
@@ -233,6 +233,33 @@ const handleFormButton = () => {
   );
 };
 
+const totals = useMemo(() => {
+  return paylist.reduce(
+    (acc, r) => {
+      acc.rtime   += Number(r.rtime)   || 0;
+      acc.otime   += Number(r.otime)   || 0;
+      acc.dtime   += Number(r.dtime)   || 0;
+      acc.fw      += Number(r.fw)      || 0;
+      acc.sse     += Number(r.sse)     || 0;
+      acc.me      += Number(r.me)      || 0;
+      acc.caw     += Number(r.caw)     || 0;
+      acc.cade    += Number(r.cade)    || 0;
+      acc.adv     += Number(r.adv)     || 0;
+      acc.csp     += Number(r.csp)     || 0;
+      acc.dd      += Number(r.dd)      || 0;
+      acc.gross   += Number(r.gross)   || 0;
+      acc.tax     += Number(r.tax)     || 0;
+      acc.net     += Number(r.net)     || 0;
+      return acc;
+    },
+    {
+      rtime: 0, otime: 0, dtime: 0,
+      fw: 0, sse: 0, me: 0, caw: 0, cade: 0,
+      adv: 0, csp: 0, dd: 0,
+      gross: 0, tax: 0, net: 0
+    }
+  );
+}, [paylist]);
 
 
 
@@ -441,21 +468,55 @@ const handleFormButton = () => {
             </tr>
           </thead>
           <tbody>
-            {paylist.length === 0 ? (
-              <tr><td colSpan="19">선택한 날짜에 대한 기록이 없습니다.</td></tr>
-            ) : (
-              paylist.map(r => (
-                <tr key={r.ckno} onClick={() => handleSelectRow(r)} style={{ cursor: 'pointer' }}>
-                  <td>{r.pdate}</td><td>{r.eid}</td><td>{r.name}</td><td>{r.ckno}</td>
-                  <td>{r.rtime}</td><td>{r.otime}</td><td>{r.dtime}</td>
-                  <td>{r.fw}</td><td>{r.sse}</td><td>{r.me}</td>
-                  <td>{r.caw}</td><td>{r.cade}</td><td>{r.adv}</td>
-                  <td>{r.csp}</td><td>{r.dd}</td><td>{r.gross}</td>
-                  <td>{r.tax}</td><td>{r.net}</td><td>{r.remark}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
+  {paylist.length === 0 ? (
+    <tr><td colSpan="19">선택한 날짜에 대한 기록이 없습니다.</td></tr>
+  ) : (
+    paylist.map(r => (
+      <tr key={r.ckno} onClick={() => handleSelectRow(r)} style={{ cursor: 'pointer' }}>
+        <td>{cleanDate(r.pdate)}</td>
+        <td>{r.eid}</td>
+        <td>{r.name}</td>
+        <td>{r.ckno}</td>
+        <td>{Number(r.rtime).toFixed(2)}</td>
+        <td>{Number(r.otime).toFixed(2)}</td>
+        <td>{Number(r.dtime).toFixed(2)}</td>
+        <td>{Number(r.fw).toFixed(2)}</td>
+        <td>{Number(r.sse).toFixed(2)}</td>
+        <td>{Number(r.me).toFixed(2)}</td>
+        <td>{Number(r.caw).toFixed(2)}</td>
+        <td>{Number(r.cade).toFixed(2)}</td>
+        <td>{Number(r.adv).toFixed(2)}</td>
+        <td>{Number(r.csp).toFixed(2)}</td>
+        <td>{Number(r.dd).toFixed(2)}</td>
+        <td>{Number(r.gross).toFixed(2)}</td>
+        <td>{Number(r.tax).toFixed(2)}</td>
+        <td>{Number(r.net).toFixed(2)}</td>
+        <td>{r.remark}</td>
+      </tr>
+    ))
+  )}
+</tbody>
+
+          <tfoot>
+  <tr>
+    <td colSpan="4" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.rtime.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.otime.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.dtime.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.fw.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.sse.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.me.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.caw.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.cade.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.adv.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.csp.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.dd.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.gross.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.tax.toFixed(2)}</td>
+    <td style={{ fontWeight: 'bold' }}>{totals.net.toFixed(2)}</td>
+    <td></td>
+  </tr>
+</tfoot>
         </table>
       </div>
     </div>
