@@ -62,7 +62,7 @@ const handleViewPDF = async () => {
     const pdfUrl = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
     window.open(pdfUrl);
   } catch (err) {
-    alert('PDF 생성 실패: ' + (err.response?.data || '오류'));
+    alert('기간입력하고 검색후 보세요 -PDF 생성 실패 ' + (err.response?.data || '오류'));
   }
 };
 
