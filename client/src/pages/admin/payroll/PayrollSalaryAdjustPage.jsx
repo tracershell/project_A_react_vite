@@ -1,9 +1,5 @@
-
 import React, { useState } from 'react';
-// ✂ 수정: 기존 CSS 모듈 경로 유지 (이 예제에서는 PayrollSalaryAdjustPage.module.css로 가정)
 import styles from './PayrollSalaryAdjustPage.module.css';
-
-// * Axios를 사용해 PDF를 Blob으로 받아오기 위해 import 합니다.
 import axios from 'axios';
 
 const PayrollSalaryAdjustPage = () => {
@@ -14,7 +10,7 @@ const PayrollSalaryAdjustPage = () => {
   const [salary, setSalary] = useState('');
   const [result, setResult] = useState(null);
 
-  // “계산” 버튼 클릭 시 실행 (이 부분은 건들지 않습니다)
+  // "계산" 버튼 클릭 시 실행
   const calculateSalary = () => {
     if (!month || !salary || deduction === '') {
       alert('모든 항목을 입력해 주세요');
@@ -47,16 +43,14 @@ const PayrollSalaryAdjustPage = () => {
     });
   };
 
-  // “PDF 보기” 버튼 클릭 시 실행
+  // "PDF 보기" 버튼 클릭 시 실행
   const openPdf = async () => {
     if (!result) {
       alert('먼저 계산을 해 주세요');
       return;
     }
 
-    // ✂ 수정: React 단순 window.open 대신, Axios로 PDF를 Blob으로 가져와서 새 탭에 띄우도록 변경
     try {
-      // 1) 쿼리 파라미터 생성 (기존 로직 유지)
       const params = new URLSearchParams({
         year: year || currentYear,
         month,
@@ -71,16 +65,11 @@ const PayrollSalaryAdjustPage = () => {
         originalSalary: result.originalSalary,
       });
 
-      // 2) Axios GET 요청, responseType: 'blob'으로 PDF 데이터(바이너리) 받아오기
-      //    - 엔드포인트는 백엔드에서 설정한 경로를 사용해야 합니다.
-      //    예시: Express 쪽 app.js에서 app.use('/api/admin/payroll/payrollsalaryadjust', ...) 로 마운트했다면
-      //    실제 URL은 "/api/admin/payroll/payrollsalaryadjust/salary_adjust_viewpdf" 가 됩니다.
       const response = await axios.get(
-        /api/admin/payroll/payrollsalaryadjust/salary_adjust_viewpdf?${params.toString()},
+        `/api/admin/payroll/payrollsalaryadjust/salary_adjust_viewpdf?${params.toString()}`,
         { responseType: 'blob' }
       );
 
-      // 3) 받은 Blob을 URL.createObjectURL 로 변환하고 새 탭으로 열기
       const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
       const pdfUrl = URL.createObjectURL(pdfBlob);
       window.open(pdfUrl, '_blank');
@@ -91,13 +80,15 @@ const PayrollSalaryAdjustPage = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} >
       <h2>Salary Adjustment Calculation</h2>
-
-      <div className={styles.formRow}>
-        {/* 년도 선택 (화면 25% 폭) */}
+      <div style={ {display: 'flex', gap: '1rem', marginBottom: '12px'}}></div>
+        {/* formRow.small 을 함께 붙이면, 내부 select/input/button 들이
+          모두 동일한 높이, 동일한 패딩 기준으로 수평 정렬됩니다. */}
+      <div className={`${styles.formRow} ${styles.small}`} style={{ flex: '0 0 auto', width: '45rem' }}>
+        {/* 년도 선택 */}
         <select
-          className={styles.quarterWidth}
+          className={`${styles.select5rem}`}
           value={year}
           onChange={(e) => setYear(e.target.value)}
         >
@@ -109,9 +100,9 @@ const PayrollSalaryAdjustPage = () => {
           ))}
         </select>
 
-        {/* 월 선택 (화면 25% 폭) */}
+        {/* 월 선택 */}
         <select
-          className={styles.quarterWidth}
+          className={`${styles.select5rem}`}
           value={month}
           onChange={(e) => setMonth(e.target.value)}
         >
@@ -123,7 +114,7 @@ const PayrollSalaryAdjustPage = () => {
           ))}
         </select>
 
-        {/* 공제일 수 입력 (고정 폭 8rem) */}
+        {/* 공제일 수 입력 */}
         <input
           type="number"
           placeholder="공제일 수"
@@ -133,7 +124,7 @@ const PayrollSalaryAdjustPage = () => {
           onChange={(e) => setDeduction(e.target.value)}
         />
 
-        {/* 월 급여 입력 (고정 폭 8rem) */}
+        {/* 월 급여 입력 */}
         <input
           type="number"
           step="0.01"
@@ -143,38 +134,31 @@ const PayrollSalaryAdjustPage = () => {
           onChange={(e) => setSalary(e.target.value)}
         />
 
-        {/* 계산 버튼 (기존 로직) */}
+        {/* 계산 버튼 */}
         <button className={styles.lightBlue} onClick={calculateSalary}>
-          계산
+          📠 계 산
         </button>
 
-        {/* PDF 보기 버튼 → 위 openPdf 수정분 사용 */}
+        {/* PDF 보기 버튼 */}
         <button className={styles.lightBlue} onClick={openPdf}>
-          PDF 보기
+          🖨️ PDF 보기
         </button>
       </div>
+     
 
       {result && (
-        <div
-          className="results"
-          style={{
-            marginTop: '20px',
-            border: '1px solid #ccc',
-            padding: '12px',
-            background: 'white',
-          }}
-        >
-          <div>총 일수: {result.totalDays}일</div>
-          <div>토요일: {result.saturdays}일</div>
-          <div>일요일: {result.sundays}일</div>
-          <div>근무일수: {result.workDays}일</div>
-          <div>실근무일수: {result.actualDays}일</div>
-          <div>기본급: ${result.originalSalary}</div>
-          <div>조정급여: ${result.adjSalary}</div>
-          <div>
+        <div className={styles.results}>
+          <div className={styles.resultLine}>총 일수: {result.totalDays}일</div>
+          <div className={styles.resultLine}>토요일: {result.saturdays}일</div>
+          <div className={styles.resultLine}>일요일: {result.sundays}일</div>
+          <div className={styles.resultLine}>근무일수: {result.workDays}일</div>
+          <div className={styles.resultLine}>실근무일수: {result.actualDays}일</div>
+          <div className={styles.resultLine}>기본급: ${result.originalSalary}</div>
+          <div className={styles.resultLine}>조정급여: ${result.adjSalary}</div>
+          <div className={styles.resultLine}>
             반올림금액: <b>${result.fixSalary}</b>
           </div>
-          <div>
+          <div className={styles.resultLine}>
             수식: (
             {result.originalSalary} × {result.actualDays}) ÷{' '}
             {result.workDays} = ${result.adjSalary}
