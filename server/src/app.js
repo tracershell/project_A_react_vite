@@ -79,8 +79,11 @@ app.use('/api/admin/payroll/payrolltax', require('./routes/admin/payroll/payroll
 app.use('/api/admin/payroll/payrolltaxaudit', require('./routes/admin/payroll/payrolltaxauditpage'));
 app.use('/api/admin/payroll/payrollindividual', require('./routes/admin/payroll/payrollindividualpage'));
 app.use('/api/admin/payroll/payrollclassification', require('./routes/admin/payroll/payrollclassificationpage'));
+app.use('/api/admin/payroll/payrollsalaryadjust', require('./routes/admin/payroll/payrollsalaryadjustpage'));
 
-//app.use('/api/admin/import/extra/pdf', require('./routes/admin/import/import_extra_pdf'));
+
+
+//app.use('/api/admin/import/extra/pdf', require('./routes/admin/import/import_extra_pdf'));    server/src/utils/generateSalaryAdjustPDF.js
 
 
 

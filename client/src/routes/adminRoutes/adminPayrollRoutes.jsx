@@ -8,6 +8,7 @@ import PayrollTaxPage from '../../pages/admin/payroll/PayrollTaxPage';
 import PayrollTaxAuditPage from '../../pages/admin/payroll/PayrollTaxAuditPage';
 import PayrollIndividualPage from '../../pages/admin/payroll/PayrollIndividualPage';
 import PayrollClassificationPage from '../../pages/admin/payroll/PayrollClassificationPage';
+import PayrollSalaryAdjustPage from '../../pages/admin/payroll/PayrollSalaryAdjustPage';
 
 const adminPayrollRoutes = [
   <Route
@@ -46,6 +47,16 @@ const adminPayrollRoutes = [
     element={
       <PrivateRoute role="admin">
         <PayrollClassificationPage />
+      </PrivateRoute>
+    }
+  />,
+
+  <Route
+    key="payroll-adjust"
+    path="payroll/adjust"
+    element={
+      <PrivateRoute role="admin">
+        <PayrollSalaryAdjustPage />
       </PrivateRoute>
     }
   />,

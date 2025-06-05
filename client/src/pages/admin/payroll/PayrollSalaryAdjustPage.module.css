@@ -1,0 +1,117 @@
+/* ───────────────────────────────────────────────────────────── 
+   이 파일은 'PayrollSalaryAdjustPage.jsx' 전용 CSS 모듈입니다.
+   기존 PayrollIndividualPage.module.css와는 별개로 작동합니다.
+───────────────────────────────────────────────────────────── */
+
+/* 페이지 전체 배경 및 기본 font 설정 */
+.page {
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-size: 12px;
+}
+
+/* h2 제목 간격 */
+h2 {
+  margin: 0.5rem 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   formRow: 
+     - display: flex 로 가로 정렬 
+     - align-items: center 로 자식 요소 세로 중앙 정렬
+     - gap 으로 요소 간 간격 확보
+───────────────────────────────────────────────────────────── */
+.formRow {
+  display: flex;
+  flex-wrap: nowrap;       /* 한 줄에 쭉 표시 */
+  align-items: center;     /* 세로 가운데 정렬 */
+  gap: 0.5rem;             /* 요소 간 간격 */
+  padding: 0.75rem;        /* 사방 Padding */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Select/Input/Button 공통 스타일 통일:
+     height, line-height, font-size, padding, box-sizing, vertical-align
+   이를 통해 모든 폼 요소의 기준선(baseline)이 일치하게 된다.
+───────────────────────────────────────────────────────────── */
+.formRow select,
+.formRow input,
+.formRow button {
+  height: 1.6rem;                   /* 25.6px */
+  line-height: 1.6rem;              /* 텍스트 수직 중앙 정렬 */
+  font-size: 11px;
+  padding: 0 0.3rem;                /* 좌/우 여백 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-sizing: border-box;           /* padding/border를 height에 포함시킴 */
+  vertical-align: middle;           /* inline-block 기준선 정렬 */
+}
+
+/* button 추가 높이/라인 통일 */
+.formRow button {
+  /* 이미 위에서 height, line-height를 주었으므로 별도 설정 불필요하나
+     혹시 다른 CSS와 충돌이 있을 경우를 대비해 명시적으로 선언 */
+  height: 1.6rem;
+  line-height: 1.6rem;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   lightBlue: 파란색 버튼 스타일 
+───────────────────────────────────────────────────────────── */
+.lightBlue {
+  background: #e6f0ff;
+  border: 1px solid #99bbff;
+  color: #003366;
+  font-weight: bold;
+  height: 1.6rem;        /* .formRow 버튼과 높이 통일 */
+  line-height: 1.6rem;
+  padding: 0 0.6rem;     /* 좌/우 여백 */
+  border-radius: 4px;
+}
+
+.lightBlue:hover {
+  background: #cce0ff;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   quarterWidth: 년도/월 Select를 부모 flex 컨테이너의 25% 폭으로 고정
+───────────────────────────────────────────────────────────── */
+.quarterWidth {
+  flex: 0 0 25%;       /* flex-grow:0, flex-shrink:0, flex-basis:25% */
+  max-width: 25%;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   smallInput: 공제일수/월급 입력칸을 고정 폭(8rem)으로 지정
+   (원하는 size가 있으면 rem이나 px로 조정해도 됩니다)
+───────────────────────────────────────────────────────────── */
+.smallInput {
+  flex: 0 0 8rem;      /* 고정 폭 8rem */
+  max-width: 8rem;
+  min-width: 8rem;
+}
+
+/* (선택사항) 결과값 박스 앞뒤 마진, 폰트 사이즈 등 미세조정이 필요할 때 여기 추가 */
+.results {
+  /* 기존 inline style로 작성했으므로, 필요한 경우 여기에 옮겨서 확장 가능 */
+}
+
+/* ─────────────────────────────────────────────────────────────
+   ↓ 이하 코드는 페이지 전반에 걸쳐 다른 요소가 추가된다면,
+   필요시 여기에 스타일을 더 확장하세요.
+───────────────────────────────────────────────────────────── */
+
+/* 예시: 결과 텍스트 줄 간격을 좁히고 싶다면 */
+.result-line {
+  margin-bottom: 6px;
+  font-size: 11px;
+}
