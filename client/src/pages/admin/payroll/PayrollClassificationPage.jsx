@@ -41,12 +41,12 @@ const PayrollClassificationPage = () => {
       console.log('✅ Loaded by job code:', data);
       setPayrecords(data);
     } catch (err) {
-    const msg = err.response?.data?.error || '알 수 없는 오류가 발생했습니다.';
-    alert(`⚠️ ${msg}`);
-  }
-};
+      const msg = err.response?.data?.error || '알 수 없는 오류가 발생했습니다.';
+      alert(`⚠️ ${msg}`);
+    }
+  };
 
-// “PDF 보기” 버튼 클릭 시: POST로 payrecords, start, end 전송 → blob 응답 → 새 탭에 표시
+  // “PDF 보기” 버튼 클릭 시: POST로 payrecords, start, end 전송 → blob 응답 → 새 탭에 표시
   const handleViewPDF = async () => {
     try {
       const payload = { start, end, payrecords };
@@ -119,7 +119,6 @@ const PayrollClassificationPage = () => {
             {/* 그룹 정보 (Job Code) */}
             <div>
               <strong>Job Code:</strong> {group.code}
-              <strong style={{ marginLeft: '1rem' }}>Job Title:</strong> {group.title}
             </div>
 
             <table className={styles.payTable} style={{ marginTop: '0.5rem' }}>
@@ -180,7 +179,7 @@ const PayrollClassificationPage = () => {
               {/* ✅ 그룹별 합계 행 추가 */}
               <tfoot>
                 <tr>
-                  <td colSpan="5" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
+                  <td colSpan="5" style={{ textAlign: 'center', fontWeight: 'bold' }}>합 계</td>
                   <td style={{ fontWeight: 'bold' }}>
                     {wagesSum.toLocaleString('en-US', {
                       minimumFractionDigits: 2,

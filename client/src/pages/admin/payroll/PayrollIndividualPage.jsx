@@ -46,25 +46,25 @@ const PayrollTaxAuditPage = () => {
       console.log('✅ Loaded from server:', data);  // ✅ 콘솔 확인용
       setPayrecords(data);
     } catch (err) {
-    const msg = err.response?.data?.error || '알 수 없는 오류가 발생했습니다.';
-    alert(`⚠️ ${msg}`);
-  }
-};
+      const msg = err.response?.data?.error || '알 수 없는 오류가 발생했습니다.';
+      alert(`⚠️ ${msg}`);
+    }
+  };
 
-const handleViewPDF = async () => {
-  try {
-    const payload = { start, end, payrecords };  // ✅ 서버로 전송할 데이터
-    const res = await axios.post(
-      '/api/admin/payroll/payrollindividual/pdf/individual',
-      payload,
-      { responseType: 'blob' }
-    );
-    const pdfUrl = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
-    window.open(pdfUrl);
-  } catch (err) {
-    alert('기간입력하고 검색후 보세요 -PDF 생성 실패 ' + (err.response?.data || '오류'));
-  }
-};
+  const handleViewPDF = async () => {
+    try {
+      const payload = { start, end, payrecords };  // ✅ 서버로 전송할 데이터
+      const res = await axios.post(
+        '/api/admin/payroll/payrollindividual/pdf/individual',
+        payload,
+        { responseType: 'blob' }
+      );
+      const pdfUrl = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+      window.open(pdfUrl);
+    } catch (err) {
+      alert('기간입력하고 검색후 보세요 -PDF 생성 실패 ' + (err.response?.data || '오류'));
+    }
+  };
 
   // ✅ CSV 다운로드 함수형(onClick) 방식
   const handleCsvDownload = () => {
@@ -92,13 +92,13 @@ const handleViewPDF = async () => {
 
         {/* PDF/CSV 버튼 */}
         <button
-         type="button"
-         className={styles.lightBlue}
-         onClick={handleViewPDF}  // ✨ 수정: handleViewPDF에서 POST 요청 수행
-         style={{ display: 'inline' }}
-       >
-         📄 PDF 보기
-       </button>
+          type="button"
+          className={styles.lightBlue}
+          onClick={handleViewPDF}  // ✨ 수정: handleViewPDF에서 POST 요청 수행
+          style={{ display: 'inline' }}
+        >
+          📄 PDF 보기
+        </button>
         {/* ✅ CSV 저장을 함수형(onClick)으로 처리 */}
         <button
           type="button"
@@ -118,7 +118,7 @@ const handleViewPDF = async () => {
         <span style={{ color: '#007bff', fontWeight: 'bold' }}>{end}</span>
       </div>
 
-       {grouped.map((group, idx) => {
+      {grouped.map((group, idx) => {
         // ✅ 각 그룹(rows[])별 합계 계산
         const wagesSum = group.rows.reduce((sum, r) => sum + (Number(r.gross) || 0), 0);
         const rtimeSum = group.rows.reduce((sum, r) => sum + (Number(r.rtime) || 0), 0);
@@ -149,29 +149,29 @@ const handleViewPDF = async () => {
                     <td>{r.pdate?.split('T')[0]}</td>
                     <td>{r.ckno}</td>
                     <td>
-     {Number(r.gross).toLocaleString('en-US', {
-       minimumFractionDigits: 2,
-       maximumFractionDigits: 2,
-     })}
-   </td>
-   <td>
-     {Number(r.rtime).toLocaleString('en-US', {
-       minimumFractionDigits: 2,
-       maximumFractionDigits: 2,
-     })}
-   </td>
-   <td>
-     {Number(r.otime).toLocaleString('en-US', {
-       minimumFractionDigits: 2,
-       maximumFractionDigits: 2,
-     })}
-   </td>
-   <td>
-     {Number(r.dtime).toLocaleString('en-US', {
-       minimumFractionDigits: 2,
-       maximumFractionDigits: 2,
-     })}
-   </td>
+                      {Number(r.gross).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td>
+                      {Number(r.rtime).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td>
+                      {Number(r.otime).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td>
+                      {Number(r.dtime).toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
                     <td>{r.remark}</td>
                   </tr>
                 ))}
@@ -179,31 +179,31 @@ const handleViewPDF = async () => {
               {/* ✅ 그룹별 합계 행 추가 */}
               <tfoot>
                 <tr>
-                  <td colSpan="2" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
+                  <td colSpan="2" style={{ textAlign: 'center', fontWeight: 'bold' }}>합 계</td>
                   <td style={{ fontWeight: 'bold' }}>
-     {Number(wagesSum.toFixed(2)).toLocaleString('en-US', {
-       minimumFractionDigits: 2,
-       maximumFractionDigits: 2,
-     })}
-   </td>
-   <td style={{ fontWeight: 'bold' }}>
-     {Number(rtimeSum.toFixed(2)).toLocaleString('en-US', {
-       minimumFractionDigits: 2,
-       maximumFractionDigits: 2,
-     })}
-   </td>
-   <td style={{ fontWeight: 'bold' }}>
-     {Number(otimeSum.toFixed(2)).toLocaleString('en-US', {
-       minimumFractionDigits: 2,
-       maximumFractionDigits: 2,
-     })}
-   </td>
-   <td style={{ fontWeight: 'bold' }}>
-     {Number(dtimeSum.toFixed(2)).toLocaleString('en-US', {
-       minimumFractionDigits: 2,
-       maximumFractionDigits: 2,
-     })}
-   </td>
+                    {Number(wagesSum.toFixed(2)).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td style={{ fontWeight: 'bold' }}>
+                    {Number(rtimeSum.toFixed(2)).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td style={{ fontWeight: 'bold' }}>
+                    {Number(otimeSum.toFixed(2)).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td style={{ fontWeight: 'bold' }}>
+                    {Number(dtimeSum.toFixed(2)).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
                   <td></td>
                 </tr>
               </tfoot>

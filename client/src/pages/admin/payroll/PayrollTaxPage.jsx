@@ -214,52 +214,52 @@ const PayrollTaxPage = () => {
     window.location.href = `/api/admin/payroll/payrolltax/csv-export?pdate=${selectedDate}`;
   };
 
-  
+
 
   const handleSearchAudit = () => {
     // 예: '/admin/payroll/taxaudit/audit-search' 로 이동
     navigate('/admin/payroll/taxaudit/audit-search');
   };
 
-const handleFormButton = () => {
-  if (!startCheckNo || !endCheckNo) {
-    return alert(' 시작 및 끝의 Check No.를 모두 입력해 주세요');
-  }
-
-  // ✅ 포맷 적용된 Form PDF 출력
-  window.open(
-    `/api/admin/payroll/payrolltax/formpdf?start=${startCheckNo}&end=${endCheckNo}`,
-    '_blank'
-  );
-};
-
-const totals = useMemo(() => {
-  return paylist.reduce(
-    (acc, r) => {
-      acc.rtime   += Number(r.rtime)   || 0;
-      acc.otime   += Number(r.otime)   || 0;
-      acc.dtime   += Number(r.dtime)   || 0;
-      acc.fw      += Number(r.fw)      || 0;
-      acc.sse     += Number(r.sse)     || 0;
-      acc.me      += Number(r.me)      || 0;
-      acc.caw     += Number(r.caw)     || 0;
-      acc.cade    += Number(r.cade)    || 0;
-      acc.adv     += Number(r.adv)     || 0;
-      acc.csp     += Number(r.csp)     || 0;
-      acc.dd      += Number(r.dd)      || 0;
-      acc.gross   += Number(r.gross)   || 0;
-      acc.tax     += Number(r.tax)     || 0;
-      acc.net     += Number(r.net)     || 0;
-      return acc;
-    },
-    {
-      rtime: 0, otime: 0, dtime: 0,
-      fw: 0, sse: 0, me: 0, caw: 0, cade: 0,
-      adv: 0, csp: 0, dd: 0,
-      gross: 0, tax: 0, net: 0
+  const handleFormButton = () => {
+    if (!startCheckNo || !endCheckNo) {
+      return alert(' 시작 및 끝의 Check No.를 모두 입력해 주세요');
     }
-  );
-}, [paylist]);
+
+    // ✅ 포맷 적용된 Form PDF 출력
+    window.open(
+      `/api/admin/payroll/payrolltax/formpdf?start=${startCheckNo}&end=${endCheckNo}`,
+      '_blank'
+    );
+  };
+
+  const totals = useMemo(() => {
+    return paylist.reduce(
+      (acc, r) => {
+        acc.rtime += Number(r.rtime) || 0;
+        acc.otime += Number(r.otime) || 0;
+        acc.dtime += Number(r.dtime) || 0;
+        acc.fw += Number(r.fw) || 0;
+        acc.sse += Number(r.sse) || 0;
+        acc.me += Number(r.me) || 0;
+        acc.caw += Number(r.caw) || 0;
+        acc.cade += Number(r.cade) || 0;
+        acc.adv += Number(r.adv) || 0;
+        acc.csp += Number(r.csp) || 0;
+        acc.dd += Number(r.dd) || 0;
+        acc.gross += Number(r.gross) || 0;
+        acc.tax += Number(r.tax) || 0;
+        acc.net += Number(r.net) || 0;
+        return acc;
+      },
+      {
+        rtime: 0, otime: 0, dtime: 0,
+        fw: 0, sse: 0, me: 0, caw: 0, cade: 0,
+        adv: 0, csp: 0, dd: 0,
+        gross: 0, tax: 0, net: 0
+      }
+    );
+  }, [paylist]);
 
 
 
@@ -468,194 +468,195 @@ const totals = useMemo(() => {
             </tr>
           </thead>
           <tbody>
-  {paylist.length === 0 ? (
-    <tr><td colSpan="19">선택한 날짜에 대한 기록이 없습니다.</td></tr>
-  ) : (
-    paylist.map(r => (
-      <tr key={r.ckno} onClick={() => handleSelectRow(r)} style={{ cursor: 'pointer' }}>
-        <td>{cleanDate(r.pdate)}</td>
-        <td>{r.eid}</td>
-        <td>{r.name}</td>
-        <td>{r.ckno}</td>
-        <td>
-          {Number(r.rtime).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.otime).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.dtime).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.fw).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.sse).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.me).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.caw).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.cade).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.adv).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.csp).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.dd).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.gross).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.tax).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>
-          {Number(r.net).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td>{r.remark}</td>
-      </tr>
-    ))
-  )}
-</tbody>
+            {paylist.length === 0 ? (
+              <tr><td colSpan="19">선택한 날짜에 대한 기록이 없습니다.</td></tr>
+            ) : (
+              paylist.map(r => (
+                <tr key={r.ckno} onClick={() => handleSelectRow(r)} style={{ cursor: 'pointer' }}>
+                  <td>{cleanDate(r.pdate)}</td>
+                  <td>{r.eid}</td>
+                  <td>{r.name}</td>
+                  <td>{r.ckno}</td>
+                  <td>
+                    {Number(r.rtime).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.otime).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.dtime).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.fw).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.sse).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.me).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.caw).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.cade).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.adv).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.csp).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.dd).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.gross).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.tax).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>
+                    {Number(r.net).toLocaleString('en-US', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                  <td>{r.remark}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
 
           <tfoot>
-  <tr>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.rtime.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.otime.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.dtime.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.fw.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.sse.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.me.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.caw.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.cade.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.adv.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.csp.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.dd.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.gross.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.tax.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td style={{ fontWeight: 'bold' }}>
-      {totals.net.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-     <td></td>
-   </tr>
- </tfoot>
+            <tr>
+              <td colSpan={4} style={{ fontWeight: 'bold', textAlign: 'center' }}>합 계</td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.rtime.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.otime.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.dtime.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.fw.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.sse.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.me.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.caw.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.cade.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.adv.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.csp.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.dd.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.gross.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.tax.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td style={{ fontWeight: 'bold' }}>
+                {totals.net.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>

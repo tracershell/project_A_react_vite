@@ -54,18 +54,18 @@ const PayrollTaxAuditPage = () => {
   };
 
   // ✅ payrecords 변경될 때마다 합계를 다시 계산
-const totals = useMemo(() => {
-  return payrecords.reduce(
-    (acc, r) => {
-      acc.gross += Number(r.gross) || 0;
-      acc.rtime += Number(r.rtime) || 0;
-      acc.otime += Number(r.otime) || 0;
-      acc.dtime += Number(r.dtime) || 0;
-      return acc;
-    },
-    { gross: 0, rtime: 0, otime: 0, dtime: 0 }
-  );
-}, [payrecords]);
+  const totals = useMemo(() => {
+    return payrecords.reduce(
+      (acc, r) => {
+        acc.gross += Number(r.gross) || 0;
+        acc.rtime += Number(r.rtime) || 0;
+        acc.otime += Number(r.otime) || 0;
+        acc.dtime += Number(r.dtime) || 0;
+        return acc;
+      },
+      { gross: 0, rtime: 0, otime: 0, dtime: 0 }
+    );
+  }, [payrecords]);
 
 
   return (
@@ -168,35 +168,35 @@ const totals = useMemo(() => {
             )}
           </tbody>
           <tfoot>
-  <tr>
-    <td colSpan="6" style={{ textAlign: 'right', fontWeight: 'bold' }}>합계</td>
-    <td>
-      {totals.gross.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td>
-      {totals.rtime.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td>
-      {totals.otime.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td>
-      {totals.dtime.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}
-    </td>
-    <td></td>
-  </tr>
-</tfoot>
+            <tr>
+              <td colSpan="6" style={{ textAlign: 'center', fontWeight: 'bold' }}>합 계</td>
+              <td>
+                {totals.gross.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td>
+                {totals.rtime.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td>
+                {totals.otime.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td>
+                {totals.dtime.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
 
 
         </table>
