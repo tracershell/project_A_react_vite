@@ -9,6 +9,7 @@ import PayrollTaxAuditPage from '../../pages/admin/payroll/PayrollTaxAuditPage';
 import PayrollIndividualPage from '../../pages/admin/payroll/PayrollIndividualPage';
 import PayrollClassificationPage from '../../pages/admin/payroll/PayrollClassificationPage';
 import PayrollSalaryAdjustPage from '../../pages/admin/payroll/PayrollSalaryAdjustPage';
+import PayrollSickPage from '../../pages/admin/payroll/PayrollSickPage';
 
 const adminPayrollRoutes = [
   <Route
@@ -60,6 +61,17 @@ const adminPayrollRoutes = [
       </PrivateRoute>
     }
   />,
+
+  <Route
+    key="payroll-sick"
+    path="payroll/sick"
+    element={
+      <PrivateRoute role="admin">
+        <PayrollSickPage />
+      </PrivateRoute>
+    }
+  />,
+
 ];
 
 export default adminPayrollRoutes;
