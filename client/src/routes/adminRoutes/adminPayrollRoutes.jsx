@@ -10,6 +10,9 @@ import PayrollIndividualPage from '../../pages/admin/payroll/PayrollIndividualPa
 import PayrollClassificationPage from '../../pages/admin/payroll/PayrollClassificationPage';
 import PayrollSalaryAdjustPage from '../../pages/admin/payroll/PayrollSalaryAdjustPage';
 import PayrollSickPage from '../../pages/admin/payroll/PayrollSickPage';
+import PayrollSickInputPage from '../../pages/admin/payroll/PayrollSickInputPage';
+import PayrollPvInputPage from '../../pages/admin/payroll/PayrollPvInputPage';
+import PayrollGivenInputPage from '../../pages/admin/payroll/PayrollGivenInputPage';
 
 const adminPayrollRoutes = [
   <Route
@@ -68,6 +71,36 @@ const adminPayrollRoutes = [
     element={
       <PrivateRoute role="admin">
         <PayrollSickPage />
+      </PrivateRoute>
+    }
+  />,
+
+  <Route
+    key="payroll-sickinput"
+    path="payroll/sickinput"
+    element={
+      <PrivateRoute role="admin">
+        <PayrollSickInputPage />
+      </PrivateRoute>
+    }
+  />,
+
+  <Route
+    key="payroll-pvinput"
+    path="payroll/pvinput"
+    element={
+      <PrivateRoute role="admin">
+        <PayrollPvInputPage />
+      </PrivateRoute>
+    }
+  />,
+
+  <Route
+    key="payroll-giveninput"
+    path="payroll/giveninput"
+    element={
+      <PrivateRoute role="admin">
+        <PayrollGivenInputPage />
       </PrivateRoute>
     }
   />,

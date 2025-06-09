@@ -18,7 +18,7 @@ api.interceptors.request.use(cfg => {
   return cfg;
 });
 
-const PayrollSickPage = () => {
+const PayrollSickInputPage = () => {
   const [form, setForm] = useState({ name: '', eid: '' });
   const [employees, setEmployees] = useState([]);
   const [selected, setSelected] = useState('');
@@ -74,36 +74,9 @@ const PayrollSickPage = () => {
           ))}
         </select>
       </div>
-      <h2>Pay Vacation Input</h2>
-      <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem' }}>
-        <label style={{ minWidth: '6rem' }}>Select Name</label>
-        <select
-          className={styles.nameSelect}
-          value={selected}
-          onChange={e => setSelected(e.target.value)}
-        >
-          <option value="">-- Select Employee --</option>
-          {employees.map(e => (
-            <option key={e.eid} value={e.eid}>{e.name}</option>
-          ))}
-        </select>
-      </div>
-      <h2>Initiate Give Sick & Paid Vacation</h2>
-      <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem' }}>
-        <label style={{ minWidth: '6rem' }}>Select Name</label>
-        <select
-          className={styles.nameSelect}
-          value={selected}
-          onChange={e => setSelected(e.target.value)}
-        >
-          <option value="">-- Select Employee --</option>
-          {employees.map(e => (
-            <option key={e.eid} value={e.eid}>{e.name}</option>
-          ))}
-        </select>
-      </div>
+      
     </div>
   );
 };
 
-export default PayrollSickPage;
+export default PayrollSickInputPage;

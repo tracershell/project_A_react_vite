@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import styles from './PayrollSickPage.module.css';
-import { useNavigate } from 'react-router-dom';
+import styles from './PayrollSickInputPage.module.css';
+
 
 const api = axios.create({
-  baseURL: '/api/admin/payroll/sick', // “sick” 라우터로 연결
+  baseURL: '/api/admin/payroll/sickinput', // “sick” 라우터로 연결
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -22,7 +22,6 @@ const PayrollSickPage = () => {
   const [form, setForm] = useState({ name: '', eid: '' });
   const [employees, setEmployees] = useState([]);
   const [selected, setSelected] = useState('');
-  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEmployees();
@@ -58,28 +57,9 @@ const PayrollSickPage = () => {
     }
   };
 
-    const handleSickInput = () => {    
-    navigate('/admin/payroll/sickinput');
-  };
-
-
-
-  const handlePvInput = () => {    
-    navigate('/admin/payroll/pvinput');
-  };
-
-
-  const handleGivenInput = () => {    
-    navigate('/admin/payroll/giveninput');
-  };
-
-
-
-
   return (
     <div className={styles.page}>
-      <h2>Sick & Pay Vacation Data</h2>
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+      <h2>Sick Day Input</h2>
       <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem' }}>
         <label style={{ minWidth: '6rem' }}>Select Name</label>
         <select
@@ -94,18 +74,6 @@ const PayrollSickPage = () => {
           ))}
         </select>
       </div>
-
-      {/* 오른쪽: 버튼 전용 박스 */}
-  <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem' }}>
-    <button className={styles.lightBlue} onClick={handleSickInput}>Sick Input</button>
-    <button className={styles.lightBlue} onClick={handlePvInput}>P. Vacation Input</button>
-    <button className={styles.lightBlue} onClick={handleGivenInput}>Sick & PV Given Input</button>
-    <button className={styles.submitBtn}>html 보기</button>
-    <button className={styles.submitBtn}>PDF 보기</button>
-  </div>
-</div>
-
-
       <h2>Pay Vacation Input</h2>
       <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem' }}>
         <label style={{ minWidth: '6rem' }}>Select Name</label>
