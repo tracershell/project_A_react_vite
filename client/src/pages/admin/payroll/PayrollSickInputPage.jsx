@@ -4,6 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './PayrollSickInputPage.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const api = axios.create({
   baseURL: '/api/admin/payroll/sickinput',
@@ -111,6 +112,8 @@ const PayrollSickInputPage = () => {
     setForm(f => ({ ...f, sickdate: '', sicktime: '', sickhour: '', remark: '' }));
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className={styles.page}>
       <h2>Sick Day Input</h2>
@@ -138,6 +141,7 @@ const PayrollSickInputPage = () => {
         <button className={styles.lightBlue} onClick={handleUpdate}>수정</button>
         <button className={styles.lightBlue} onClick={handleDelete}>삭제</button>
         <button className={styles.lightBlue} onClick={resetForm}>초기화</button>
+        <button className={styles.lightBlue} onClick={() => navigate(-1)}>되돌아가기</button>
       </div>
 
       </div>
@@ -145,25 +149,28 @@ const PayrollSickInputPage = () => {
       <h2>Sick Day List</h2>
       <div className={styles.tableWrapper}>
         <table className={styles.payTable}>
-          <thead>
-            <tr>
-              <th>Date</th><th>Hour</th><th>Remark</th>
-            </tr>
-          </thead>
-          <tbody>
-            {records.length === 0 ? (
-              <tr><td colSpan="3">No records found.</td></tr>
-            ) : (
-              records.map(r => (
-                <tr key={r.id} onClick={() => handleSelect(r)} style={{ cursor: 'pointer' }}>
-                  <td>{r.sickdate?.split('T')[0]}</td>
-                  <td>{Number(r.sickhour).toFixed(2)}</td>
-                  <td>{r.remark}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+  <thead>
+    <tr>
+      <th>Sick Date</th><th>Sick Hour</th><th>Remark</th>
+    </tr>
+  </thead>
+  <tbody>
+    {records.filter(r => !!r.sickdate).length === 0 ? (
+      <tr><td colSpan="3">No records found.</td></tr>
+    ) : (
+      records
+        .filter(r => !!r.sickdate)
+        .map(r => (
+          <tr key={r.id} onClick={() => handleSelect(r)} style={{ cursor: 'pointer' }}>
+            <td>{r.sickdate?.split('T')[0]}</td>
+            <td>{Number(r.sickhour).toFixed(2)}</td>
+            <td>{r.remark}</td>
+          </tr>
+        ))
+    )}
+  </tbody>
+</table>
+
       </div>
     </div>
   );
