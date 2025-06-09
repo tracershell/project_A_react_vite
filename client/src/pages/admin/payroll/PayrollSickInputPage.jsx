@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './PayrollSickInputPage.module.css';
 import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react'; 
 
 const api = axios.create({
   baseURL: '/api/admin/payroll/sickinput',
@@ -114,6 +115,14 @@ const PayrollSickInputPage = () => {
 
   const navigate = useNavigate();
 
+  const totalSickHour = useMemo(() => {
+  return records
+    .filter(r => !!r.sickdate)
+    .reduce((acc, r) => acc + (parseFloat(r.sickhour) || 0), 0)
+    .toFixed(2);
+}, [records]);
+
+
   return (
     <div className={styles.page}>
       <h2>Sick Day Input</h2>
@@ -169,6 +178,16 @@ const PayrollSickInputPage = () => {
         ))
     )}
   </tbody>
+  {/* ✅ 합계 표시용 tfoot 추가 */}
+  {records.filter(r => !!r.sickdate).length > 0 && (
+    <tfoot>
+      <tr>
+        <td style={{ fontWeight: 'bold', color: 'red', textAlign: 'center' }}>Total</td>
+        <td style={{ fontWeight: 'bold', color: 'red' }}>{totalSickHour}</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  )}
 </table>
 
       </div>

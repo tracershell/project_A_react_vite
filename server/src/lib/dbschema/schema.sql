@@ -317,3 +317,13 @@ CREATE TABLE IF NOT EXISTS sickpv_data (
   pvhour DECIMAL(5,2),          -- 개인휴가 시간 (예: 0.75)
   remark TEXT                   -- 비고
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+CREATE TABLE sickpv_given (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  eid VARCHAR(10),                          -- 직원 ID
+  name VARCHAR(60),                         -- 직원 이름
+  sickgiven DECIMAL(5,2) DEFAULT 0.00,      -- 지급된 병가 시간
+  pvgiven DECIMAL(5,2) DEFAULT 0.00,        -- 지급된 유급휴가 시간
+  remark TEXT                               -- 비고
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;

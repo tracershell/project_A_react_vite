@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './PayrollPvInputPage.module.css';
 import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react'; 
 
 const api = axios.create({
   baseURL: '/api/admin/payroll/pvinput',
@@ -112,6 +113,13 @@ const PayrollPvInputPage = () => {
 
   const navigate = useNavigate();
 
+  const totalPvHour = useMemo(() => {
+  return records
+    .filter(r => !!r.pvdate)
+    .reduce((acc, r) => acc + (parseFloat(r.pvhour) || 0), 0)
+    .toFixed(2);
+}, [records]);
+
 
   return (
     <div className={styles.page}>
@@ -169,6 +177,16 @@ const PayrollPvInputPage = () => {
         ))
     )}
   </tbody>
+  {/* ✅ 합계 표시용 tfoot 추가 */}
+  {records.filter(r => !!r.pvdate).length > 0 && (
+    <tfoot>
+      <tr>
+        <td style={{ fontWeight: 'bold', color: 'blue', textAlign: 'center' }}>Total</td>
+        <td style={{ fontWeight: 'bold', color: 'blue' }}>{totalPvHour}</td>
+        <td></td>
+      </tr>
+    </tfoot>
+  )}
 </table>
 
       </div>
