@@ -303,3 +303,17 @@ CREATE TABLE IF NOT EXISTS payroll_tax (
 
 
   -----------------------------------------------------------
+
+
+CREATE TABLE IF NOT EXISTS sickpv_data (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  eid VARCHAR(10),               -- 직원 ID
+  name VARCHAR(60),              -- 직원 이름 (참조용)
+  givensick INT DEFAULT 0,       -- 지급된 병가 일수
+  sickdate DATE,                 -- 병가 사용 날짜
+  sickhour DECIMAL(5,2),        -- 병가 시간 (예: 1.50)
+  givenpv INT DEFAULT 0,        -- 지급된 개인휴가 일수
+  pvdate DATE,                  -- 개인휴가 사용 날짜
+  pvhour DECIMAL(5,2),          -- 개인휴가 시간 (예: 0.75)
+  remark TEXT                   -- 비고
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;

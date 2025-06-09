@@ -66,25 +66,89 @@ h2 {
 
 /* ----------------------------------------------------------------------*/
 
-<div className={`${styles.formRow} ${styles.small}`} style={{ flex: '0 0 auto', width: '45rem' }}>  /* border box 의 폭을 45rem 으로  */                  
-        {/* 년도 선택 */}
-        <select
-          className={`${styles.select5rem}`} /* 선택 box 의 크기를 5rem 으로 */
-          value={year}
-          onChange={(e) => setYear(e.target.value)}
-        >
-          <option value="">년도 선택</option>
-          {[...Array(12)].map((_, i) => (
-            <option key={i} value={2024 + i}>
-              {2024 + i}년
-            </option>
-          ))}
-        </select>
+<div className= {
+  `$ {
+    styles.formRow
+  }
 
-/* ----------------------------------------------------------------------*/       
+  $ {
+    styles.small
+  }
+
+  `
+}
+
+style= {
+    {
+    flex: '0 0 auto', width: '45rem'
+  }
+}
+
+>
+
+/* border box 의 폭을 45rem 으로  */
+  {
+  /* 년도 선택 */
+}
+
+<select className= {
+  `$ {
+    styles.select5rem
+  }
+
+  `
+}
+
+/* 선택 box 의 크기를 5rem 으로 */
+value= {
+  year
+}
+
+onChange= {
+  (e)=>setYear(e.target.value)
+}
+
+><option value="">년도 선택</option> {
+  [...Array(12)].map((_, i)=> (<option key= {
+        i
+      }
+
+      value= {
+        2024 + i
+      }
+
+      > {
+        2024 + i
+      }
+
+      년 </option>))
+}
+
+</select>
+/* ----------------------------------------------------------------------*/
 
 .select5rem {
   width: 5rem;
   min-width: 5rem;
   max-width: 5rem;
 }
+
+/* ----------------------------------------------------------------------*/
+
+api.interceptors.request.use(cfg=> {
+    const t=localStorage.getItem('authToken');
+
+    if (t) {
+      cfg.headers.Authorization=`Bearer $ {
+        t
+      }
+
+      `;
+    }
+
+    else {
+      console.warn('⚠️ authToken 없음 (SickPage)');
+    }
+
+    return cfg;
+  });

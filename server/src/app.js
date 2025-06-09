@@ -81,7 +81,8 @@ app.use('/api/admin/payroll/payrollindividual', require('./routes/admin/payroll/
 app.use('/api/admin/payroll/payrollclassification', require('./routes/admin/payroll/payrollclassificationpage'));
 app.use('/api/admin/payroll/payrollsalaryadjust', require('./routes/admin/payroll/payrollsalaryadjustpage'));
 
-app.use('/api/admin/payroll/payrollsick', require('./routes/admin/payroll/payrollsickpage'));
+app.use('/api/admin/payroll/sick', require('./routes/admin/payroll/payrollsickpage'));
+app.use('/api/admin/payroll/sickinput', require('./routes/admin/payroll/payrollsickinputpage'));
 
 
 
