@@ -1,4 +1,4 @@
-// server/src/utils/generateSalaryAdjustPDF.js
+// server/src/utils/admin/payroll/generateSalaryAdjustPDF.js
 
 const PDFDocument = require('pdfkit');
 

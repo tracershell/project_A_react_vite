@@ -363,3 +363,20 @@ h2 {
 .nowrapLabel {
   white-space: nowrap;
 }
+
+.sickCol {
+  color: red;
+  font-weight: bold;
+}
+
+.pvCol {
+  color: blue;
+  font-weight: bold;
+}
+
+.nameCol {
+  min-width: 12rem !important;
+  max-width: 18rem;
+  white-space: nowrap;
+  text-align: left;
+}
