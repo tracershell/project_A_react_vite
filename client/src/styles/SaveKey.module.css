@@ -152,3 +152,38 @@ api.interceptors.request.use(cfg=> {
 
     return cfg;
   });
+
+
+  /* ------------------------------------------------------- */
+
+  계속 사용해온 세션 axios 요청 인터셉터 : await axios.get('/api/admin/import/vendors', { withCredentials: true });
+
+
+  개선 code:
+
+  // client/src/api.js
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: '/api',
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true, // ✅ 세션 쿠키 자동 포함
+});
+
+// (선택) 인증 실패 시 자동 리다이렉트 처리
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response?.status === 401) {
+      alert('로그인 정보가 없습니다. 다시 로그인 해주세요.');
+      window.location.href = '/login'; // 또는 navigate('/login') in React
+    }
+    return Promise.reject(err);
+  }
+);
+
+export default api;
+
+
+  /* ------------------------------------------------------- */
+

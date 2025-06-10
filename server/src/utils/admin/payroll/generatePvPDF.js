@@ -1,73 +1,102 @@
-// server/src/utils/admin/payroll/generatePvPDF.js
-
+// server/utils/admin/payroll/generatePvPDF.js
 
 const PDFDocument = require('pdfkit');
 const path = require('path');
+const fs = require('fs');
 
-const generatePVPDF = async (res, summaryData) => {
+const generatePvPDF = async (res, records) => {
   const fontPath = path.join(__dirname, '../../../public/fonts/NotoSansKR-Regular.ttf');
+
+  if (!records || !Array.isArray(records)) {
+    return res.status(400).send('records 배열이 필요합니다.');
+  }
+
   const doc = new PDFDocument({ margin: 30, size: 'letter', layout: 'landscape' });
-  doc.registerFont('Korean', fontPath).font('Korean');
 
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'inline; filename=pv_summary.pdf');
-  doc.pipe(res);
+  try {
+    if (fs.existsSync(fontPath)) {
+      doc.registerFont('Korean', fontPath);
+      doc.font('Korean');
+    } else {
+      doc.font('Helvetica');
+    }
 
-  doc.fontSize(12).text('PV Summary Report', { align: 'center' });
-  doc.moveDown(1);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename=pv_summary_${Date.now()}.pdf`);
+    doc.pipe(res);
 
-  const monthAbbr = Array.from({ length: 12 }, (_, i) =>
-    new Date(0, i).toLocaleString('en-US', { month: 'short' })
-  );
-  const headers = ['EID', 'Name', 'PV Given', 'PV Remain', ...monthAbbr];
-  const colWidths = [40, 100, 70, 70, ...Array(12).fill(40)];
-  const rowHeight = 14;
-  const startX = doc.page.margins.left;
-  const pageBottom = doc.page.height - doc.page.margins.bottom;
+    // Title
+    doc.fontSize(12).text('Paid Vacation Summary Report', { align: 'center' }).moveDown(1);
 
-  let y = doc.y;
-  let x = startX;
+    // Header row (PV Only)
+    const headers = ['EID', 'Name', 'Given', 'Remain', ...Array.from({ length: 12 }, (_, i) =>
+      new Date(0, i).toLocaleString('en-US', { month: 'short' })
+    )];
+    const colWidths = [40, 100, 42, 42, ...Array(12).fill(42)];
+    const rowHeight = 13;
+    const startX = doc.page.margins.left;
+    doc.fontSize(8).lineWidth(0.4);
+    let y = doc.y + 4;
 
-  headers.forEach((header, i) => {
-    doc.rect(x, y, colWidths[i], rowHeight).stroke();
-    doc.text(header, x + 2, y + 2, { width: colWidths[i] - 4, align: 'center' });
-    x += colWidths[i];
-  });
-  y += rowHeight;
-
-  summaryData.forEach(row => {
-    if (y + rowHeight > pageBottom) {
-      doc.addPage();
-      y = doc.page.margins.top;
-      x = startX;
-      headers.forEach((header, i) => {
+    const drawRow = (rowData) => {
+      let x = startX;
+      rowData.forEach((cell, i) => {
         doc.rect(x, y, colWidths[i], rowHeight).stroke();
-        doc.text(header, x + 2, y + 2, { width: colWidths[i] - 4, align: 'center' });
+        doc.text(cell, x + 2, y + 3, { width: colWidths[i] - 4, align: 'center' });
+
+        // 강조 선
+        if (i === 2) { // 'Given' 왼쪽
+          doc.save()
+            .lineWidth(0.6)
+            .moveTo(x, y)
+            .lineTo(x, y + rowHeight)
+            .stroke()
+            .restore();
+        }
+        if (i === 3) { // 'Remain' 오른쪽
+          const rightX = x + colWidths[i];
+          doc.save()
+            .lineWidth(0.6)
+            .moveTo(rightX, y)
+            .lineTo(rightX, y + rowHeight)
+            .stroke()
+            .restore();
+        }
+
         x += colWidths[i];
       });
       y += rowHeight;
-    }
+    };
 
-    const values = [
-      row.EID,
-      row.NAME,
-      row.PVGiven,
-      row.PVRemain,
-      ...monthAbbr.map(m => row[`${m}_PV`] || 0)
-    ];
+    // Draw header
+    drawRow(headers);
 
-    x = startX;
-    values.forEach((val, i) => {
-      doc.rect(x, y, colWidths[i], rowHeight).stroke();
-      doc.text(val.toString(), x + 2, y + 2, { width: colWidths[i] - 4, align: 'center' });
-      x += colWidths[i];
+    // Draw records (PV Only)
+    records.forEach(row => {
+      if (y + rowHeight > doc.page.height - doc.page.margins.bottom) {
+        doc.addPage();
+        y = doc.page.margins.top;
+        drawRow(headers);
+      }
+      const dataRow = [
+        row.EID || '',
+        row.NAME || '',
+        Number(row.PVGiven || 0).toFixed(2),
+        Number(row.PVRemain || 0).toFixed(2),
+        ...Array.from({ length: 12 }, (_, i) => {
+          const mon = new Date(0, i).toLocaleString('en-US', { month: 'short' });
+          const key = `${mon}_PV`;
+          return Number(row[key] || 0).toFixed(2);
+        })
+      ];
+      drawRow(dataRow);
     });
-    y += rowHeight;
-  });
 
-  doc.end();
+    doc.end();
+  } catch (err) {
+    console.error('PV PDF 생성 중 오류:', err);
+    res.end();
+  }
 };
 
-module.exports = generatePVPDF;
-
-
+module.exports = generatePvPDF;
