@@ -153,58 +153,58 @@ const ImportPoPage = () => {
     setBpSelected(s => s.includes(id) ? s.filter(x => x !== id) : [...s, id]);
 
   // 검색 필터링
-const filteredList = list.filter(r => {
-  // 검색 조건: Vendor
-  const matchesVendor = !searchVendor || r.vendor_id === Number(searchVendor);
+  const filteredList = list.filter(r => {
+    // 검색 조건: Vendor
+    const matchesVendor = !searchVendor || r.vendor_id === Number(searchVendor);
 
-  // 검색 조건: 텍스트 (vendor_name, style_no, po_no)
-  const matchesSearchText =
-    r.vendor_name?.toLowerCase().includes(searchText.toLowerCase()) ||
-    r.style_no?.toLowerCase().includes(searchText.toLowerCase()) ||
-    r.po_no?.toLowerCase().includes(searchText.toLowerCase());
+    // 검색 조건: 텍스트 (vendor_name, style_no, po_no)
+    const matchesSearchText =
+      r.vendor_name?.toLowerCase().includes(searchText.toLowerCase()) ||
+      r.style_no?.toLowerCase().includes(searchText.toLowerCase()) ||
+      r.po_no?.toLowerCase().includes(searchText.toLowerCase());
 
-  // 금액 필드 숫자 변환 (NaN 방지)
-  const tAmount = Number(r.t_amount_rmb) || 0;
-  const dpAmount = Number(r.dp_amount_rmb) || 0;
-  const bpAmount = Number(r.bp_amount_rmb) || 0;
-  const totalPaid = dpAmount + bpAmount;
+    // 금액 필드 숫자 변환 (NaN 방지)
+    const tAmount = Number(r.t_amount_rmb) || 0;
+    const dpAmount = Number(r.dp_amount_rmb) || 0;
+    const bpAmount = Number(r.bp_amount_rmb) || 0;
+    const totalPaid = dpAmount + bpAmount;
 
-// 문자열 비교 전 정제 (안정성 향상) - 공백, 대소문자 실수 방지
-  const bpStatus = searchBP?.trim().toLowerCase();
+    // 문자열 비교 전 정제 (안정성 향상) - 공백, 대소문자 실수 방지
+    const bpStatus = searchBP?.trim().toLowerCase();
 
 
-  // 검색 조건: BP 상태별 필터링
-  let matchesBP = true;
-  if (searchBP === 'paid') {
-    // 조건 1~4: 지급 완료된 경우
-    matchesBP =
-      tAmount === 0 ||                // 조건 1
-      dpAmount === tAmount ||        // 조건 2
-      bpAmount === tAmount ||        // 조건 3
-      totalPaid === tAmount;         // 조건 4
-  } else if (searchBP === 'unpaid') {
-    // 조건 1~2: 미지급 or 일부 지급
-    matchesBP =
-      tAmount > 0 && (
-        (dpAmount === 0 && bpAmount === 0) ||   // 조건 1
-        totalPaid < tAmount                     // 조건 2 (일부 지급)
-      );
-  }
+    // 검색 조건: BP 상태별 필터링
+    let matchesBP = true;
+    if (searchBP === 'paid') {
+      // 조건 1~4: 지급 완료된 경우
+      matchesBP =
+        tAmount === 0 ||                // 조건 1
+        dpAmount === tAmount ||        // 조건 2
+        bpAmount === tAmount ||        // 조건 3
+        totalPaid === tAmount;         // 조건 4
+    } else if (searchBP === 'unpaid') {
+      // 조건 1~2: 미지급 or 일부 지급
+      matchesBP =
+        tAmount > 0 && (
+          (dpAmount === 0 && bpAmount === 0) ||   // 조건 1
+          totalPaid < tAmount                     // 조건 2 (일부 지급)
+        );
+    }
 
-  // 최종 결과 리턴
-  return matchesVendor && matchesBP && matchesSearchText;
-});
+    // 최종 결과 리턴
+    return matchesVendor && matchesBP && matchesSearchText;
+  });
 
-// filteredList 의 합계용
-const totalSummary = filteredList.reduce(
-  (acc, row) => {
-    acc.total += Number(row.t_amount_rmb || 0);
-    acc.dp += Number(row.dp_amount_rmb || 0);
-    acc.bp += Number(row.bp_amount_rmb || 0);
-    return acc;
-  },
-  { total: 0, dp: 0, bp: 0 }
-);
+  // filteredList 의 합계용
+  const totalSummary = filteredList.reduce(
+    (acc, row) => {
+      acc.total += Number(row.t_amount_rmb || 0);
+      acc.dp += Number(row.dp_amount_rmb || 0);
+      acc.bp += Number(row.bp_amount_rmb || 0);
+      return acc;
+    },
+    { total: 0, dp: 0, bp: 0 }
+  );
 
 
 
@@ -392,37 +392,37 @@ const totalSummary = filteredList.reduce(
 
     try {
       const cleanedRows = rowsToSend.map(r => {
-  const pcs = Number(r.pcs) || 0;
-  const cost = Number(r.cost_rmb) || 0;
-  const rate = Number(r.deposit_rate || vRate) / 100;
-  const t_amount_rmb = pcs * cost;
+        const pcs = Number(r.pcs) || 0;
+        const cost = Number(r.cost_rmb) || 0;
+        const rate = Number(r.deposit_rate || vRate) / 100;
+        const t_amount_rmb = pcs * cost;
 
-  const isFullPayment = dpSelected.includes(r.id) && bpSelected.includes(r.id);
+        const isFullPayment = dpSelected.includes(r.id) && bpSelected.includes(r.id);
 
-  const dpRmb = isFullPayment ? 0 : (r.dp_amount_rmb || 0);
+        const dpRmb = isFullPayment ? 0 : (r.dp_amount_rmb || 0);
 
-  const bpRmb = isFullPayment
-    ? t_amount_rmb
-    : parseFloat((t_amount_rmb - dpRmb).toFixed(2));
+        const bpRmb = isFullPayment
+          ? t_amount_rmb
+          : parseFloat((t_amount_rmb - dpRmb).toFixed(2));
 
-  return {
-    vendor_id: r.vendor_id,
-    vendor_name: r.vendor_name,
-    po_no: r.po_no,
-    style_no: r.style_no,
-    po_date: cleanDate(r.po_date),
-    pcs,
-    cost_rmb: cost,
-    t_amount_rmb,
-    note: r.note || '',
-    deposit_rate: Number(r.deposit_rate || vRate) || 0,
-    dp_amount_rmb: dpRmb, // <- 이 부분이 핵심
-    bp_amount_rmb: bpRmb,
-    bp_exrate: 0,
-    bp_amount_usd: 0,
-    bp_date: null
-  };
-});
+        return {
+          vendor_id: r.vendor_id,
+          vendor_name: r.vendor_name,
+          po_no: r.po_no,
+          style_no: r.style_no,
+          po_date: cleanDate(r.po_date),
+          pcs,
+          cost_rmb: cost,
+          t_amount_rmb,
+          note: r.note || '',
+          deposit_rate: Number(r.deposit_rate || vRate) || 0,
+          dp_amount_rmb: dpRmb, // <- 이 부분이 핵심
+          bp_amount_rmb: bpRmb,
+          bp_exrate: 0,
+          bp_amount_usd: 0,
+          bp_date: null
+        };
+      });
 
 
       await axios.post(
@@ -444,87 +444,96 @@ const totalSummary = filteredList.reduce(
     }
   };
 
+  const handleVendorInput = () => navigate('/admin/import/vendorinput');
+  const handleExtraItemInput = () => navigate('/admin/import/extraiteminput');
   return (
     <div className={styles.page}>
       <h2>PO Input</h2>
-      <form className={`${styles.formRow} ${styles.small}`} onSubmit={e => e.preventDefault()}>
-        <select
-          ref={el => inputsRef.current[0] = el}
-          name="vendor_id"
-          value={form.vendor_id || ''}
-          onChange={handleVendorChange}
-        >
-          <option value="">선택: Vendor</option>
-          {vendors.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
-        </select>
-        <div><strong>Rate (%)</strong>: {form.deposit_rate || ''}</div>
-        <input
-          ref={el => inputsRef.current[1] = el}
-          type="date"
-          name="po_date"
-          value={form.po_date || ''}
-          onChange={handleChange}
-        />
-        <input
-          ref={el => inputsRef.current[2] = el}
-          name="style_no"
-          placeholder="Style no."
-          value={form.style_no || ''}
-          onChange={handleChange}
-          onKeyDown={e => handleKeyDown(2, e)}
-        />
-        <input
-          ref={el => inputsRef.current[3] = el}
-          name="po_no"
-          placeholder="PO no."
-          value={form.po_no || ''}
-          onChange={handleChange}
-          onKeyDown={e => handleKeyDown(3, e)}
-        />
-        <input
-          ref={el => inputsRef.current[4] = el}
-          type="number"
-          name="pcs"
-          placeholder="pcs"
-          value={form.pcs || ''}
-          onChange={handleChange}
-          onKeyDown={e => handleKeyDown(4, e)}
-        />
-        <input
-          ref={el => inputsRef.current[5] = el}
-          type="number"
-          step="0.01"
-          name="cost_rmb"
-          placeholder="cost (RMB)"
-          value={form.cost_rmb || ''}
-          onChange={handleChange}
-          onKeyDown={e => handleKeyDown(5, e)}
-        />
-        <input readOnly placeholder="T.Amount" value={totalRmb} />
-        <input
-          ref={el => inputsRef.current[6] = el}
-          name="note"
-          placeholder="note"
-          value={form.note || ''}
-          onChange={handleChange}
-          onKeyDown={e => handleKeyDown(6, e)}
-        />
-        <button type="button" onClick={handleAdd}>입력</button>
-        <button type="button" onClick={handleEdit} disabled={!selectedId}>수정</button>
-        <button
-          type="button"
-          onClick={handleDelete}
-          disabled={
-            !selectedId ||
-            (list.find(r => r.id === selectedId)?.dp_status === 'paid' ||
-              list.find(r => r.id === selectedId)?.bp_status === 'paid')
-          }
-        >
-          제거
-        </button>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '12px' }}>
+        <form className={`${styles.formRow} ${styles.small}`} onSubmit={e => e.preventDefault()}>
+          <select
+            ref={el => inputsRef.current[0] = el}
+            name="vendor_id"
+            value={form.vendor_id || ''}
+            onChange={handleVendorChange}
+          >
+            <option value="">선택: Vendor</option>
+            {vendors.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
+          </select>
+          <div><strong>Rate (%)</strong>: {form.deposit_rate || ''}</div>
+          <input
+            ref={el => inputsRef.current[1] = el}
+            type="date"
+            name="po_date"
+            value={form.po_date || ''}
+            onChange={handleChange}
+          />
+          <input
+            ref={el => inputsRef.current[2] = el}
+            name="style_no"
+            placeholder="Style no."
+            value={form.style_no || ''}
+            onChange={handleChange}
+            onKeyDown={e => handleKeyDown(2, e)}
+          />
+          <input
+            ref={el => inputsRef.current[3] = el}
+            name="po_no"
+            placeholder="PO no."
+            value={form.po_no || ''}
+            onChange={handleChange}
+            onKeyDown={e => handleKeyDown(3, e)}
+          />
+          <input
+            ref={el => inputsRef.current[4] = el}
+            type="number"
+            name="pcs"
+            placeholder="pcs"
+            value={form.pcs || ''}
+            onChange={handleChange}
+            onKeyDown={e => handleKeyDown(4, e)}
+          />
+          <input
+            ref={el => inputsRef.current[5] = el}
+            type="number"
+            step="0.01"
+            name="cost_rmb"
+            placeholder="cost (RMB)"
+            value={form.cost_rmb || ''}
+            onChange={handleChange}
+            onKeyDown={e => handleKeyDown(5, e)}
+          />
+          <input readOnly placeholder="T.Amount" value={totalRmb} />
+          <input
+            ref={el => inputsRef.current[6] = el}
+            name="note"
+            placeholder="note"
+            value={form.note || ''}
+            onChange={handleChange}
+            onKeyDown={e => handleKeyDown(6, e)}
+          />
+          <button type="button" onClick={handleAdd}>입력</button>
+          <button type="button" onClick={handleEdit} disabled={!selectedId}>수정</button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={
+              !selectedId ||
+              (list.find(r => r.id === selectedId)?.dp_status === 'paid' ||
+                list.find(r => r.id === selectedId)?.bp_status === 'paid')
+            }
+          >
+            제거
+          </button>
 
-        <button type="button" onClick={clearFormFields}>초기화</button>
-      </form>
+          <button type="button" onClick={clearFormFields}>초기화</button>
+        </form>
+        <div className={`${styles.formRow} ${styles.small}`} style={{ flex: '0 0 auto' }}>
+          <button className={styles.lightPink} onClick={handleVendorInput} >Vendor List</button>
+          <button className={styles.lightPink} onClick={handleExtraItemInput} >Extra Item</button>
+
+        </div>
+      </div>
 
       <h2>PO List</h2>
       <form className={`${styles.formRow} ${styles.small}`} onSubmit={handleSearch}>
@@ -545,8 +554,8 @@ const totalSummary = filteredList.reduce(
         />
         <button type="submit">검색</button>
         <button type="button" onClick={handleViewPdf}>PDF 보기</button>
-        <button type="button" onClick={handleDepositPay}>Deposit Pay</button>
-        <button type="button" onClick={handleBalancePay}>Balance Pay</button>
+        <button type="button" className={styles.lightPink} onClick={handleDepositPay}>Deposit Pay</button>
+        <button type="button" className={styles.lightPink} onClick={handleBalancePay}>Balance Pay</button>
       </form>
 
       <div className={styles.list}>
@@ -622,23 +631,23 @@ const totalSummary = filteredList.reduce(
                         r.dp_amount_rmb === r.t_amount_rmb ||
                         r.t_amount_rmb === 0 ||
                         (Number(r.pcs) === 0 && Number(r.cost_rmb) === 0)
-                   }
-                 />
-            )}
-              </td>
+                      }
+                    />
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
-            <tfoot>
-  <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
-    <td colSpan={8} style={{ textAlign: 'right' }}>합계</td>
-    <td>{totalSummary.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-    <td>{totalSummary.dp.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-    <td></td>
-    <td>{totalSummary.bp.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-    <td></td>
-  </tr>
-</tfoot>
+          <tfoot>
+            <tr style={{ fontWeight: 'bold', backgroundColor: '#f0f0f0' }}>
+              <td colSpan={8} style={{ textAlign: 'right' }}>합계</td>
+              <td>{totalSummary.total.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td>{totalSummary.dp.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td></td>
+              <td>{totalSummary.bp.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>

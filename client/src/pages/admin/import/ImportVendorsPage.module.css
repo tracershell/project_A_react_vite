@@ -20,7 +20,7 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-bottom: 12px;
-  }
+}
 
 .form input {
   display: inline-block;
@@ -65,7 +65,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   padding: 0.4rem;
   border: 1px solid #ddd;
   text-align: center;
@@ -97,4 +98,10 @@ th, td {
   gap: 0.3rem;
   padding-top: 1.0rem;
   padding-bottom: 0.1rem;
+}
+
+.formRow.small button.lightPink {
+  background-color: lightpink;
+  border: 1px solid #d88a9a;
+  color: #000;
 }

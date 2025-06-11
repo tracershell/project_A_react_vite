@@ -1,7 +1,7 @@
 // ✅ Given Sick & Paid Vacation 관리 화면
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import styles from './PayrollSickInputPage.module.css';
+import styles from './PayrollGivenInputPage.module.css';
 import { useNavigate } from 'react-router-dom';
 
 const api = axios.create({
@@ -90,26 +90,26 @@ const PayrollGivenInputPage = () => {
     <div className={styles.page}>
       <h2>Given Sick & Paid Vacation Input</h2>
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-      <div className={`${styles.formRow} ${styles.small}`}>
-        <label style={{ minWidth: '6rem' }}>Select Name</label>
-        <select name="name" value={form.name} onChange={handleChange} className={styles.nameSelect}>
-          <option value="">-- Select --</option>
-          {employees.map(e => <option key={e.eid} value={e.name}>{e.name}</option>)}
-        </select>
-        <label style={{ whiteSpace: 'nowrap', minWidth: '5rem' }}>Sick Given</label>
-        <input type="text" name="sickgiven" value={form.sickgiven} onChange={handleChange} />
-        <label>PV Given</label>
-        <input type="text" name="pvgiven" value={form.pvgiven} onChange={handleChange} />
-        <label>Remark</label>
-        <input type="text" name="remark" value={form.remark} onChange={handleChange} className={styles.remarkInput} />
-      </div>
+        <div className={`${styles.formRow} ${styles.small}`}>
+          <label style={{ minWidth: '6rem' }}>Select Name</label>
+          <select name="name" value={form.name} onChange={handleChange} className={styles.nameSelect}>
+            <option value="">-- Select --</option>
+            {employees.map(e => <option key={e.eid} value={e.name}>{e.name}</option>)}
+          </select>
+          <label style={{ whiteSpace: 'nowrap', minWidth: '5rem' }}>Sick Given</label>
+          <input type="text" name="sickgiven" value={form.sickgiven} onChange={handleChange} />
+          <label>PV Given</label>
+          <input type="text" name="pvgiven" value={form.pvgiven} onChange={handleChange} />
+          <label>Remark</label>
+          <input type="text" name="remark" value={form.remark} onChange={handleChange} className={styles.remarkInput} />
+        </div>
 
-      <div className={styles.formRow}>
-        <button className={styles.submitBtn} onClick={handleSubmit}>입력</button>
-        <button className={styles.lightBlue} onClick={resetForm}>초기화</button>
-        <button className={styles.lightBlue} onClick={() => navigate(-1)}>되돌아가기</button>
+        <div className={styles.formRow}>
+          <button className={styles.submitBtn} onClick={handleSubmit}>입력</button>
+          <button className={styles.lightBlue} onClick={resetForm}>초기화</button>
+          <button className={styles.lightPink} onClick={() => navigate(-1)}>되돌아가기</button>
+        </div>
       </div>
-</div>
       <h2>Given Sick & Paid Vacation List</h2>
       <div className={styles.tableWrapper}>
         <table className={styles.payTable}>

@@ -15,7 +15,8 @@ h2 {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem; /* 기본 패딩 값 */
+  padding: 0.75rem;
+  /* 기본 패딩 값 */
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-bottom: 12px;
@@ -95,7 +96,8 @@ th {
 
 /* 바디(row)용 padding—여기서 상·하 여백을 조절하세요 */
 tbody td {
-  padding: 0.10rem 0.25rem;  /* 상하 0.5rem, 좌우 0.25rem 예시 */
+  padding: 0.10rem 0.25rem;
+  /* 상하 0.5rem, 좌우 0.25rem 예시 */
 }
 
 tbody tr:hover {
@@ -114,20 +116,26 @@ tbody tr:hover {
   margin-right: 10px;
 
   /* 더 나은 baseline 정렬을 위해 아래 속성들을 추가하거나 확인합니다. */
-  display: inline-block;    /* 다른 inline 요소들과 유사하게 동작하도록 합니다. */
-  vertical-align: baseline; /* baseline 정렬을 명시합니다. */
-  /* line-height: 1.6rem; */ /* 입력창과 동일한 line-height를 시도해볼 수 있으나, 14px 폰트에 너무 클 수 있습니다. 우선 주석 처리하고 테스트합니다. */
+  display: inline-block;
+  /* 다른 inline 요소들과 유사하게 동작하도록 합니다. */
+  vertical-align: baseline;
+  /* baseline 정렬을 명시합니다. */
+  /* line-height: 1.6rem; */
+  /* 입력창과 동일한 line-height를 시도해볼 수 있으나, 14px 폰트에 너무 클 수 있습니다. 우선 주석 처리하고 테스트합니다. */
 }
 
 /* 1) .formRow.small 에서 align-items를 baseline으로 변경 */
 .formRow.small {
   display: flex;
   flex-wrap: nowrap;
-  align-items: baseline;   /* 이 설정은 유지합니다. */
+  align-items: baseline;
+  /* 이 설정은 유지합니다. */
   font-size: 11px;
   gap: 0.3rem;
-  padding-top: 1.0rem;    /* 기존에 설정하신 작은 패딩 값 */
-  padding-bottom: 0.1rem; /* 기존에 설정하신 작은 패딩 값 */
+  padding-top: 1.0rem;
+  /* 기존에 설정하신 작은 패딩 값 */
+  padding-bottom: 0.1rem;
+  /* 기존에 설정하신 작은 패딩 값 */
 }
 
 /* 입력창(select, input) 및 버튼 스타일은 vertical-align: baseline이 이미 설정되어 있는지 확인합니다. (제공해주신 코드에는 이미 잘 되어 있습니다) */
@@ -136,7 +144,8 @@ tbody tr:hover {
   display: inline-block;
   vertical-align: baseline;
   height: 1.6rem;
-  line-height: 1.6rem; /* 텍스트를 박스 중앙에 오도록 합니다. */
+  line-height: 1.6rem;
+  /* 텍스트를 박스 중앙에 오도록 합니다. */
   padding: 0 0.3rem;
   font-size: 11px;
   appearance: none;
@@ -147,7 +156,14 @@ tbody tr:hover {
   display: inline-block;
   vertical-align: baseline;
   height: 1.6rem;
-  line-height: 1.6rem; /* 텍스트를 박스 중앙에 오도록 합니다. */
+  line-height: 1.6rem;
+  /* 텍스트를 박스 중앙에 오도록 합니다. */
   font-size: 11px;
   padding: 0 0.5rem;
+}
+
+.formRow.small button.lightPink {
+  background-color: lightpink;
+  border: 1px solid #d88a9a;
+  color: #000;
 }

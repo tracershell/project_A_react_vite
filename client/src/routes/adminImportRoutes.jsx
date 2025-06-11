@@ -14,7 +14,7 @@ import ImportExtraItemsPage from '../pages/admin/import/ImportExtraItemsPage'; /
 const adminImportRoutes = [
   <Route
     key="import-vendors"
-    path="import/vendors"
+    path="import/vendorinput"
     element={
       <PrivateRoute role="admin">
         <ImportVendorsPage />
@@ -52,7 +52,7 @@ const adminImportRoutes = [
   
   <Route
     key="import-extra-items"
-    path="import/extra"
+    path="import/extraiteminput"
     element={
       <PrivateRoute role="admin">
         <ImportExtraItemsPage />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import styles from './ImportVendorsPage.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const ImportVendorsPage = () => {
   const [vendors, setVendors] = useState([]);
@@ -56,43 +57,46 @@ const ImportVendorsPage = () => {
     setForm({});
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className={styles.page}>
       <h2>Vendors Input</h2>
       <form className={styles.form} onSubmit={e => e.preventDefault()}>
-  {[
-    { name: 'vendor_id',     placeholder: 'Vendor ID',         width: '60px' },
-    { name: 'name',          placeholder: 'Vendor Name',       width: '180px' },
-    { name: 'deposit_rate',  placeholder: 'Deposit Rate (%)',  width: '70px' },
-    { name: 'email',         placeholder: 'Email',             width: '200px' },
-    { name: 'phone',         placeholder: 'Phone no.',         width: '130px' },
-    { name: 'street',        placeholder: 'Street Address',    width: '200px' },
-    { name: 'city',          placeholder: 'City',              width: '100px' },
-    { name: 'state',         placeholder: 'State',             width: '100px' },
-    { name: 'zip',           placeholder: 'Zip',               width: '50px' },
-    { name: 'nation',        placeholder: 'Nation',            width: '100px' },
-    { name: 'remark',        placeholder: 'Remark',            width: '250px' },
-  ].map((field, i) => (
-    <input
-      key={field.name}
-      ref={el => inputsRef.current[i] = el}
-      name={field.name}
-      value={form[field.name] || ''}
-      placeholder={field.placeholder}
-      onChange={handleChange}
-      onKeyDown={e => handleKeyDown(i, e)}
-      style={{ width: field.width, flex: 'none' }}
-    />
-  ))}
+        {[
+          { name: 'vendor_id', placeholder: 'Vendor ID', width: '60px' },
+          { name: 'name', placeholder: 'Vendor Name', width: '180px' },
+          { name: 'deposit_rate', placeholder: 'Deposit Rate (%)', width: '70px' },
+          { name: 'email', placeholder: 'Email', width: '200px' },
+          { name: 'phone', placeholder: 'Phone no.', width: '130px' },
+          { name: 'street', placeholder: 'Street Address', width: '200px' },
+          { name: 'city', placeholder: 'City', width: '100px' },
+          { name: 'state', placeholder: 'State', width: '100px' },
+          { name: 'zip', placeholder: 'Zip', width: '50px' },
+          { name: 'nation', placeholder: 'Nation', width: '100px' },
+          { name: 'remark', placeholder: 'Remark', width: '250px' },
+        ].map((field, i) => (
+          <input
+            key={field.name}
+            ref={el => inputsRef.current[i] = el}
+            name={field.name}
+            value={form[field.name] || ''}
+            placeholder={field.placeholder}
+            onChange={handleChange}
+            onKeyDown={e => handleKeyDown(i, e)}
+            style={{ width: field.width, flex: 'none' }}
+          />
+        ))}
 
-  <div className={styles.buttons}>
-        <button onClick={handleAdd}>입력</button>
-        <button onClick={handleEdit} disabled={!selectedId}>수정</button>
-        <button onClick={handleDelete} disabled={!selectedId}>제거</button>
-      </div>
-</form>
+        <div className={styles.buttons}>
+          <button onClick={handleAdd}>입력</button>
+          <button onClick={handleEdit} disabled={!selectedId}>수정</button>
+          <button onClick={handleDelete} disabled={!selectedId}>제거</button>
+          <button className={styles.lightPink} onClick={() => navigate(-1)}>되돌아가기</button>
+        </div>
+      </form>
 
-      
+
 
       <h2>Vendors List</h2>
       <div className={styles.list}>

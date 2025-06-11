@@ -363,3 +363,9 @@ h2 {
 .nowrapLabel {
   white-space: nowrap;
 }
+
+.formRow.small button.lightPink {
+  background-color: lightpink;
+  border: 1px solid #d88a9a;
+  color: #000;
+}

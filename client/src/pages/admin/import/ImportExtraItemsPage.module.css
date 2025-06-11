@@ -73,3 +73,10 @@ h2 {
 .selected {
   background-color: #ffff99;
 }
+
+
+.formRow.small button.lightPink {
+  background-color: lightpink;
+  border: 1px solid #d88a9a;
+  color: #000;
+}

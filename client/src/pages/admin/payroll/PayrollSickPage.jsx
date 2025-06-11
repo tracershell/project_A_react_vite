@@ -15,7 +15,7 @@ const PayrollSickPage = () => {
   const [errorSummary, setErrorSummary] = useState(null);
 
   const navigate = useNavigate();
-  const months = useMemo(() => ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], []);
+  const months = useMemo(() => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], []);
 
   useEffect(() => {
     fetchEmployees();
@@ -26,8 +26,8 @@ const PayrollSickPage = () => {
     setErrorEmployees(null);
     try {
       const { data } = await axios.get('/api/admin/payroll/sick/employees', {
-  withCredentials: true
-});
+        withCredentials: true
+      });
       if (Array.isArray(data)) setEmployees(data);
       else setEmployees([]);
     } catch (e) {
@@ -63,9 +63,9 @@ const PayrollSickPage = () => {
       const params = {};
       if (eid) params.eid = eid;
       const { data } = await axios.get('/api/admin/payroll/sick/summary', {
-  params,
-  withCredentials: true
-});
+        params,
+        withCredentials: true
+      });
       if (Array.isArray(data)) setSummaryData(data);
       else setSummaryData([]);
     } catch (err) {
@@ -87,13 +87,13 @@ const PayrollSickPage = () => {
     }
     try {
       const res = await axios.post(
-  '/api/admin/payroll/sick/pdf/sick',
-  { records: summaryData },
-  {
-    responseType: 'blob',
-    withCredentials: true,
-  }
-);
+        '/api/admin/payroll/sick/pdf/sick',
+        { records: summaryData },
+        {
+          responseType: 'blob',
+          withCredentials: true,
+        }
+      );
       const blob = new Blob([res.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
@@ -116,13 +116,13 @@ const PayrollSickPage = () => {
     }
     try {
       const res = await axios.post(
-  '/api/admin/payroll/sick/pdf/pv',
-  { records: summaryData },
-  {
-    responseType: 'blob',
-    withCredentials: true,
-  }
-);
+        '/api/admin/payroll/sick/pdf/pv',
+        { records: summaryData },
+        {
+          responseType: 'blob',
+          withCredentials: true,
+        }
+      );
       const blob = new Blob([res.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
@@ -139,36 +139,36 @@ const PayrollSickPage = () => {
     }
   };
   useEffect(() => {
-  const handleBeforeUnload = () => {
-    if (summaryData.length > 0) {
-      navigator.sendBeacon(
-        '/api/admin/payroll/sick/update-remaining',
-        new Blob([JSON.stringify({ records: summaryData })], { type: 'application/json' })
-      );
+    const handleBeforeUnload = () => {
+      if (summaryData.length > 0) {
+        navigator.sendBeacon(
+          '/api/admin/payroll/sick/update-remaining',
+          new Blob([JSON.stringify({ records: summaryData })], { type: 'application/json' })
+        );
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [summaryData]);
+
+  const handleSaveRemaining = async () => {
+    if (!Array.isArray(summaryData) || summaryData.length === 0) {
+      return alert('저장할 데이터가 없습니다.');
+    }
+    try {
+      await axios.post('/api/admin/payroll/sick/update-remaining', {
+        records: summaryData,
+      }, { withCredentials: true });
+
+      alert('Sick / PV 잔여 시간이 저장되었습니다.');
+    } catch (err) {
+      console.error('잔여 저장 실패:', err);
+      alert('저장 중 오류 발생');
     }
   };
-
-  window.addEventListener('beforeunload', handleBeforeUnload);
-  return () => {
-    window.removeEventListener('beforeunload', handleBeforeUnload);
-  };
-}, [summaryData]);
-
-const handleSaveRemaining = async () => {
-  if (!Array.isArray(summaryData) || summaryData.length === 0) {
-    return alert('저장할 데이터가 없습니다.');
-  }
-  try {
-    await axios.post('/api/admin/payroll/sick/update-remaining', {
-      records: summaryData,
-    }, { withCredentials: true });
-
-    alert('Sick / PV 잔여 시간이 저장되었습니다.');
-  } catch (err) {
-    console.error('잔여 저장 실패:', err);
-    alert('저장 중 오류 발생');
-  }
-};
 
 
 
@@ -188,9 +188,9 @@ const handleSaveRemaining = async () => {
           {errorEmployees && <div style={{ color: 'red', marginLeft: '0.5rem' }}>{errorEmployees}</div>}
         </div>
         <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem', gap: '0.5rem' }}>
-          <button type="button" className={styles.lightBlue} onClick={handleSickInput}>Sick Input</button>
-          <button type="button" className={styles.lightBlue} onClick={handlePvInput}>P. Vacation Input</button>
-          <button type="button" className={styles.lightBlue} onClick={handleGivenInput}>Sick & PV Given Input</button>
+          <button type="button" className={styles.lightPink} onClick={handleSickInput}>Sick Input</button>
+          <button type="button" className={styles.lightPink} onClick={handlePvInput}>P. Vacation Input</button>
+          <button type="button" className={styles.lightPink} onClick={handleGivenInput}>Sick & PV Given Input</button>
           <button
             type="button"
             className={styles.submitBtn}
@@ -210,14 +210,14 @@ const handleSaveRemaining = async () => {
             PV PDF 보기
           </button>
           <button
-  type="button"
-  className={styles.submitBtn}
-  onClick={handleSaveRemaining}
-  disabled={!summaryData.length}
-  title={summaryData.length ? '' : '먼저 직원 선택 후 데이터를 불러오세요'}
->
-  잔여시간 저장
-</button>
+            type="button"
+            className={styles.submitBtn}
+            onClick={handleSaveRemaining}
+            disabled={!summaryData.length}
+            title={summaryData.length ? '' : '먼저 직원 선택 후 데이터를 불러오세요'}
+          >
+            잔여시간 저장
+          </button>
 
         </div>
       </div>
@@ -267,7 +267,7 @@ const handleSaveRemaining = async () => {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={6 + months.length*2} style={{ textAlign: 'center', color: '#888' }}>
+                  <td colSpan={6 + months.length * 2} style={{ textAlign: 'center', color: '#888' }}>
                     선택된 직원의 데이터가 없습니다.
                   </td>
                 </tr>

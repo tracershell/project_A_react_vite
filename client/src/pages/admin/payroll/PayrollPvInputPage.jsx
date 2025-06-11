@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './PayrollPvInputPage.module.css';
 import { useNavigate } from 'react-router-dom';
-import { useMemo } from 'react'; 
+import { useMemo } from 'react';
 
 const api = axios.create({
   baseURL: '/api/admin/payroll/pvinput',
@@ -114,80 +114,80 @@ const PayrollPvInputPage = () => {
   const navigate = useNavigate();
 
   const totalPvHour = useMemo(() => {
-  return records
-    .filter(r => !!r.pvdate)
-    .reduce((acc, r) => acc + (parseFloat(r.pvhour) || 0), 0)
-    .toFixed(2);
-}, [records]);
+    return records
+      .filter(r => !!r.pvdate)
+      .reduce((acc, r) => acc + (parseFloat(r.pvhour) || 0), 0)
+      .toFixed(2);
+  }, [records]);
 
 
   return (
     <div className={styles.page}>
       <h2>Paid Vacation Input</h2>
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-      <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem' }}>
-        <label style={{ minWidth: '6rem' }}>Select Name</label>
-        <select name="name" value={form.name} onChange={handleChange} className={styles.nameSelect}>
-          <option value="">-- Select --</option>
-          {employees.map(e => <option key={e.eid} value={e.name}>{e.name}</option>)}
-        </select>
-      </div>
+        <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem' }}>
+          <label style={{ minWidth: '6rem' }}>Select Name</label>
+          <select name="name" value={form.name} onChange={handleChange} className={styles.nameSelect}>
+            <option value="">-- Select --</option>
+            {employees.map(e => <option key={e.eid} value={e.name}>{e.name}</option>)}
+          </select>
+        </div>
 
-      <div className={styles.formRow}>
-        <label>PV Date</label>
-        <input type="date" name="pvdate" value={form.pvdate} onChange={handleChange} />
+        <div className={styles.formRow}>
+          <label>PV Date</label>
+          <input type="date" name="pvdate" value={form.pvdate} onChange={handleChange} />
 
-        <label>PV Time (hh:mm)</label>
-        <input type="text" name="pvtime" value={form.pvtime} onChange={handleChange} placeholder="1:30" />
+          <label>PV Time (hh:mm)</label>
+          <input type="text" name="pvtime" value={form.pvtime} onChange={handleChange} placeholder="1:30" />
 
-        <label>Remark</label>
-        <input type="text" name="remark" value={form.remark} onChange={handleChange} className={styles.remarkInput} />
-      </div>
+          <label>Remark</label>
+          <input type="text" name="remark" value={form.remark} onChange={handleChange} className={styles.remarkInput} />
+        </div>
 
-      <div className={styles.formRow}>
-        <button className={styles.submitBtn} onClick={handleSubmit}>입력</button>
-        <button className={styles.lightBlue} onClick={handleUpdate}>수정</button>
-        <button className={styles.lightBlue} onClick={handleDelete}>삭제</button>
-        <button className={styles.lightBlue} onClick={resetForm}>초기화</button>
-        <button className={styles.lightBlue} onClick={() => navigate(-1)}>되돌아가기</button>
-      </div>
+        <div className={styles.formRow}>
+          <button className={styles.submitBtn} onClick={handleSubmit}>입력</button>
+          <button className={styles.lightBlue} onClick={handleUpdate}>수정</button>
+          <button className={styles.lightBlue} onClick={handleDelete}>삭제</button>
+          <button className={styles.lightBlue} onClick={resetForm}>초기화</button>
+          <button className={styles.lightPink} onClick={() => navigate(-1)}>되돌아가기</button>
+        </div>
 
       </div>
 
       <h2>Paid Vacation List</h2>
       <div className={styles.tableWrapper}>
         <table className={styles.payTable}>
-  <thead>
-    <tr>
-      <th>Paid Vacation Date</th><th>Paid Vacation Hour</th><th>Remark</th>
-    </tr>
-  </thead>
-  <tbody>
-    {records.filter(r => !!r.pvdate).length === 0 ? (
-      <tr><td colSpan="3">No records found.</td></tr>
-    ) : (
-      records
-        .filter(r => !!r.pvdate)
-        .map(r => (
-          <tr key={r.id} onClick={() => handleSelect(r)} style={{ cursor: 'pointer' }}>
-            <td>{r.pvdate?.split('T')[0]}</td>
-            <td>{Number(r.pvhour).toFixed(2)}</td>
-            <td>{r.remark}</td>
-          </tr>
-        ))
-    )}
-  </tbody>
-  {/* ✅ 합계 표시용 tfoot 추가 */}
-  {records.filter(r => !!r.pvdate).length > 0 && (
-    <tfoot>
-      <tr>
-        <td style={{ fontWeight: 'bold', color: 'blue', textAlign: 'center' }}>Total</td>
-        <td style={{ fontWeight: 'bold', color: 'blue' }}>{totalPvHour}</td>
-        <td></td>
-      </tr>
-    </tfoot>
-  )}
-</table>
+          <thead>
+            <tr>
+              <th>Paid Vacation Date</th><th>Paid Vacation Hour</th><th>Remark</th>
+            </tr>
+          </thead>
+          <tbody>
+            {records.filter(r => !!r.pvdate).length === 0 ? (
+              <tr><td colSpan="3">No records found.</td></tr>
+            ) : (
+              records
+                .filter(r => !!r.pvdate)
+                .map(r => (
+                  <tr key={r.id} onClick={() => handleSelect(r)} style={{ cursor: 'pointer' }}>
+                    <td>{r.pvdate?.split('T')[0]}</td>
+                    <td>{Number(r.pvhour).toFixed(2)}</td>
+                    <td>{r.remark}</td>
+                  </tr>
+                ))
+            )}
+          </tbody>
+          {/* ✅ 합계 표시용 tfoot 추가 */}
+          {records.filter(r => !!r.pvdate).length > 0 && (
+            <tfoot>
+              <tr>
+                <td style={{ fontWeight: 'bold', color: 'blue', textAlign: 'center' }}>Total</td>
+                <td style={{ fontWeight: 'bold', color: 'blue' }}>{totalPvHour}</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          )}
+        </table>
 
       </div>
     </div>

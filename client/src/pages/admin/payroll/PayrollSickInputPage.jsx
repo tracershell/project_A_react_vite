@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './PayrollSickInputPage.module.css';
 import { useNavigate } from 'react-router-dom';
-import { useMemo } from 'react'; 
+import { useMemo } from 'react';
 
 const api = axios.create({
   baseURL: '/api/admin/payroll/sickinput',
@@ -116,79 +116,79 @@ const PayrollSickInputPage = () => {
   const navigate = useNavigate();
 
   const totalSickHour = useMemo(() => {
-  return records
-    .filter(r => !!r.sickdate)
-    .reduce((acc, r) => acc + (parseFloat(r.sickhour) || 0), 0)
-    .toFixed(2);
-}, [records]);
+    return records
+      .filter(r => !!r.sickdate)
+      .reduce((acc, r) => acc + (parseFloat(r.sickhour) || 0), 0)
+      .toFixed(2);
+  }, [records]);
 
 
   return (
     <div className={styles.page}>
       <h2>Sick Day Input</h2>
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-      <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem' }}>
-        <label style={{ minWidth: '6rem' }}>Select Name</label>
-        <select name="name" value={form.name} onChange={handleChange} className={styles.nameSelect}>
-          <option value="">-- Select --</option>
-          {employees.map(e => <option key={e.eid} value={e.name}>{e.name}</option>)}
-        </select>
-      </div>
+        <div className={`${styles.formRow} ${styles.small}`} style={{ width: '45rem' }}>
+          <label style={{ minWidth: '6rem' }}>Select Name</label>
+          <select name="name" value={form.name} onChange={handleChange} className={styles.nameSelect}>
+            <option value="">-- Select --</option>
+            {employees.map(e => <option key={e.eid} value={e.name}>{e.name}</option>)}
+          </select>
+        </div>
 
-      <div className={styles.formRow}>
-        <label>Sick Date</label>
-        <input type="date" name="sickdate" value={form.sickdate} onChange={handleChange} />
-
-        <label>Sick Time (hh:mm)</label>
-        <input type="text" name="sicktime" value={form.sicktime} onChange={handleChange} placeholder="1:30" />
-
-        <label>Remark</label>
-        <input type="text" name="remark" value={form.remark} onChange={handleChange} className={styles.remarkInput} />
-      </div>
         <div className={styles.formRow}>
-        <button className={styles.submitBtn} onClick={handleSubmit}>입력</button>
-        <button className={styles.lightBlue} onClick={handleUpdate}>수정</button>
-        <button className={styles.lightBlue} onClick={handleDelete}>삭제</button>
-        <button className={styles.lightBlue} onClick={resetForm}>초기화</button>
-        <button className={styles.lightBlue} onClick={() => navigate(-1)}>되돌아가기</button>
-      </div>
+          <label>Sick Date</label>
+          <input type="date" name="sickdate" value={form.sickdate} onChange={handleChange} />
+
+          <label>Sick Time (hh:mm)</label>
+          <input type="text" name="sicktime" value={form.sicktime} onChange={handleChange} placeholder="1:30" />
+
+          <label>Remark</label>
+          <input type="text" name="remark" value={form.remark} onChange={handleChange} className={styles.remarkInput} />
+        </div>
+        <div className={styles.formRow}>
+          <button className={styles.submitBtn} onClick={handleSubmit}>입력</button>
+          <button className={styles.lightBlue} onClick={handleUpdate}>수정</button>
+          <button className={styles.lightBlue} onClick={handleDelete}>삭제</button>
+          <button className={styles.lightBlue} onClick={resetForm}>초기화</button>
+          <button className={styles.lightPink} onClick={() => navigate(-1)}>되돌아가기</button>
+        </div>
 
       </div>
 
       <h2>Sick Day List</h2>
       <div className={styles.tableWrapper}>
         <table className={styles.payTable}>
-  <thead>
-    <tr>
-      <th>Sick Date</th><th>Sick Hour</th><th>Remark</th>
-    </tr>
-  </thead>
-  <tbody>
-    {records.filter(r => !!r.sickdate).length === 0 ? (
-      <tr><td colSpan="3">No records found.</td></tr>
-    ) : (
-      records
-        .filter(r => !!r.sickdate)
-        .map(r => (
-          <tr key={r.id} onClick={() => handleSelect(r)} style={{ cursor: 'pointer' }}>
-            <td>{r.sickdate?.split('T')[0]}</td>
-            <td>{Number(r.sickhour).toFixed(2)}</td>
-            <td>{r.remark}</td>
-          </tr>
-        ))
-    )}
-  </tbody>
-  {/* ✅ 합계 표시용 tfoot 추가 */}
-  {records.filter(r => !!r.sickdate).length > 0 && (
-    <tfoot>
-      <tr>
-        <td style={{ fontWeight: 'bold', color: 'red', textAlign: 'center' }}>Total</td>
-        <td style={{ fontWeight: 'bold', color: 'red' }}>{totalSickHour}</td>
-        <td></td>
-      </tr>
-    </tfoot>
-  )}
-</table>
+          <thead>
+            <tr>
+              <th>Sick Date</th><th>Sick Hour</th><th>Remark</th>
+            </tr>
+          </thead>
+          <tbody>
+            {records.filter(r => !!r.sickdate).length === 0 ? (
+              <tr><td colSpan="3">No records found.</td></tr>
+            ) : (
+              records
+                .filter(r => !!r.sickdate)
+                .map(r => (
+                  <tr key={r.id} onClick={() => handleSelect(r)} style={{ cursor: 'pointer' }}>
+                    <td>{r.sickdate?.split('T')[0]}</td>
+                    <td>{Number(r.sickhour).toFixed(2)}</td>
+                    <td>{r.remark}</td>
+                  </tr>
+                ))
+            )}
+          </tbody>
+          {/* ✅ 합계 표시용 tfoot 추가 */}
+          {records.filter(r => !!r.sickdate).length > 0 && (
+            <tfoot>
+              <tr>
+                <td style={{ fontWeight: 'bold', color: 'red', textAlign: 'center' }}>Total</td>
+                <td style={{ fontWeight: 'bold', color: 'red' }}>{totalSickHour}</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          )}
+        </table>
 
       </div>
     </div>
