@@ -4,6 +4,7 @@ import PrivateRoute from './PrivateRoute';
 
 import AdminPage from '../pages/admin/AdminPage';
 import adminMainRoutes from './adminMainRoutes';
+import adminAccountRoutes from './adminRoutes/adminAccountRoutes';
 import adminEmployeesRoutes from './adminEmployeesRoutes';
 import adminImportRoutes from './adminImportRoutes';
 import adminGeneralRoutes from './adminGeneralRoutes';
@@ -27,6 +28,9 @@ export default function AdminRoutes() {
 
       {/* /admin/main/... */}
       {adminMainRoutes}
+
+       {/* /admin/main/... */}
+      {adminAccountRoutes}
 
       {/* /admin/employees/... */}
       {adminEmployeesRoutes}

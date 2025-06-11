@@ -327,3 +327,47 @@ CREATE TABLE sickpv_given (
   pvgiven DECIMAL(5,2) DEFAULT 0.00,        -- 지급된 유급휴가 시간
   remark TEXT                               -- 비고
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+==========================================================
+
+
+CREATE TABLE IF NOT EXISTS creditcard_data (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pdate DATE NOT NULL,                          -- 결제 날짜
+  ptype VARCHAR(10),                            -- Check or ACH
+  ptname VARCHAR(30),                           -- Check number or null
+  pamount DECIMAL(12,2),                        -- 결제 금액
+  provider VARCHAR(50),                         -- 카드사 (예: Chase, Amex 등)
+  anumber VARCHAR(20),                          -- 카드 번호
+  holder VARCHAR(50),                           -- 카드 소유자 이름
+  hnumber VARCHAR(20),                          -- 카드 고유번호 또는 끝 4자리
+  udate DATE,                                   -- 사용일자
+  alist VARCHAR(50),                            -- 사용내역 (purchase, auto gas 등)
+  acode VARCHAR(10),                            -- 코드 (예: 670, 350)
+  anote TEXT,                                   -- 사용 메모
+  uamount DECIMAL(12,2),                        -- 실제 사용 금액
+  uremark TEXT                                  -- 사용 상세 비고
+) CHARACTER SET utf8mb4;
+
+
+CREATE TABLE IF NOT EXISTS creditcard_holder (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  provider VARCHAR(50),                         -- 카드사
+  anumber VARCHAR(20),                          -- 카드 번호
+  holder VARCHAR(50),                           -- 소유자 이름
+  hnumber VARCHAR(20),                          -- 고유 번호 (끝 4자리 등)
+  hlimit DECIMAL(12,2),                         -- 한도
+  hnote TEXT                                     -- 비고
+) CHARACTER SET utf8mb4;
+
+
+CREATE TABLE IF NOT EXISTS creditcard_item (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  aitem VARCHAR(50),                            -- 분류명 (예: purchase, auto gas)
+  icode VARCHAR(10),                            -- 코드 (예: 670, 350)
+  inote TEXT                                     -- 분류 설명
+) CHARACTER SET utf8mb4;
+
+
+

@@ -369,3 +369,9 @@ h2 {
   border: 1px solid #d88a9a;
   color: #000;
 }
+
+button.lightPink {
+  background-color: lightpink;
+  border: 1px solid #d88a9a;
+  color: #000;
+}

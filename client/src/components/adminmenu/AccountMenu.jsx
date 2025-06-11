@@ -3,10 +3,10 @@ import DropdownMenu from '../DropdownMenu';
 
 const AccountMenu = () => {
   const adminItems = [
-    { label: 'a', link: '/admin/dashboard' },
-    { label: 'b', link: '/admin/users' },
-    { label: 'c', link: '/admin/reports' },
-    { label: 'd', link: '/admin/settings' },
+    { label: 'C.C List', link: '/admin/account/ccpaylist' },
+    { label: 'C.C Pay', link: '/admin/account/ccpayinput' },
+    { label: 'C.C Item', link: '/admin/account/cciteminput' },
+    { label: 'C.C Holder', link: '/admin/account/ccholderinput' },
     { label: 'e', link: '/admin/logs' },
   ];
 
