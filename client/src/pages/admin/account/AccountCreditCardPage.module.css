@@ -156,3 +156,15 @@ h2 {
 .nowrapLabel {
   white-space: nowrap;
 }
+
+
+.infoRow {
+  display: flex;
+  gap: 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.payTable td, .payTable th {
+  padding: 0.5rem;
+}

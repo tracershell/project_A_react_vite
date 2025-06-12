@@ -1,5 +1,4 @@
-// 📁 client/src/pages/admin/account/AccountCreditCardPage.jsx
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './AccountCreditCardPage.module.css';
 
@@ -9,54 +8,66 @@ const api = axios.create({
 });
 
 const AccountCreditCardPage = () => {
-  const [records, setRecords] = useState([]);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedProvider, setSelectedProvider] = useState('');
   const [dates, setDates] = useState([]);
   const [providers, setProviders] = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedProvider, setSelectedProvider] = useState('');
+  const [summaryRecord, setSummaryRecord] = useState({});
+  const [details, setDetails] = useState([]);
 
   useEffect(() => {
     fetchMeta();
-    fetchRecords();
   }, []);
 
   const fetchMeta = async () => {
   try {
-    const { data } = await api.get('/meta');
-    const { pdates, providers } = data;
-    setDates(pdates.map(d => d.pdate?.slice(0, 10)).sort());
-    setProviders(providers.map(p => p.provider).sort());
+    const { pdates = [], providers = [] } = await api.get('/meta').then(res => res.data);
+
+    // 날짜와 카드사를 직접 할당
+    setDates(pdates.map(d => d.pdate?.slice(0, 10)).filter(Boolean).sort());
+    setProviders(providers.map(p => p.provider).filter(Boolean).sort());
   } catch (err) {
     console.error('meta fetch 실패:', err);
   }
 };
 
+  useEffect(() => {
+    if (!selectedDate || !selectedProvider) return;
 
-  const fetchRecords = async () => {
-    try {
-      const { data } = await api.get('/list');
-      setRecords(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error('목록 오류:', err);
-      setRecords([]);
-    }
-  };
+    const fetchSummaryAndDetails = async () => {
+      try {
+        const [summaryRes, detailsRes] = await Promise.all([
+          api.get('/summary', { params: { pdate: selectedDate, provider: selectedProvider } }),
+          api.get('/details', { params: { pdate: selectedDate, provider: selectedProvider } }),
+        ]);
+        setSummaryRecord(summaryRes.data || {});
+        setDetails(detailsRes.data || []);
+      } catch (err) {
+        console.error('summary/details fetch 오류:', err);
+        setSummaryRecord({});
+        setDetails([]);
+      }
+    };
 
-  const filtered = records.filter(
-    r => r.pdate?.slice(0, 10) === selectedDate && r.provider === selectedProvider
-  );
+    fetchSummaryAndDetails();
+  }, [selectedDate, selectedProvider]);
 
-  const summary = useMemo(() => {
-    const map = {};
-    filtered.forEach(r => {
-      map[r.aitem] = (map[r.aitem] || 0) + parseFloat(r.uamount || 0);
-    });
-    return map;
-  }, [filtered]);
+  const total = details.reduce((sum, r) => sum + parseFloat(r.total || 0), 0);
 
-  const total = Object.values(summary).reduce((sum, val) => sum + val, 0);
+  const handlePdfView = () => {
+  if (!selectedDate || !selectedProvider) {
+    alert('결제일과 카드사를 선택하세요.');
+    return;
+  }
 
-  const summaryRecord = filtered[0] || {};
+  const query = new URLSearchParams({
+    pdate: selectedDate,
+    provider: selectedProvider,
+  }).toString();
+
+  window.open(`/api/admin/account/accountcreditcardpage/cc_summary_pdf?${query}`, '_blank');
+};
+
 
   return (
     <div className={styles.page}>
@@ -79,37 +90,42 @@ const AccountCreditCardPage = () => {
           ))}
         </select>
 
-        <button className={styles.lightBlue}>PDF 보기</button>
+        <button className={styles.lightBlue} onClick={handlePdfView}>PDF 보기</button>
       </div>
 
       {selectedDate && selectedProvider && (
-        <div className={styles.summaryBox}>
-          <div className={styles.infoRow}>
-            <span>유형: {summaryRecord.ptype}</span>
-            <span>Check번호: {summaryRecord.ptname}</span>
-            <span>결제금액: {summaryRecord.pamount}</span>
-            <span>카드번호: {summaryRecord.anumber}</span>
-          </div>
+  <div className={styles.summaryBox} style={{ width: '80%', marginTop: '1rem' }}>
+    <div className={styles.infoRow} style={{ display: 'flex', gap: '2rem', fontSize: '1.1rem', fontWeight: '500' }}>
+      <span>유형: {summaryRecord.ptype}</span>
+      <span>Check번호: {summaryRecord.ptname}</span>
+      <span>결제금액: {Number(summaryRecord.pamount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+      <span>카드번호: {summaryRecord.anumber}</span>
+    </div>
 
-          <table className={styles.payTable}>
-            <thead>
-              <tr><th>항목</th><th>금액</th></tr>
-            </thead>
-            <tbody>
-              {Object.entries(summary).map(([aitem, amount]) => (
-                <tr key={aitem}>
-                  <td>{aitem}</td>
-                  <td style={{ textAlign: 'right' }}>{amount.toLocaleString()}</td>
-                </tr>
-              ))}
-              <tr>
-                <td style={{ fontWeight: 'bold' }}>합계</td>
-                <td style={{ fontWeight: 'bold', textAlign: 'right' }}>{total.toLocaleString()}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
+    <table className={styles.payTable} style={{ marginTop: '1rem', width: '100%' }}>
+      <thead>
+        <tr><th>항목</th><th>금액</th></tr>
+      </thead>
+      <tbody>
+        {details.map(({ aitem, total }) => (
+          <tr key={aitem}>
+            <td>{aitem}</td>
+            <td style={{ textAlign: 'right' }}>
+              {Number(total).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            </td>
+          </tr>
+        ))}
+        <tr>
+          <td style={{ fontWeight: 'bold' }}>합계</td>
+          <td style={{ fontWeight: 'bold', textAlign: 'right' }}>
+            {total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+)}
+
     </div>
   );
 };

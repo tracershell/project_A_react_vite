@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
+const generateAccountCcSummaryPDF = require('../../../utils/admin/account/generateAccountCcSummaryPDF');
 
 // ✅ meta 정보: pdate, provider 목록
 router.get('/meta', async (req, res) => {
@@ -53,5 +54,34 @@ router.get('/details', async (req, res) => {
     res.status(500).json({ error: '상세 내역 조회 실패' });
   }
 });
+
+router.get('/cc_summary_pdf', async (req, res) => {
+  const { pdate, provider } = req.query;
+  if (!pdate || !provider) return res.status(400).json({ error: '필수 항목 누락' });
+
+  try {
+    const [[summary]] = await db.query(
+      `SELECT pdate, ptname, pamount, anumber FROM creditcard_data
+       WHERE pdate = ? AND provider = ? LIMIT 1`,
+      [pdate, provider]
+    );
+
+    const [details] = await db.query(
+      `SELECT aitem, SUM(uamount) AS total
+       FROM creditcard_data
+       WHERE pdate = ? AND provider = ?
+       GROUP BY aitem ORDER BY aitem ASC`,
+      [pdate, provider]
+    );
+
+    if (!summary) return res.status(404).json({ error: '요약 정보 없음' });
+
+    generateAccountCcSummaryPDF(res, { ...summary, details });
+  } catch (err) {
+    console.error('PDF 생성 오류:', err);
+    res.status(500).json({ error: 'PDF 생성 실패' });
+  }
+});
+
 
 module.exports = router;
