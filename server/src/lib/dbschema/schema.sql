@@ -343,9 +343,9 @@ CREATE TABLE IF NOT EXISTS creditcard_data (
   holder VARCHAR(50),                           -- 카드 소유자 이름
   hnumber VARCHAR(20),                          -- 카드 고유번호 또는 끝 4자리
   udate DATE,                                   -- 사용일자
-  alist VARCHAR(50),                            -- 사용내역 (purchase, auto gas 등)
-  acode VARCHAR(10),                            -- 코드 (예: 670, 350)
-  anote TEXT,                                   -- 사용 메모
+  aitem VARCHAR(50),                            -- 사용내역 (purchase, auto gas 등)
+  icode VARCHAR(10),                            -- 코드 (예: 670, 350)
+  inote TEXT,                                   -- 사용 메모
   uamount DECIMAL(12,2),                        -- 실제 사용 금액
   uremark TEXT                                  -- 사용 상세 비고
 ) CHARACTER SET utf8mb4;

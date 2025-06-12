@@ -2,12 +2,33 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import PrivateRoute from '../PrivateRoute';
 
-
-
+import AccountCreditCardPage from '../../pages/admin/account/AccountCreditCardPage';
+import AccountCcPayPage from '../../pages/admin/account/AccountCcPayPage';
 import AccountCcItemPage from '../../pages/admin/account/AccountCcItemPage';
 import AccountCcHolderPage from '../../pages/admin/account/AccountCcHolderPage';
 
 const adminAccountRoutes = [
+
+    <Route
+    key="creditcard"
+    path="account/ccsummary"
+    element={
+      <PrivateRoute role="admin">
+        <AccountCreditCardPage />
+      </PrivateRoute>
+    }
+  />,
+
+
+  <Route
+    key="creditcardpay-input"
+    path="account/ccpayinput"
+    element={
+      <PrivateRoute role="admin">
+        <AccountCcPayPage />
+      </PrivateRoute>
+    }
+  />,
 
   <Route
     key="creditcarditem-input"
@@ -29,7 +50,7 @@ const adminAccountRoutes = [
     }
   />,
     
-
+  
 ];
 
 export default adminAccountRoutes;

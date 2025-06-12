@@ -57,27 +57,20 @@ const CPage = () => {
   return (
     <div className={styles.page}>
       <h2>C Page - DB 선택</h2>
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '12px' }}>
-        <div className={`${styles.formRow}`} style={{ width: '70rem'}}>
-          <select value={selectedId} onChange={handleSelect}>
-            <option value="">선택</option>
-            {list.map(item => (
-              <option key={item.id} value={item.id}>
-                {item.name_value} ({item.date_value})
-              </option>
-            ))}
-          </select>
-          <input type="date" value={selected.date_value} onChange={(e) => setSelected({ ...selected, date_value: e.target.value })} />
-          <label>Name</label>
-          <input type="number" value={selected.number_value} onChange={(e) => setSelected({ ...selected, number_value: e.target.value })} />
-          <label>Comment</label>
-          <input type="text" value={selected.name_value} onChange={(e) => setSelected({ ...selected, name_value: e.target.value })} />
-          <button type="button" onClick={handleUpdate}>수정</button>
-          <button type="button" onClick={handleDelete} className={styles.deleteBtn}>삭제</button>
-        </div>
-        <div className={`${styles.formRow}`} style={{ width: '30rem'}}>
-          <input type="date" value={selected.date_value} onChange={(e) => setSelected({ ...selected, date_value: e.target.value })} />
-        </div>
+      <div className={`${styles.formRow} ${styles.small}`}>
+        <select value={selectedId} onChange={handleSelect}>
+          <option value="">선택</option>
+          {list.map(item => (
+            <option key={item.id} value={item.id}>
+              {item.name_value} ({item.date_value})
+            </option>
+          ))}
+        </select>
+        <input type="date" value={selected.date_value} onChange={(e) => setSelected({ ...selected, date_value: e.target.value })} />
+        <input type="number" value={selected.number_value} onChange={(e) => setSelected({ ...selected, number_value: e.target.value })} />
+        <input type="text" value={selected.name_value} onChange={(e) => setSelected({ ...selected, name_value: e.target.value })} />
+        <button type="button" onClick={handleUpdate}>수정</button>
+        <button type="button" onClick={handleDelete}>삭제</button>
       </div>
     </div>
   );

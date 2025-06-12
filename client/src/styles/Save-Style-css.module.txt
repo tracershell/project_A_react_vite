@@ -35,7 +35,7 @@ h2 {
 .formRow div {
   height: 1.4rem;
   font-size: 12px;
-  width: 10rem;
+  width: 12rem;
   /* input 의 폭 */
   flex-shrink: 0;
   /* input 의 폭이 부모의 flex shrink 의 영향을 받지 않게게 */

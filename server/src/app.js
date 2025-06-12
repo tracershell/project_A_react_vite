@@ -88,8 +88,11 @@ app.use('/api/admin/payroll/giveninput', require('./routes/admin/payroll/payroll
 
 //app.use('/api/admin/import/extra/pdf', require('./routes/admin/import/import_extra_pdf'));    server/src/utils/generateSalaryAdjustPDF.js
 
+app.use('/api/admin/account/accountcreditcardpage', require('./routes/admin/account/accountcreditcardpage'));
+app.use('/api/admin/account/accountccpaypage', require('./routes/admin/account/accountccpaypage'));
 app.use('/api/admin/account/accountccitempage', require('./routes/admin/account/accountccitempage'));
 app.use('/api/admin/account/accountccholderpage', require('./routes/admin/account/accountccholderpage'));
+
 
 
 // ✔️ fpage 확인용

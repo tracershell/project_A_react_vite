@@ -1,0 +1,158 @@
+.page {
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-size: 12px;
+}
+
+h2 {
+  margin: 0.5rem 0;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.payTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  background: #fff;
+}
+
+.payTable th {
+  background: #d0ebff;
+  color: #003366;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+}
+
+.payTable td {
+  padding: 0.4rem;
+  border: 1px solid #ddd;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.payTable tr:hover {
+  background: #fff8dc;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline; /* ✅ 핵심 변경 */
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  margin-bottom: 12px;
+}
+
+.formRow.small {
+  font-size: 11px;
+  gap: 0.3rem;
+  padding-top: 0.75rem;   /* 상단 간격 */
+  align-items: baseline;
+}
+
+.formRow label {
+  font-size: 11px;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
+.formRow select,
+.formRow input,
+.formRow button {
+  display: inline-block;
+  vertical-align: baseline; /* ✅ 추가 */
+  height: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.4rem;
+  vertical-align: baseline;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.formRow select[name="ptype"],
+.formRow select[name="holder"],
+.formRow select[name="aitem"] {
+  width: 6rem;
+ flex-shrink: 0;
+}
+
+.formRow input[type='date'] {
+  width: 6rem;
+}
+
+.submitBtn {
+  height: 1.8rem;
+  line-height: 1.8rem;
+  font-size: 12px;
+  padding: 0 0.8rem;
+  margin-left: 0.5rem;
+  border: 1px solid #066da5;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submitBtn:hover {
+  background: #e6f0ff;
+}
+
+.lightBlue {
+  background: #e6f0ff;
+  border: 1px solid #99bbff;
+  color: #003366;
+  font-weight: bold;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  padding: 0 0.6rem;
+}
+
+.lightBlue:hover {
+  background: #cce0ff;
+}
+
+.lightPink {
+  background-color: lightpink;
+  border: 1px solid #d88a9a;
+  color: #000;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  padding: 0 0.6rem;
+}
+
+.remarkInput {
+  width: 15rem !important;
+  min-width: 15rem;
+  max-width: 15rem;
+  flex: 0 0 15rem;
+}
+
+.nameSelect {
+  width: 15rem !important;
+  min-width: 15rem;
+  max-width: 15rem;
+  flex: 0 0 15rem;
+}
+
+.dateSelect {
+  width: 8rem;
+  flex-shrink: 0;
+}
+
+.nowrapLabel {
+  white-space: nowrap;
+}
