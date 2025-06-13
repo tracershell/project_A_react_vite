@@ -55,6 +55,7 @@ router.get('/details', async (req, res) => {
   }
 });
 
+// PDF 생성 라우터
 router.get('/cc_summary_pdf', async (req, res) => {
   const { pdate, provider } = req.query;
   if (!pdate || !provider) return res.status(400).json({ error: '필수 항목 누락' });
@@ -76,12 +77,14 @@ router.get('/cc_summary_pdf', async (req, res) => {
 
     if (!summary) return res.status(404).json({ error: '요약 정보 없음' });
 
-    generateAccountCcSummaryPDF(res, { ...summary, details });
+    // ✅ provider 포함
+    generateAccountCcSummaryPDF(res, { ...summary, provider, details });
   } catch (err) {
     console.error('PDF 생성 오류:', err);
     res.status(500).json({ error: 'PDF 생성 실패' });
   }
 });
+
 
 
 module.exports = router;

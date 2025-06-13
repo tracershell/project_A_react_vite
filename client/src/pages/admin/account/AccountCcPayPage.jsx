@@ -273,6 +273,9 @@ const resetFixedOwner = () => {
   결제 정보 초기화
 </button>
       </div>
+      <div className={`${styles.formRow} ${styles.small}`} style={{ width: '20%' }}>
+      <button className={styles.lightPink} onClick={() => navigate(-1)}>되돌아가기</button>
+      </div>
       </div>
 
      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>

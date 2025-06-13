@@ -1,4 +1,4 @@
-// server/routes/admin/payroll/sick.js
+// server/src/routes/admin/payroll/payrollsickpage.js
 
 const express = require('express');
 const router = express.Router();

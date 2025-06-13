@@ -1,6 +1,6 @@
 const PDFDocument = require('pdfkit');
 
-function generateAccountCcSummaryPDF(res, { pdate, ptname, pamount, anumber, details }) {
+function generateAccountCcSummaryPDF(res, { pdate, ptname, pamount, anumber, provider, details }) {
   const formattedDate = pdate ? new Date(pdate).toISOString().slice(0, 10) : '';
   const doc = new PDFDocument({ size: 'LETTER', layout: 'portrait', margin: 40 });
   const buffers = [];
@@ -28,7 +28,7 @@ function generateAccountCcSummaryPDF(res, { pdate, ptname, pamount, anumber, det
     .stroke();
 
   // 헤더
-  doc.fontSize(12).text(`# ${anumber}`, leftX, y);
+  doc.fontSize(12).text(`# ${anumber}  :  ( ${provider || ''} )`, leftX, y);
   doc.fontSize(11).text(`Pay Date : ${formattedDate}`, leftX + 20, y + 40);
   doc.text(`Check No. : ${ptname || ''}`, leftX + 160, y + 40);
   doc.text(`Pay Amount : $${format(pamount)}`, leftX + 350, y + 40);

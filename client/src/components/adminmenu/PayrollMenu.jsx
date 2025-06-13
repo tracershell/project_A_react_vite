@@ -6,7 +6,7 @@ const ImportMenu = () => {
     { label: 'Payroll Tax', link: '/admin/payroll/tax' },   // adminPayrollTaxRoutes 에서 정의한  path 경로
     { label: 'Salary Adjust', link: '/admin/payroll/adjust' },
     { label: 'Sick PVcation', link: '/admin/payroll/sick' },
-    { label: 'c', link: '/admin/' },
+    { label: 'Payroll Doc', link: '/admin/payroll/doc' },
     { label: 'd', link: '/admin/' },
   ];
 

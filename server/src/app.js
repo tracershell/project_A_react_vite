@@ -86,6 +86,8 @@ app.use('/api/admin/payroll/sickinput', require('./routes/admin/payroll/payrolls
 app.use('/api/admin/payroll/pvinput', require('./routes/admin/payroll/payrollpvinputpage'));
 app.use('/api/admin/payroll/giveninput', require('./routes/admin/payroll/payrollgiveninputpage'));
 
+app.use('/api/admin/payroll/payrolldoc', require('./routes/admin/payroll/payrolldocpage'));
+
 //app.use('/api/admin/import/extra/pdf', require('./routes/admin/import/import_extra_pdf'));    server/src/utils/generateSalaryAdjustPDF.js
 
 app.use('/api/admin/account/accountcreditcardpage', require('./routes/admin/account/accountcreditcardpage'));

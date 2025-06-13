@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './AccountCreditCardPage.module.css';
+import { useNavigate } from 'react-router-dom'; 
 
 const api = axios.create({
   baseURL: '/api/admin/account/accountcreditcardpage',
@@ -14,6 +15,7 @@ const AccountCreditCardPage = () => {
   const [selectedProvider, setSelectedProvider] = useState('');
   const [summaryRecord, setSummaryRecord] = useState({});
   const [details, setDetails] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMeta();
@@ -68,11 +70,16 @@ const AccountCreditCardPage = () => {
   window.open(`/api/admin/account/accountcreditcardpage/cc_summary_pdf?${query}`, '_blank');
 };
 
+  const handlePayInput = () => navigate('/admin/account/ccpayinput');
+  const handleItemInput = () => navigate('/admin/account/cciteminput');
+  const handleHolderInput = () => navigate('/admin/account/ccholderinput');
+
+
 
   return (
     <div className={styles.page}>
       <h2>Credit Card Payment Summary</h2>
-
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
       <div className={styles.formRow} style={{ width: '50%' }}>
         <label>결제일</label>
         <select value={selectedDate} onChange={e => setSelectedDate(e.target.value)}>
@@ -92,9 +99,14 @@ const AccountCreditCardPage = () => {
 
         <button className={styles.lightBlue} onClick={handlePdfView}>PDF 보기</button>
       </div>
-
+      <div className={styles.formRow} style={{ width: '20%' }}>
+          <button type="button" className={styles.lightPink} onClick={handlePayInput}>Pay Input</button>
+          <button type="button" className={styles.lightPink} onClick={handleItemInput}>Item Input</button>
+          <button type="button" className={styles.lightPink} onClick={handleHolderInput}>Holder Input</button>
+      </div>
+      </div>
       {selectedDate && selectedProvider && (
-  <div className={styles.summaryBox} style={{ width: '80%', marginTop: '1rem' }}>
+  <div className={styles.summaryBox} style={{ width: '50%', marginTop: '1rem' }}>
     <div className={styles.infoRow} style={{ display: 'flex', gap: '2rem', fontSize: '1.1rem', fontWeight: '500' }}>
       <span>유형: {summaryRecord.ptype}</span>
       <span>Check번호: {summaryRecord.ptname}</span>
@@ -110,14 +122,14 @@ const AccountCreditCardPage = () => {
         {details.map(({ aitem, total }) => (
           <tr key={aitem}>
             <td>{aitem}</td>
-            <td style={{ textAlign: 'right' }}>
+            <td style={{ textAlign: 'center' }}>
               {Number(total).toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </td>
           </tr>
         ))}
         <tr>
           <td style={{ fontWeight: 'bold' }}>합계</td>
-          <td style={{ fontWeight: 'bold', textAlign: 'right' }}>
+          <td style={{ fontWeight: 'bold', textAlign: 'center' }}>
             {total.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </td>
         </tr>
