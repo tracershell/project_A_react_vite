@@ -32,13 +32,20 @@ h2 {
 }
 
 button {
-  padding: 0.4rem 1rem;
-  background-color: lightpink;
-  border: 1px solid #d88a9a;
+  padding: 0.2rem 0.4rem;
   cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #066da5;
+  background: #fff;
 }
 
 .commentInput {
   min-width: 200px;
   flex: 1 1 250px;
+}
+
+.formRow input[name="cdate"],
+.formRow input[name="cname"] {
+  min-width: 10rem;
+  width: 12rem;
 }

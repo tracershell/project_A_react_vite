@@ -73,10 +73,25 @@ const PayrollDocPage = () => {
       <h2>Cash Calculation Note</h2>
       <div className={styles.formRow}>
         <label>Date:</label>
-        <input ref={el => inputRefs.current[8] = el} name="cdate" type="date" value={form.cdate} onChange={handleChange} onKeyDown={e => handleKeyDown(e, 8)} />
+        <input
+          ref={el => inputRefs.current[8] = el}
+          name="cdate"
+          type="date"
+          value={form.cdate}
+          onChange={handleChange}
+          onKeyDown={e => handleKeyDown(e, 8)}
+          className={styles.wideInput}
+        />
 
         <label>Name:</label>
-        <input ref={el => inputRefs.current[9] = el} name="cname" value={form.cname} onChange={handleChange} onKeyDown={e => handleKeyDown(e, 9)} />
+        <input
+          ref={el => inputRefs.current[9] = el}
+          name="cname"
+          value={form.cname}
+          onChange={handleChange}
+          onKeyDown={e => handleKeyDown(e, 9)}
+          className={styles.wideInput}
+        />
 
         <label>R Time:</label>
         <input ref={el => inputRefs.current[10] = el} name="crhour" placeholder="hh" value={form.crhour} onChange={handleChange} onKeyDown={e => handleKeyDown(e, 10)} />

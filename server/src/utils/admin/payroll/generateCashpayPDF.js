@@ -1,16 +1,23 @@
 const PDFDocument = require('pdfkit');
 
 const generateCashpayPDF = (res, query) => {
+  console.log('✅ 받은 query:', query);  // 디버깅용 로그
+
   const {
-    cdate, cname = 'Edgar', crate = '3.00',
+    cdate,
+    cname: rawName,
+    crate = '3.00',
     crhour = 0, crmin = 0, cohour = 0, comin = 0
   } = query;
 
+  // ✅ 이름 처리 (기본값 'Edgar')
+  const name = (typeof rawName === 'string' && rawName.trim() !== '') ? rawName.trim() : 'Edgar';
+
+  const rate = !isNaN(crate) ? parseFloat(crate) : 3.00;
   const rhr = parseFloat(crhour);
   const rmn = parseFloat(crmin) / 60;
   const ohr = parseFloat(cohour);
   const omn = parseFloat(comin) / 60;
-  const rate = parseFloat(crate);
 
   const ramount = (rhr + rmn) * rate;
   const oamount = (ohr + omn) * (rate * 1.5);
@@ -24,10 +31,10 @@ const generateCashpayPDF = (res, query) => {
 
   doc.fontSize(9);
 
-  // ⬇ Box 위치: 왼쪽 상단, 크기 축소
-  const boxX = 10;      // box 왼쪽 상단 위치
-  const boxY = 10;      // box 위쪽 위치  
-  const boxW = 200;     // box 폭을 줄여서 200으로 설정// 
+  // ⬇ Box 설정
+  const boxX = 10;
+  const boxY = 10;
+  const boxW = 200;
   const boxH = 80;
 
   doc.rect(boxX, boxY, boxW, boxH).stroke();
@@ -38,14 +45,14 @@ const generateCashpayPDF = (res, query) => {
   const line3Y = boxY + 35;
   const line4Y = boxY + 55;
 
-  const descWidth = 90;         // 설명 (e.g. Regular Time)
-  const calcWidth = 70;         // 계산식 폭
-  const amountWidth = 45;       // 금액 폭
-  const spacing = 6;            // 계산식과 금액 사이 여백
+  const descWidth = 90;
+  const calcWidth = 70;
+  const amountWidth = 45;
+  const spacing = 6;
 
   // 1️⃣ Pay Date & Name
-  doc.text(`Pay Date: ${cdate || ''}`, leftX, line1Y, { continued: true });
-  doc.text(`${cname}`, leftX + 100, line1Y, { width: 110, align: 'right' });
+  doc.text(`Pay Date: ${cdate || ''}`, leftX, line1Y);
+  doc.text(`${name}`, leftX + 95, line1Y);
 
   // 2️⃣ Regular Time
   const regCalc = `${crhour}:${crmin} x $${rate.toFixed(2)}`;
