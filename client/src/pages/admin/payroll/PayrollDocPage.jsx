@@ -19,6 +19,8 @@ const PayrollDocPage = () => {
   const [childspFilename, setChildspFilename] = useState('');
   const [childspPreviewUrl, setChildspPreviewUrl] = useState('');
   const inputRefs = useRef([]);
+  const [deductionFile, setDeductionFile] = useState(null);
+  const [deductionFilename, setDeductionFilename] = useState('');
 
   useEffect(() => {
     const fetchChildspInfo = async () => {
@@ -34,6 +36,18 @@ const PayrollDocPage = () => {
       }
     };
     fetchChildspInfo();
+
+    const fetchDeductionInfo = async () => {
+      try {
+        const res = await axios.get('/api/admin/payroll/payrolldoc/deduction-info');
+        const filename = res.data.filename;
+        if (filename) setDeductionFilename(filename);
+      } catch (err) {
+        console.error('초기 deduction 파일 불러오기 실패:', err);
+      }
+    };
+    fetchDeductionInfo();
+
   }, []);
 
 
@@ -103,6 +117,43 @@ const PayrollDocPage = () => {
     }
   };
 
+  //-----------------------------
+
+  const handleDeductionPDF = () => {
+    const params = new URLSearchParams({
+      ddate: form.ddate || '',
+      dname: form.dname || 'Jonathan Gutierrez',
+      dnumber: form.dnumber || '',
+      damount: form.damount || '25.00',
+      filename: deductionFilename
+    }).toString();
+    window.open(`/api/admin/payroll/payrolldoc/deduction-pdf?${params}`, '_blank');
+  };
+
+  const handleDeductionUpload = async () => {
+    if (!deductionFile) return alert('파일을 선택하세요.');
+    const formData = new FormData();
+    formData.append('file', deductionFile);
+    try {
+      const res = await axios.post('/api/admin/payroll/payrolldoc/upload-deduction', formData);
+      const filename = res.data.filename;
+      setDeductionFilename(filename);
+      alert('✅ 업로드 성공');
+    } catch (err) {
+      alert('⛔ 업로드 실패');
+    }
+  };
+
+  const handleDeductionDelete = async () => {
+    if (!deductionFilename) return;
+    try {
+      await axios.delete(`/api/admin/payroll/payrolldoc/delete-deduction?filename=${deductionFilename}`);
+      setDeductionFilename('');
+      alert('🗑️ 삭제 완료');
+    } catch (err) {
+      alert('⛔ 삭제 실패');
+    }
+  };
 
   //-----------------------------
   return (
@@ -174,7 +225,7 @@ const PayrollDocPage = () => {
         <button onClick={handleCashPDF}>PDF 보기</button>
       </div>
 
-      <h2>Child Support Print</h2>
+      <h2>Child Support Voucher Print</h2>
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
         <div className={styles.formRow} style={{ width: '50%' }}>
           <label>Date:</label>
@@ -223,6 +274,57 @@ const PayrollDocPage = () => {
           {childspFilename && <span>{childspFilename}</span>}
           <button type="button" onClick={handleChildspDelete}>Delete</button>
 
+        </div>
+      </div>
+
+      <h2>Payroll Deduction Voucher Print</h2>
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+        <div className={styles.formRow} style={{ width: '50%' }}>
+          <label>Date:</label>
+          <input
+            name="ddate"
+            type="date"
+            value={form.ddate || ''}
+            onChange={handleChange}
+            className={styles.wideInput}
+          />
+
+          <label>Name:</label>
+          <input
+            name="dname"
+            placeholder="기본: Jonathan Gutierrez"
+            value={form.dname || ''}
+            onChange={handleChange}
+            className={styles.wideInput}
+          />
+
+          <label>Check No.:</label>
+          <input
+            name="dnumber"
+            value={form.dnumber || ''}
+            onChange={handleChange}
+          />
+
+          <label>Amount:</label>
+          <input
+            name="damount"
+            value={form.damount || '25.00'}
+            onChange={handleChange}
+          />
+
+          <button type="button" onClick={handleDeductionPDF}>PDF 보기</button>
+        </div>
+
+        <div className={styles.formRow} style={{ width: '50%' }}>
+          <label>Choose File:</label>
+          <input
+            type="file"
+            onChange={e => setDeductionFile(e.target.files[0])}
+            style={{ width: '16rem' }}
+          />
+          <button type="button" onClick={handleDeductionUpload}>Upload</button>
+          {deductionFilename && <span>{deductionFilename}</span>}
+          <button type="button" onClick={handleDeductionDelete}>Delete</button>
         </div>
       </div>
 

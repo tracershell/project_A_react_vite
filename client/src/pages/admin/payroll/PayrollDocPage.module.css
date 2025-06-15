@@ -45,7 +45,15 @@ button {
 }
 
 .formRow input[name="cdate"],
-.formRow input[name="cname"] {
+.formRow input[name="cs_date"],
+.formRow input[name="ddate"] {
+  min-width: 6em;
+  width: 6rem;
+}
+
+.formRow input[name="cname"],
+.formRow input[name="cs_name"],
+.formRow input[name="dname"] {
   min-width: 10rem;
   width: 12rem;
 }

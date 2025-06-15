@@ -2,9 +2,10 @@
 
 const express = require('express');
 const router = express.Router();
-const generateDeductionPDF = require('../../../utils/admin/payroll/generateTimeaddPDF');
+const generateTimeaddPDF = require('../../../utils/admin/payroll/generateTimeaddPDF');
 const generateCashpayPDF = require('../../../utils/admin/payroll/generateCashpayPDF');
 const generateChildspPDF = require('../../../utils/admin/payroll/generateChildspPDF');
+const generateDeductionPDF = require('../../../utils/admin/payroll/generateDeductionPDF');
 
 // ---------------------------------------------------
 
@@ -14,7 +15,7 @@ const fs = require('fs');
 
 // ---------------------------------------------------
 router.get('/timesheetpdf', (req, res) => {
-  generateDeductionPDF(res, req.query);
+  generateTimeaddPDF(res, req.query);
 });
 
 router.get('/cashpaypdf', (req, res) => {
@@ -24,6 +25,11 @@ router.get('/cashpaypdf', (req, res) => {
 // ✅ Child Support PDF 생성 라우터
 router.get('/childsp-pdf', (req, res) => {
   generateChildspPDF(res, req.query);
+});
+
+// ✅ Payroll Deduction PDF 생성 라우터
+router.get('/deduction-pdf', (req, res) => {
+  generateDeductionPDF(res, req.query);
 });
 
 // ---------------------------------------------------
@@ -99,5 +105,50 @@ router.delete('/delete-childsp', async (req, res) => {
 
 // ---------------------------------------------------
 
+// ✅ 업로드
+router.post('/upload-deduction', upload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  const filename = req.file.filename;
 
+  try {
+    await db.query(`DELETE FROM payroll_doc WHERE dtype = 'payroll_deduction'`);
+    await db.query(`INSERT INTO payroll_doc (dtype, filename) VALUES (?, ?)`, ['payroll_deduction', filename]);
+    res.json({ filename });
+  } catch (err) {
+    console.error('DB 저장 실패:', err);
+    res.status(500).json({ error: 'DB 저장 실패' });
+  }
+});
+
+// ✅ 정보 조회
+router.get('/deduction-info', async (req, res) => {
+  try {
+    const [rows] = await db.query(`SELECT filename FROM payroll_doc WHERE dtype = 'payroll_deduction' LIMIT 1`);
+    if (rows.length === 0) return res.json({ filename: null });
+    res.json({ filename: rows[0].filename });
+  } catch (err) {
+    res.status(500).json({ error: 'DB 조회 실패' });
+  }
+});
+
+// ✅ 삭제
+router.delete('/delete-deduction', async (req, res) => {
+  const filename = req.query.filename;
+  if (!filename) return res.status(400).json({ error: 'No filename provided' });
+
+  const filePath = path.join(uploadDir, filename);
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
+
+  try {
+    fs.unlinkSync(filePath);
+    await db.query(`DELETE FROM payroll_doc WHERE dtype = 'payroll_deduction'`);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('삭제 오류:', err);
+    res.status(500).json({ error: 'File delete failed' });
+  }
+});
+
+
+// ---------------------------------------------------
 module.exports = router;
