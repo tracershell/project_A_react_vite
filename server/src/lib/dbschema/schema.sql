@@ -370,4 +370,14 @@ CREATE TABLE IF NOT EXISTS creditcard_item (
 ) CHARACTER SET utf8mb4;
 
 
+==========================================================
+
+CREATE TABLE IF NOT EXISTS payroll_doc (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  dtype VARCHAR(50),      -- 'child_support' 같은 구분자
+  filename VARCHAR(255),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+==========================================================
 

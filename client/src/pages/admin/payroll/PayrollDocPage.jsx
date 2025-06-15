@@ -1,8 +1,11 @@
 // client/src/pages/admin/payroll/PayrollDocPage.jsx
 
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './PayrollDocPage.module.css';
 import axios from 'axios';
+
+
+
 
 const PayrollDocPage = () => {
   const [form, setForm] = useState({
@@ -12,7 +15,28 @@ const PayrollDocPage = () => {
     crhour: '', crmin: '', cohour: '', comin: ''
   });
 
+  const [childspFile, setChildspFile] = useState(null);
+  const [childspFilename, setChildspFilename] = useState('');
+  const [childspPreviewUrl, setChildspPreviewUrl] = useState('');
   const inputRefs = useRef([]);
+
+  useEffect(() => {
+    const fetchChildspInfo = async () => {
+      try {
+        const res = await axios.get('/api/admin/payroll/payrolldoc/childsp-info');
+        const filename = res.data.filename;
+        if (filename) {
+          setChildspFilename(filename);
+          setChildspPreviewUrl(`/uploads/payroll/pdoc_upload/${filename}`);
+        }
+      } catch (err) {
+        console.error('초기 파일 불러오기 실패:', err);
+      }
+    };
+    fetchChildspInfo();
+  }, []);
+
+
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -38,6 +62,49 @@ const PayrollDocPage = () => {
     window.open(`/api/admin/payroll/payrolldoc/cashpaypdf?${query}`, '_blank');
   };
 
+  // -----------------------------
+
+
+  const handleChildspPDF = () => {
+    const params = new URLSearchParams({
+      cs_date: form.cs_date || '',
+      cs_name: form.cs_name || 'Jonathan Gutierrez',
+      cs_checkno: form.cs_checkno || '',
+      cs_amount: form.cs_amount || '50.01',
+      filename: childspFilename
+    }).toString();
+    window.open(`/api/admin/payroll/payrolldoc/childsp-pdf?${params}`, '_blank');
+  };
+
+  const handleChildspUpload = async () => {
+    if (!childspFile) return alert('파일을 선택하세요.');
+    const formData = new FormData();
+    formData.append('file', childspFile);
+    try {
+      const res = await axios.post('/api/admin/payroll/payrolldoc/upload-childsp', formData);
+      const filename = res.data.filename;
+      setChildspFilename(filename);
+      setChildspPreviewUrl(`/uploads/payroll/pdoc_upload/${filename}`);  // 🔹 미리보기용 경로 설정
+      alert('✅ 업로드 성공');
+    } catch (err) {
+      alert('⛔ 업로드 실패');
+    }
+  };
+
+  const handleChildspDelete = async () => {
+    if (!childspFilename) return;
+    try {
+      await axios.delete(`/api/admin/payroll/payrolldoc/delete-childsp?filename=${childspFilename}`);
+      setChildspFilename('');
+      setChildspPreviewUrl('');  // 🔹 미리보기 URL 제거
+      alert('🗑️ 삭제 완료');
+    } catch (err) {
+      alert('⛔ 삭제 실패');
+    }
+  };
+
+
+  //-----------------------------
   return (
     <div className={styles.page}>
       <h2>Time Sheet Add</h2>
@@ -106,6 +173,59 @@ const PayrollDocPage = () => {
 
         <button onClick={handleCashPDF}>PDF 보기</button>
       </div>
+
+      <h2>Child Support Print</h2>
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+        <div className={styles.formRow} style={{ width: '50%' }}>
+          <label>Date:</label>
+          <input
+            name="cs_date"
+            type="date"
+            value={form.cs_date || ''}
+            onChange={handleChange}
+            className={styles.wideInput}
+          />
+
+          <label>Name:</label>
+          <input
+            name="cs_name"
+            placeholder="기본: Jonathan Gutierrez"
+            value={form.cs_name || ''}
+            onChange={handleChange}
+            className={styles.wideInput}
+          />
+
+          <label>Check No.:</label>
+          <input
+            name="cs_checkno"
+            value={form.cs_checkno || ''}
+            onChange={handleChange}
+          />
+
+          <label>Amount:</label>
+          <input
+            name="cs_amount"
+            value={form.cs_amount || '50.01'}
+            onChange={handleChange}
+          />
+
+          <button type="button" onClick={handleChildspPDF}>PDF 보기</button>
+        </div>
+
+        <div className={styles.formRow} style={{ width: '50%' }}>
+          <label>Choose File:</label>
+          <input
+            type="file"
+            onChange={e => setChildspFile(e.target.files[0])}
+            style={{ width: '16rem' }}
+          />
+          <button type="button" onClick={handleChildspUpload}>Upload</button>
+          {childspFilename && <span>{childspFilename}</span>}
+          <button type="button" onClick={handleChildspDelete}>Delete</button>
+
+        </div>
+      </div>
+
     </div>
   );
 };
