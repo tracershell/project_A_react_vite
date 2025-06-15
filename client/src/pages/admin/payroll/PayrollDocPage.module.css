@@ -1,89 +1,44 @@
 .page {
-  font-family: Arial, sans-serif;
-  font-size: 12px;
-  padding: 20px;
   background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-size: 12px;
 }
 
-.section {
-  border: 1px solid #ccc;
-  padding: 15px;
-  margin-bottom: 20px;
-  background: white;
+h2 {
+  margin: 0.5rem 0;
 }
 
-.section h2 {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.row {
+.formRow {
   display: flex;
   flex-wrap: wrap;
+  gap: 0.5rem;
   align-items: center;
-  gap: 14px;
-}
-
-.formGroup {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.formGroup label {
-  font-weight: bold;
-  font-size: 12px;
-}
-
-.formGroup input[type="text"],
-.formGroup input[type="number"],
-.formGroup input[type="date"] {
-  height: 24px;
-  padding: 4px;
-  font-size: 12px;
-  width: 80px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 1rem;
+  border-radius: 6px;
 }
 
-.formGroup input[name="comment"] {
-  width: 200px;
+.formRow input {
+  width: 4rem;
+  padding: 0.3rem;
+  font-size: 12px;
+}
+
+.formRow label {
+  font-size: 12px;
+  margin-right: 4px;
 }
 
 button {
-  background-color: #066da5;
-  color: white;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
+  padding: 0.4rem 1rem;
+  background-color: lightpink;
+  border: 1px solid #d88a9a;
   cursor: pointer;
-  font-size: 12px;
-  height: 32px;
 }
 
-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.uploadSection {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.uploadSection input[type="file"] {
-  font-size: 12px;
-}
-
-.uploadSection span {
-  color: #c7142c;
-  font-weight: bold;
-}
-
-.error {
-  color: red;
-  margin-bottom: 10px;
+.commentInput {
+  min-width: 200px;
+  flex: 1 1 250px;
 }

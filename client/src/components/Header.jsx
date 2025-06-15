@@ -34,19 +34,19 @@ const Header = () => {
           {/* ✅ 로그인 안 했을 때만 Home 표시 */}
           {!user && <Link to="/">Home</Link>}
           {user?.role === 'admin' && (
-    <>
-      <AdminMenu />
-      <MainMenu />
-      <AccountMenu />
-      <GeneralMenu />
-      <ImportMenu />
-      <DomesticMenu />
-      <MailMenu />
-      <EmployeesMenu />
-      <PayrollMenu />
-      <PersonalMenu />
-    </>
-  )}
+            <>
+              <AdminMenu />
+              <MainMenu />
+              <AccountMenu />
+              <GeneralMenu />
+              <ImportMenu />
+              <DomesticMenu />
+              <MailMenu />
+              <EmployeesMenu />
+              <PayrollMenu />
+              <PersonalMenu />
+            </>
+          )}
           {user?.role === 'user' && <UserMenu />}
         </div>
 
