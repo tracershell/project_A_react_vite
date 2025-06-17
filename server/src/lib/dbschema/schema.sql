@@ -381,3 +381,24 @@ CREATE TABLE IF NOT EXISTS payroll_doc (
 
 ==========================================================
 
+CREATE TABLE IF NOT EXISTS envelope_senderdata (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  sname VARCHAR(100) DEFAULT 'ARGUS US INC',
+  sstreet VARCHAR(255) DEFAULT '2055 E. 51st Street',
+  scity VARCHAR(100) DEFAULT 'VERNON',
+  sstate VARCHAR(10) DEFAULT 'CA',
+  szip VARCHAR(10) DEFAULT '90058'
+);
+
+CREATE TABLE IF NOT EXISTS envelope_receiverdata (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  rcode VARCHAR(20),
+  rname VARCHAR(100),
+  ratt VARCHAR(100),
+  rstreet VARCHAR(255),
+  rcity VARCHAR(100),
+  rstate VARCHAR(10),
+  rzip VARCHAR(10)
+);
+
+==========================================================

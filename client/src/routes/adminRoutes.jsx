@@ -7,7 +7,7 @@ import adminMainRoutes from './adminMainRoutes';
 import adminAccountRoutes from './adminRoutes/adminAccountRoutes';
 import adminEmployeesRoutes from './adminEmployeesRoutes';
 import adminImportRoutes from './adminImportRoutes';
-import adminGeneralRoutes from './adminGeneralRoutes';
+import adminGeneralRoutes from './adminRoutes/adminGeneralRoutes';
 import adminPayrollRoutes from './adminRoutes/adminPayrollRoutes';
 
 

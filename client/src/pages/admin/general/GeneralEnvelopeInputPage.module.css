@@ -1,0 +1,86 @@
+/* ✅ GeneralEnvelopeInputPage.module.css */
+
+.page {
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-size: 12px;
+}
+
+h2 {
+  margin: 0.5rem 0;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.formRow.small {
+  font-size: 11px;
+  gap: 0.3rem;
+  padding-top: 1.0rem;
+  padding-bottom: 0.1rem;
+  align-items: baseline;
+}
+
+.formRow input {
+  flex: 1 1 120px;
+  height: 1.6rem;
+  padding: 0 0.3rem;
+  font-size: 11px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  vertical-align: baseline;
+}
+
+.formRow button {
+  flex: 0 0 auto;
+  height: 1.6rem;
+  padding: 0 0.5rem;
+  font-size: 11px;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  vertical-align: baseline;
+}
+
+.formRow button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.table th {
+  background-color: #d0ebff;
+  color: #003366;
+  font-weight: bold;
+  padding: 0.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.table td {
+  padding: 0.25rem;
+  border-bottom: 1px solid #ccc;
+}
+
+.table tbody tr:hover {
+  background-color: #fff8dc;
+  cursor: pointer;
+}

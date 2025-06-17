@@ -3,8 +3,8 @@ import DropdownMenu from '../DropdownMenu';
 
 const GeneralMenu = () => {
   const adminItems = [
-    { label: 'a', link: '/admin/general/a' },
-    { label: 'b', link: '/admin/users' },
+    { label: 'Envelope', link: '/admin/general/envelope' },
+    { label: 'Envelope input', link: '/admin/general/envelope_input' },
     { label: 'c', link: '/admin/reports' },
     { label: 'd', link: '/admin/settings' },
     { label: 'e', link: '/admin/logs' },

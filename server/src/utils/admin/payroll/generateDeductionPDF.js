@@ -41,7 +41,7 @@ const generateDeductionPDF = (res, query) => {
   doc.text(`Date: ${ddate}`, 60, 680);
   doc.text(`Check No.  ${dnumber}`, 200, 680);
   doc.text(`$${damount}`, 340, 680);
-  doc.text(`( Name: ${dname} )`, 420, 680);
+  doc.text(`( ${dname} )`, 420, 680);
 
   // ✅ 텍스트 아래 가로선
   doc.moveTo(50, 720).lineTo(doc.page.width - 50, 720).stroke();

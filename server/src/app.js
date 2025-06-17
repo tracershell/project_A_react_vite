@@ -96,6 +96,8 @@ app.use('/api/admin/account/accountccitempage', require('./routes/admin/account/
 app.use('/api/admin/account/accountccholderpage', require('./routes/admin/account/accountccholderpage'));
 
 
+app.use('/api/admin/general/generalenvelopeinput', require('./routes/admin/general/generalenvelopeinputpage'));
+app.use('/api/admin/general/generalenvelope', require('./routes/admin/general/generalenvelopepage'));
 
 // ✔️ fpage 확인용
 console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');

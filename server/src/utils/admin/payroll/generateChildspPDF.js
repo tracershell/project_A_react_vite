@@ -39,8 +39,8 @@ const generateChildspPDF = (res, query) => {
   doc.fontSize(12);
   doc.text(`Date: ${cs_date}`, 60, 680);
   doc.text(`Check No.  ${cs_checkno}`, 200, 680);
-  doc.text(`$${cs_amount}`, 340, 680);
-  doc.text(`( Name: ${cs_name} )`, 420, 680);
+  doc.text(` $${cs_amount}`, 340, 680);
+  doc.text(`( ${cs_name} )`, 420, 680);
 
   // ✅ 텍스트 삽입 후: 가로선 추가
   doc.moveTo(50, 720).lineTo(doc.page.width - 50, 720).stroke();
