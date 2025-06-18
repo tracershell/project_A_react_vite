@@ -22,14 +22,30 @@ const AccountPettyMoneyPage = () => {
   }
 };
 
-  const fetchList = async () => {
-    const { data } = await axios.get('/api/admin/account/accountpettymoney/list');
-    setList(data);
-  };
+ const fetchList = async () => {
+  try {
+    const params = {};
+    if (startDate) params.start = startDate;
+    if (endDate) params.end = endDate;
 
-  useEffect(() => {
-    fetchList();
-  }, []);
+    const { data } = await axios.get('/api/admin/account/accountpettymoney/list', { params });
+    setList(data);
+  } catch (err) {
+    alert('데이터 불러오기 오류: ' + err.message);
+  }
+};
+
+// 최초 1회 전체 조회
+useEffect(() => {
+  fetchList();
+}, []);
+
+
+// 날짜 바뀔 때마다 조건 없이 조회
+useEffect(() => {  
+    fetchList();  
+}, [startDate, endDate]);
+
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -98,6 +114,8 @@ const AccountPettyMoneyPage = () => {
   }
   setShowSubmitPage(true);
 };
+
+
 
   return (
     <div className={styles.page}>
@@ -182,9 +200,9 @@ const AccountPettyMoneyPage = () => {
             {list.map(row => (
               <tr key={row.id} onClick={() => selectRow(row)}>
                 <td>{row.pldate?.split('T')[0]}</td>
-                <td>{Number(row.plcredit).toFixed(2)}</td>
-                <td>{Number(row.pldebit).toFixed(2)}</td>
-                <td>{Number(row.plbalance).toFixed(2)}</td>
+                <td>{Number(row.plcredit).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td>{Number(row.pldebit).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                <td>{Number(row.plbalance).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                 <td>{row.plcomment}</td>
               </tr>
             ))}

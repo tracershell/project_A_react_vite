@@ -6,8 +6,19 @@ const generateAccountPettyMoneyPDF = require('../../../utils/admin/account/gener
 
 // 전체 조회
 router.get('/list', async (req, res) => {
+  const { start, end } = req.query;
   try {
-    const [rows] = await db.query('SELECT * FROM petty_ledger ORDER BY pldate, id');
+   let query = 'SELECT * FROM petty_ledger';
+   const params = [];
+
+   if (start && end) {
+     query += ' WHERE pldate BETWEEN ? AND ?';
+     params.push(start, end);
+   }
+
+   query += ' ORDER BY pldate, id';
+   const [rows] = await db.query(query, params);
+   
     res.json(rows);
   } catch (err) {
     console.error('조회 오류:', err);
@@ -75,6 +86,8 @@ async function recalculateBalances() {
     await db.query('UPDATE petty_ledger SET plbalance = ? WHERE id = ?', [balance, row.id]);
   }
 }
+
+
 
 // ✅ PDF 생성 라우터
 router.get('/viewpdf', async (req, res) => {
