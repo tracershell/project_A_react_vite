@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
+const generateAccountPettyMoneyPDF = require('../../../utils/admin/account/generateAccountPettyMoneyPDF');
 
 // 전체 조회
 router.get('/list', async (req, res) => {
@@ -74,5 +75,22 @@ async function recalculateBalances() {
     await db.query('UPDATE petty_ledger SET plbalance = ? WHERE id = ?', [balance, row.id]);
   }
 }
+
+// ✅ PDF 생성 라우터
+router.get('/viewpdf', async (req, res) => {
+  const { start, end } = req.query;
+  if (!start || !end) return res.status(400).json({ error: '기간(start, end)이 필요합니다.' });
+
+  try {
+    const [rows] = await db.query(
+      'SELECT * FROM petty_ledger WHERE pldate BETWEEN ? AND ? ORDER BY pldate, id',
+      [start, end]
+    );
+    generateAccountPettyMoneyPDF(res, { rows, start, end });
+  } catch (err) {
+    console.error('PDF 생성 오류:', err);
+    res.status(500).json({ error: 'PDF 생성 실패' });
+  }
+});
 
 module.exports = router;

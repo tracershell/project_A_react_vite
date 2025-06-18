@@ -1,3 +1,5 @@
+//server/src/utils/admin/account/generateAccountCcSummaryPDF.js
+
 const PDFDocument = require('pdfkit');
 
 function generateAccountCcSummaryPDF(res, { pdate, ptname, pamount, anumber, provider, details }) {
