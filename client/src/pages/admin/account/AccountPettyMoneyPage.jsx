@@ -1,7 +1,9 @@
-// ✅ Petty Money Ledger React Page: AccountPettyMoneyPage.jsx
+// client/src/pages/admin/account/AccountPettyMoneyPage.jsx
+
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './AccountPettyMoneyPage.module.css';
 import axios from 'axios';
+import AccountPettyMoneySubmitPage from './AccountPettyMoneySubmitPage';
 
 const AccountPettyMoneyPage = () => {
   const [form, setForm] = useState({ pldate: '', plcredit: '0', pldebit: '0', plcomment: '' });
@@ -9,6 +11,7 @@ const AccountPettyMoneyPage = () => {
   const [selectedId, setSelectedId] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [showSubmitPage, setShowSubmitPage] = useState(false);
   const inputsRef = useRef([]);
   const handleFocusSelectAll = e => e.target.select();
 
@@ -88,11 +91,20 @@ const AccountPettyMoneyPage = () => {
     setSelectedId(row.id);
   };
 
+  const handleShowSubmitPage = () => {
+  if (!startDate || !endDate) {
+    alert('시작일과 종료일을 먼저 입력하세요.');
+    return;
+  }
+  setShowSubmitPage(true);
+};
+
   return (
     <div className={styles.page}>
       <h2>Petty Money Ledger</h2>
       <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
       <div className={`${styles.formRow} ${styles.small}`} style={{ width: '50%' }}>
+        
         <input
   ref={el => inputsRef.current[0] = el}
   type="date"
@@ -100,6 +112,7 @@ const AccountPettyMoneyPage = () => {
   value={form.pldate}
   onChange={handleChange}
   onKeyDown={e => handleKeyDown(0, e)}
+  style={{ width: '8rem' }}
 />
 <input
   ref={el => inputsRef.current[1] = el}
@@ -138,15 +151,23 @@ const AccountPettyMoneyPage = () => {
       </div>
 
       <div className={`${styles.formRow} ${styles.small}`} style={{ width: '50%' }}>
-        <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
-        <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+        <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} style={{ width: '8rem' }} />
+        <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} style={{ width: '8rem' }} />
         <button onClick={handleViewPdf}>PDF 보기</button>
-        <button onClick={fetchList}>Submit Ledger</button>
+        <button onClick={handleShowSubmitPage}>Submit Ledger</button>
       </div>
       </div>
 
       <h2>Ledger List</h2>
       <div className={styles.list}>
+        {showSubmitPage && (
+  <AccountPettyMoneySubmitPage
+    startDate={startDate}
+    endDate={endDate}
+    onBack={() => setShowSubmitPage(false)}
+  />
+)}
+
         <table className={styles.compactTable}>
           <thead>
             <tr>
@@ -168,7 +189,8 @@ const AccountPettyMoneyPage = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table>       
+
       </div>
     </div>
   );

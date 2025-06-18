@@ -100,6 +100,7 @@ app.use('/api/admin/general/generalenvelopeinput', require('./routes/admin/gener
 app.use('/api/admin/general/generalenvelope', require('./routes/admin/general/generalenvelopepage'));
 
 app.use('/api/admin/account/accountpettymoney', require('./routes/admin/account/accountpettymoneypage'));
+app.use('/api/admin/account/accountpettymoneysubmit', require('./routes/admin/account/accountpettymoneysubmitpage'));
 
 
 // ✔️ fpage 확인용

@@ -7,6 +7,8 @@ import AccountCcPayPage from '../../pages/admin/account/AccountCcPayPage';
 import AccountCcItemPage from '../../pages/admin/account/AccountCcItemPage';
 import AccountCcHolderPage from '../../pages/admin/account/AccountCcHolderPage';
 import AccountPettyMoneyPage from '../../pages/admin/account/AccountPettyMoneyPage';
+import AccountPettyMoneySubmitPage from '../../pages/admin/account/AccountPettyMoneySubmitPage';
+
 
 const adminAccountRoutes = [
 
@@ -58,6 +60,16 @@ const adminAccountRoutes = [
     element={
       <PrivateRoute role="admin">
         <AccountPettyMoneyPage />
+      </PrivateRoute>
+    }
+  />,
+
+  <Route
+    key="pettymoneyledger_submit"
+    path="account/pettymoneyledger_submit"
+    element={
+      <PrivateRoute role="admin">
+        <AccountPettyMoneySubmitPage />
       </PrivateRoute>
     }
   />,
