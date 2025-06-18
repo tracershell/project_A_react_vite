@@ -4,7 +4,7 @@ import DropdownMenu from '../DropdownMenu';
 const AccountMenu = () => {
   const adminItems = [
     { label: 'Credit Card', link: '/admin/account/ccsummary' },
-    { label: 'F', link: '/admin' },
+    { label: 'Petty Money', link: '/admin/account/pettymoneyledger' },
     { label: 'G', link: '/admin' },
     { label: 'H', link: '/admin' },
     { label: 'I', link: '/admin' },

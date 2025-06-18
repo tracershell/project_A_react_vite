@@ -34,10 +34,10 @@ const generateEnvelopePDF = async (res, { sender, receivers }) => {
 
     if (receiver.rcode && receiver.rcode.startsWith('E')) {
       // rcode가 'E'로 시작하면 하단 중앙에 rname만 출력
-      doc.fontSize(13).text(receiver.rname, 400, 440);
+      doc.fontSize(13).text(receiver.rname, 550, 410);
     } else {
       // 전체 주소 블럭 중앙에 출력
-      const baseX = 440;
+      const baseX = 350;
       const baseY = 280;
       const baseWidth = 200;
 

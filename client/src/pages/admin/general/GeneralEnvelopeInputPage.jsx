@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './GeneralEnvelopeInputPage.module.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const GeneralEnvelopeInputPage = () => {
   const [senderForm, setSenderForm] = useState({ sname: 'ARGUS US INC', sstreet: '2055 E. 51st Street', scity: 'VERNON', sstate: 'CA', szip: '90058' });
@@ -12,6 +13,7 @@ const GeneralEnvelopeInputPage = () => {
   const [selectedSenderId, setSelectedSenderId] = useState(null);
   const [selectedReceiverId, setSelectedReceiverId] = useState(null);
   const inputRefs = useRef([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSender();
@@ -107,6 +109,7 @@ const GeneralEnvelopeInputPage = () => {
         <button type="button" onClick={handleAddSender}>입력</button>
         <button type="button" onClick={handleEditSender} disabled={!selectedSenderId}>수정</button>
         <button type="button" onClick={handleDeleteSender} disabled={!selectedSenderId}>삭제</button>
+        <button type="button" className={styles.lightBlue} onClick={() => navigate(-1)}>🔙 되돌아가기</button>
       </form>
 
       <h2>Sender Table</h2>
@@ -136,6 +139,7 @@ const GeneralEnvelopeInputPage = () => {
         <button type="button" onClick={handleAddReceiver}>입력</button>
         <button type="button" onClick={handleEditReceiver} disabled={!selectedReceiverId}>수정</button>
         <button type="button" onClick={handleDeleteReceiver} disabled={!selectedReceiverId}>삭제</button>
+        <button type="button" className={styles.lightBlue} onClick={() => navigate(-1)}>🔙 되돌아가기</button>
       </form>
 
       <h2>Receiver Table</h2>

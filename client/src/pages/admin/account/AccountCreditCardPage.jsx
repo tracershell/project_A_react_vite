@@ -1,3 +1,5 @@
+// client/src/pages/admin/account/AccountCreditCardPage.jsx
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './AccountCreditCardPage.module.css';

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './GeneralEnvelopePage.module.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const GeneralEnvelopePage = () => {
   const [senderList, setSenderList] = useState([]);
@@ -11,6 +12,7 @@ const GeneralEnvelopePage = () => {
   const [receiverSearch, setReceiverSearch] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [rcodeList, setRcodeList] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSender();
@@ -69,6 +71,10 @@ const GeneralEnvelopePage = () => {
     }
   };
 
+  const handleInputData = () => {    
+    navigate('/admin/general/envelope_input');
+  };
+
   const filteredReceivers = receiverList.filter(r =>
     receiverSearch === '' || r.rcode === receiverSearch
   );
@@ -78,6 +84,7 @@ const GeneralEnvelopePage = () => {
       <h2>Envelope Print</h2>
       <div className={styles.buttonRow}>
         <button onClick={handlePrint}>PDF 보기</button>
+        <button className={styles.lightBlue} onClick={handleInputData}>Input Data</button>
       </div>
 
       <h2>Sender Selection</h2>
@@ -102,16 +109,15 @@ const GeneralEnvelopePage = () => {
       </table>
 
       <h2>Receiver Selection</h2>
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-        <div className={styles.selectBox} style={{ width: '30%' }}>                        
-          <label>Code 검색: </label>
-          <select value={receiverSearch} onChange={e => setReceiverSearch(e.target.value)}>
-            <option value=''>-- 전체 보기 --</option>
-            {rcodeList.map(code => <option key={code} value={code}>{code}</option>)}
-          </select>
-        </div>
-      </div>
-
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>              
+<div className={styles.inlineFilter} style={{ width: '20%' }}>
+  <label style={{ marginRight: '0.5rem', width: '8rem'  } }>Code 검색: </label>
+  <select value={receiverSearch} onChange={e => setReceiverSearch(e.target.value)}>
+    <option value=''>-- 전체 보기 --</option>
+    {rcodeList.map(code => <option key={code} value={code}>{code}</option>)}
+  </select>
+  </div>
+</div>
       <table className={styles.table}>
         <thead>
           <tr>

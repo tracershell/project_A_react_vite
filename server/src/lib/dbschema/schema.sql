@@ -402,3 +402,16 @@ CREATE TABLE IF NOT EXISTS envelope_receiverdata (
 );
 
 ==========================================================
+
+CREATE TABLE IF NOT EXISTS petty_ledger (
+  id INT AUTO_INCREMENT PRIMARY KEY,         -- 고유 ID
+  pldate DATE NOT NULL,                      -- 거래 날짜
+  plcredit DECIMAL(10,2) DEFAULT 0,          -- 입금
+  pldebit DECIMAL(10,2) DEFAULT 0,           -- 출금
+  plbalance DECIMAL(10,2) DEFAULT 0,         -- 잔액 (입력/수정 후 재계산됨)
+  plcomment VARCHAR(255),                    -- 비고
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,                       -- 생성일
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 수정일
+) CHARACTER SET utf8mb4;
+
+==========================================================
