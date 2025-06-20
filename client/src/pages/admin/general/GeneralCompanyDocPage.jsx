@@ -1,5 +1,5 @@
 // 📁 client/src/pages/admin/general/GeneralCompanyDocPage.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './GeneralCompanyDocPage.module.css';
 import axios from 'axios';
 
@@ -9,6 +9,7 @@ const GeneralCompanyDocPage = () => {
   const [list, setList] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [filterCid, setFilterCid] = useState('');
+  const formRef = useRef(null);
 
   // — 데이터 로딩 함수들 —
   const fetchList = async () => {
@@ -53,6 +54,9 @@ const GeneralCompanyDocPage = () => {
     setForm({ cid: '', comment: '' });
     setFileInput(null);
     fetchList();
+
+    // 👇 폼 리셋 강제
+    if (formRef.current) formRef.current.reset();
   };
 
   const handleDelete = async id => {
@@ -66,9 +70,9 @@ const GeneralCompanyDocPage = () => {
     setForm({ cid: record.cid, comment: record.comment });
   };
 
-  const filtered = filterCid
-    ? list.filter(item => item.cid.includes(filterCid))
-    : list;
+  const filtered = !filterCid
+  ? list
+  : list.filter(item => item.cid === filterCid);
 
   const [cidList, setCidList] = useState([]);
 
@@ -86,10 +90,17 @@ const GeneralCompanyDocPage = () => {
     }
   };
 
+  // 초기화 버튼
+  const handleResetForm = () => {
+    setForm({ cid: '', comment: '' });
+    setFileInput(null);
+    setSelectedId(null);
+  };
+
   return (
     <div className={styles.page}>
       <h2>Company Document Upload</h2>
-      <form onSubmit={handleUpload} className={styles.uploadForm}>
+      <form onSubmit={handleUpload} className={styles.uploadForm} ref={formRef} >
         <input type="file" onChange={handleFileChange} required />
         <input
           name="cid"
@@ -111,20 +122,22 @@ const GeneralCompanyDocPage = () => {
         <button type="button" onClick={handleUpdate} disabled={!selectedId}>
           수정
         </button>
+        {/* ✅ 초기화 버튼 추가 */}
+        <button type="button" onClick={handleResetForm}>
+          초기화
+        </button>
       </form>
 
       <div className={styles.filter}>
         <select
-          value={filterCid}
-          onChange={e => setFilterCid(e.target.value)}
-        >
-          <option value="">:: 전체 보기 ::</option>
-          {cidList.map((cid, idx) => (
-            <option key={idx} value={cid}>
-              {cid}
-            </option>
-          ))}
-        </select>
+  value={filterCid}
+  onChange={e => setFilterCid(e.target.value)}
+>
+  <option value="">:: 전체 보기 ::</option>
+  {cidList.map((cid, idx) => (
+    <option key={idx} value={cid}>{cid}</option>
+  ))}
+</select>
       </div>
 
       <table className={styles.compactTable}>

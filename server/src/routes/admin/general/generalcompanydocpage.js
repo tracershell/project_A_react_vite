@@ -11,8 +11,10 @@ const fs = require('fs');
 // __dirname = project/server/src/routes/admin/general
 // 네 단계 올라가서 project/server/public/uploads/... 으로 연결
 // ✅ 업로드 기본 폴더 (카테고리별 분기 없음)
+// 회사 문서 전용 하위 폴더(cdoc_upload)까지 포함해서 저장하도록
 const rootPath = path.join(__dirname, '../../../../public/uploads/company/cdoc_upload');
-// 서버 시작 시 한 번만 생성
+console.log('upload rootPath:', rootPath);
+// 서버 시작 시 한 번만 생성(mkdir 로직)
 if (!fs.existsSync(rootPath)) fs.mkdirSync(rootPath, { recursive: true });
 
 const storage = multer.diskStorage({
