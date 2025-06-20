@@ -10,23 +10,24 @@ const fs = require('fs');
 // ✅ 동적으로 cid 폴더 분기 저장 가능하게 설정
 // __dirname = project/server/src/routes/admin/general
 // 네 단계 올라가서 project/server/public/uploads/... 으로 연결
+// ✅ 업로드 기본 폴더 (카테고리별 분기 없음)
 const rootPath = path.join(__dirname, '../../../../public/uploads/company/cdoc_upload');
+// 서버 시작 시 한 번만 생성
+if (!fs.existsSync(rootPath)) fs.mkdirSync(rootPath, { recursive: true });
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const cid = req.body.cid || 'unknown';
-    const targetPath = path.join(rootPath, cid);
-    if (!fs.existsSync(targetPath)) fs.mkdirSync(targetPath, { recursive: true });
-    cb(null, targetPath);
-  },
+  // 항상 동일한 rootPath 에 저장
+  destination: (req, file, cb) => cb(null, rootPath),
+
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     const timestamp = Date.now();
-    const cid = req.body.cid || 'unknown';
-    const filename = `${cid}_${timestamp}${ext}`;
+    // 원하시는 파일명 포맷으로만 수정
+    const filename = `${timestamp}${ext}`;
     cb(null, filename);
   },
 });
+
 
 const upload = multer({ storage });
 
@@ -73,7 +74,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     await db.query(
       `INSERT INTO company_data (cid, filename, originalname, comment)
        VALUES (?, ?, ?, ?)`,
-      [cid, `${cid}/${file.filename}`, file.originalname, comment || '']
+      [cid, file.filename, file.originalname, comment || '']
     );
     res.json({ success: true });
   } catch (err) {
