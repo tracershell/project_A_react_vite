@@ -6,7 +6,7 @@ const path = require('path');
 const fs = require('fs');
 
 // ✅ 업로드 폴더 경로 설정
-const uploadPath = path.join(__dirname, '../../../../public/uploads/e_uploads');
+const uploadPath = path.join(__dirname, '../../../../public/uploads/employees/edoc_upload');
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }

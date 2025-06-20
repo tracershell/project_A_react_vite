@@ -4,7 +4,7 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 
-const uploadDir = path.join(__dirname, '../../../../public/uploads/ep_uploads');
+const uploadDir = path.join(__dirname, '../../../../public/uploads/employees/eimg_upload');
 
 router.get('/:eid', async (req, res) => {
   const { eid } = req.params;

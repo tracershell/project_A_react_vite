@@ -130,7 +130,7 @@ const EmployeesDataPage = () => {
                     <td>{f.upload_date.split('T')[0]}</td>
                     <td>
                       <a
-                        href={`/e_uploads/${f.filename}`}
+                        href={`/employees/edoc_upload/${f.filename}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >

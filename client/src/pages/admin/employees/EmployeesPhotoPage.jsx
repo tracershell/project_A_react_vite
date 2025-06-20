@@ -104,7 +104,7 @@ const EmployeesPhotoPage = () => {
                 photos.map(f => (
                   <tr key={f.id}>
                     <td>{f.name} ({f.eid})</td>
-                    <td><img src={`/uploads/ep_uploads/${f.filename}`} alt="employee" height="60" /></td>
+                    <td><img src={`/uploads/employees/eimg_upload/${f.filename}`} alt="employee" height="60" /></td>
                     <td>{f.comment}</td>
                     <td>{f.upload_date.split('T')[0]}</td>
                     <td><button type="button" onClick={() => handleDelete(f.id)}>Delete</button></td>
