@@ -19,7 +19,7 @@ const generateTimeaddPDF = (res, query) => {
 
   doc.fontSize(10);
   const boxX = 200;
-  const boxY = 100;
+  const boxY = 80;
   const boxWidth = 390;
   const boxHeight = 50;
 

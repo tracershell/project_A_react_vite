@@ -103,6 +103,9 @@ app.use('/api/admin/account/accountpettymoney', require('./routes/admin/account/
 app.use('/api/admin/account/accountpettymoneysubmit', require('./routes/admin/account/accountpettymoneysubmitpage'));
 
 
+app.use('/api/admin/general/companydoc', require('./routes/admin/general/generalcompanydocpage'));
+
+
 // ✔️ fpage 확인용
 console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');
 

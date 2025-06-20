@@ -5,6 +5,7 @@ import PrivateRoute from '../PrivateRoute';
 
 import GeneralEnvelopePage from '../../pages/admin/general/GeneralEnvelopePage';
 import GeneralEnvelopeInputPage from '../../pages/admin/general/GeneralEnvelopeInputPage';
+import GeneralCompanyDocPage from '../../pages/admin/general/GeneralCompanyDocPage';
 
 
 const adminPayrollRoutes = [
@@ -26,6 +27,16 @@ const adminPayrollRoutes = [
     element={
       <PrivateRoute role="admin">
         <GeneralEnvelopeInputPage />
+      </PrivateRoute>
+    }
+  />,
+
+  <Route
+    key="general_Envelope_input"
+    path="general/companydoc"
+    element={
+      <PrivateRoute role="admin">
+        <GeneralCompanyDocPage />
       </PrivateRoute>
     }
   />,

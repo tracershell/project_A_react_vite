@@ -156,6 +156,17 @@ const PayrollDocPage = () => {
   };
 
   //-----------------------------
+  const handleResetTimeFields = () => {
+  setForm(f => ({
+    ...f,
+    rhour: '', rmin: '',
+    ohour: '', omin: '',
+    dhour: '', dmin: ''
+  }));
+  inputRefs.current[0]?.focus();  // 초기화 후 첫 칸 포커싱
+};
+
+  //-----------------------------
   return (
     <div className={styles.page}>
       <h2>Time Sheet Add</h2>
@@ -186,6 +197,7 @@ const PayrollDocPage = () => {
           className={styles.commentInput}
         />
         <button onClick={handleViewPDF}>PDF 보기</button>
+        <button onClick={handleResetTimeFields} style={{ marginLeft: '0.5rem' }}>초기화</button>
       </div>
 
       <h2>Cash Calculation Note</h2>

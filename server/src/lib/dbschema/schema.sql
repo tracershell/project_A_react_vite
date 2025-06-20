@@ -415,3 +415,15 @@ CREATE TABLE IF NOT EXISTS petty_ledger (
 ) CHARACTER SET utf8mb4;
 
 ==========================================================
+
+CREATE TABLE IF NOT EXISTS company_data (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cid VARCHAR(50) NOT NULL,      
+  filename VARCHAR(255) NOT NULL, 
+  originalname VARCHAR(255),      
+  comment VARCHAR(255),            
+  upload_date DATETIME DEFAULT CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+==========================================================

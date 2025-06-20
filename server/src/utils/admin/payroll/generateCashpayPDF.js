@@ -24,6 +24,20 @@ const generateCashpayPDF = (res, query) => {
   const stotal = ramount + oamount;
   const total = Math.round(stotal * 10) / 10;
 
+  //====================== Regular Time 정수부, 소수부 ======================
+  const rthr = rhr + rmn;
+  // 정수부: RXX
+  const RXX = Math.floor(rthr);
+  // 소수부: RYY
+  const RYY = Number((rthr - RXX).toFixed(2)) * 100;
+//====================== Over Time 정수부, 소수부 ======================
+  const othr = ohr + omn;
+  // 정수부: OXX
+  const OXX = Math.floor(othr);
+  // 소수부: OYY
+  const OYY = Number((othr - OXX).toFixed(2)) * 100;
+
+
   const doc = new PDFDocument({ margin: 40 });
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', 'inline; filename=cashpay.pdf');
@@ -55,7 +69,7 @@ const generateCashpayPDF = (res, query) => {
   doc.text(`${name}`, leftX + 95, line1Y);
 
   // 2️⃣ Regular Time
-  const regCalc = `${crhour}:${crmin} x $${rate.toFixed(2)}`;
+  const regCalc = `${RXX}.${RYY} x $${rate.toFixed(2)}`;
   doc.text(`Regular Time:`, leftX, line2Y);
   doc.text(regCalc, leftX + descWidth - 40, line2Y, {
     width: calcWidth,
@@ -67,7 +81,7 @@ const generateCashpayPDF = (res, query) => {
   });
 
   // 3️⃣ Over Time
-  const overCalc = `${cohour}:${comin} x $${(rate * 1.5).toFixed(2)}`;
+  const overCalc = `${OXX}.${OYY} x $${(rate * 1.5).toFixed(2)}`;
   doc.text(`Over Time:`, leftX, line3Y);
   doc.text(overCalc, leftX + descWidth - 40, line3Y, {
     width: calcWidth,
@@ -81,10 +95,10 @@ const generateCashpayPDF = (res, query) => {
   // 4️⃣ Total
   doc.moveTo(leftX, line4Y).lineTo(boxX + boxW - 8, line4Y).stroke();
   doc.text(`[Total Amount]`, leftX, line4Y + 5);
-  doc.text(`$${total.toFixed(2)}`, leftX + descWidth - 40 + calcWidth + spacing, line4Y + 5, {
-    width: amountWidth,
-    align: 'right'
-  });
+  doc.text(`$${Math.round(total)}`, leftX + descWidth - 40 + calcWidth + spacing, line4Y + 5, {
+  width: amountWidth,
+  align: 'right'
+});
 
   doc.end();
 };

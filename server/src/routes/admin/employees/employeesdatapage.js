@@ -1,3 +1,5 @@
+// server/src/routes/admin/general/generalcompanydocpage.js
+
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
@@ -5,22 +7,26 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// ✅ 업로드 폴더 경로 설정
-const uploadPath = path.join(__dirname, '../../../../public/uploads/e_uploads');
+// 1) ⬇️ 업로드 기본 폴더 절대경로 (employees 예시처럼)
+const uploadPath = path.join(__dirname, '../../../../public/uploads/company/cdoc_upload');
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }
 
-// ✅ multer 설정 - 파일명에 eid prefix 포함
+// 2) multer 스토리지 설정
 const storage = multer.diskStorage({
+  // 👉 파일은 항상 uploadPath에 저장
   destination: (req, file, cb) => cb(null, uploadPath),
+
+  // 👉 파일명에 cid를 prefix로 붙이거나 timestamp 섞어서 관리
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);
     const timestamp = Date.now();
-    const eid = req.body.eid || 'unknown';
-    cb(null, `${eid}_${timestamp}${ext}`); // ✅ prefix로 eid 포함
+    const cid = req.body.cid || 'unknown';
+    cb(null, `${cid}_${timestamp}${ext}`);
   },
 });
+
 const upload = multer({ storage });
 
 // ✅ 직원 + 파일 목록 조회
@@ -45,22 +51,23 @@ router.get('/', async (req, res) => {
 
 // ✅ 파일 업로드 처리
 router.post('/upload', upload.single('file'), async (req, res) => {
-  const { eid, comment } = req.body;
+  const { cid, comment } = req.body;
   const file = req.file;
-  if (!eid || !file) {
-    return res.status(400).json({ error: '필수 데이터 누락' });
+  if (!cid || !file) {
+    return res.status(400).json({ error: '필수값 누락' });
   }
+
   try {
+    // DB에 저장할 때도 경로를 uploadPath 하위 경로로만 저장
     await db.query(
-      `INSERT INTO employees_data 
-         (eid, filename, originalname, comment)
+      `INSERT INTO company_data (cid, filename, originalname, comment)
        VALUES (?, ?, ?, ?)`,
-      [eid, file.filename, file.originalname, comment || '']
+      [cid, file.filename, file.originalname, comment || '']
     );
     res.json({ success: true });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: '업로드 DB 오류' });
+    res.status(500).json({ error: '업로드 실패' });
   }
 });
 
