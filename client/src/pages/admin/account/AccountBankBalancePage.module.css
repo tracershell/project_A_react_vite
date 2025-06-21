@@ -1,0 +1,41 @@
+/* 📁 client/src/pages/admin/account/AccountBankBalancePage.module.css */
+
+.page {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  font-family: sans-serif;
+}
+
+.buttonRow {
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.table th, .table td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.table th {
+  background-color: #eee;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.25rem;
+}
+
+input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+}

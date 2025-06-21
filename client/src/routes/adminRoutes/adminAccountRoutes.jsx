@@ -2,6 +2,7 @@ import React from 'react';
 import { Route } from 'react-router-dom';
 import PrivateRoute from '../PrivateRoute';
 
+import AccountBankBalancePage from '../../pages/admin/account/AccountBankBalancePage';
 import AccountCreditCardPage from '../../pages/admin/account/AccountCreditCardPage';
 import AccountCcPayPage from '../../pages/admin/account/AccountCcPayPage';
 import AccountCcItemPage from '../../pages/admin/account/AccountCcItemPage';
@@ -11,6 +12,16 @@ import AccountPettyMoneySubmitPage from '../../pages/admin/account/AccountPettyM
 
 
 const adminAccountRoutes = [
+
+  <Route
+    key="bank balance"
+    path="account/bankbalance"
+    element={
+      <PrivateRoute role="admin">
+        <AccountBankBalancePage />
+      </PrivateRoute>
+    }
+  />,
 
     <Route
     key="creditcard"

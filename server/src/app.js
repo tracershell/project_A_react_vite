@@ -89,7 +89,7 @@ app.use('/api/admin/payroll/giveninput', require('./routes/admin/payroll/payroll
 app.use('/api/admin/payroll/payrolldoc', require('./routes/admin/payroll/payrolldocpage'));
 
 //app.use('/api/admin/import/extra/pdf', require('./routes/admin/import/import_extra_pdf'));    server/src/utils/generateSalaryAdjustPDF.js
-
+app.use('/api/admin/account/accountbankbalance', require('./routes/admin/account/accountbankbalancepage'));
 app.use('/api/admin/account/accountcreditcardpage', require('./routes/admin/account/accountcreditcardpage'));
 app.use('/api/admin/account/accountccpaypage', require('./routes/admin/account/accountccpaypage'));
 app.use('/api/admin/account/accountccitempage', require('./routes/admin/account/accountccitempage'));
