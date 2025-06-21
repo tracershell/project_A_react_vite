@@ -432,12 +432,12 @@ CREATE TABLE IF NOT EXISTS company_data (
 
 CREATE TABLE IF NOT EXISTS bankbalance (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  row_index INT NOT NULL,           -- 1~20 까지 번호 구분
+  row_index INT NOT NULL UNIQUE,       -- ✅ UNIQUE 제약 추가
   category VARCHAR(100) DEFAULT '',
   item VARCHAR(100) DEFAULT '',
   amount DECIMAL(12,2) DEFAULT 0.00,
   comment VARCHAR(255) DEFAULT '',
-  selected TINYINT(1) DEFAULT 0,    -- PDF 보기 선택 여부
+  selected TINYINT(1) DEFAULT 0,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 

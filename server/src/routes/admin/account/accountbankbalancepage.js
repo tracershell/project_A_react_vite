@@ -4,69 +4,68 @@ const db = require('../../../lib/db');
 const generateBankBalancePDF = require('../../../utils/admin/account/generateBankBalancePDF');
 
 // ✅ GET: 전체 조회
+// 📌 1. 목록 조회 + 최초 20줄 자동 생성
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await db.query(
-      `SELECT row_index, category, item, amount, comment, selected
-       FROM bankbalance
-       ORDER BY row_index ASC`
-    );
+    const [rows] = await db.query(`SELECT * FROM bankbalance ORDER BY row_index ASC`);
 
-    const mapped = Array.from({ length: 20 }, (_, i) => {
-      const match = rows.find(r => r.row_index === i + 1);
-      return match
-        ? {
-          category: match.category,
-          item: match.item,
-          amount: match.amount,
-          comment: match.comment,
-          checked: match.selected === 1,
-        }
-        : { category: '', item: '', amount: '', comment: '', checked: false };
-    });
+    // 📌 2. 테이블이 비어있으면 1~20번 기본 생성
+    if (rows.length === 0) {
+      for (let i = 1; i <= 20; i++) {
+        await db.query(`
+          INSERT INTO bankbalance (row_index)
+          VALUES (?) ON DUPLICATE KEY UPDATE row_index = row_index
+        `, [i]);
+      }
 
-    res.json(mapped);
+      // 📌 3. 생성 후 다시 SELECT
+      const [newRows] = await db.query(`SELECT * FROM bankbalance ORDER BY row_index ASC`);
+      return res.json(newRows);
+    }
+
+    // 이미 존재하면 그대로 반환
+    res.json(rows);
   } catch (err) {
-    console.error('🔴 bankbalance 조회 오류:', err);
-    res.status(500).json({ error: '조회 실패' });
+    console.error('목록 조회 실패:', err);
+    res.status(500).json({ error: '목록 조회 실패' });
   }
 });
 
 // ✅ POST: 저장 (Update 버튼)
+
+
 router.post('/save', async (req, res) => {
-  const { records } = req.body;
-
-  if (!Array.isArray(records)) {
-    return res.status(400).json({ error: 'records는 배열이어야 합니다.' });
-  }
-
+  const data = req.body; // [{row_index, category, item, amount, comment, selected}]
+  const conn = await db.getConnection();
   try {
-    // 기존 삭제 후 재삽입 (간단한 구현)
-    await db.query('DELETE FROM bankbalance');
+    await conn.beginTransaction();
 
-    const insertValues = records.map((rec, i) => [
-      i + 1,
-      rec.category || '',
-      rec.item || '',
-      parseFloat(rec.amount || 0),
-      rec.comment || '',
-      rec.checked ? 1 : 0,
-    ]);
-
-    if (insertValues.length > 0) {
-      await db.query(
-        `INSERT INTO bankbalance (row_index, category, item, amount, comment, selected)
-         VALUES ?`,
-        [insertValues]
-      );
+    for (const row of data) {
+      const { row_index, category, item, amount, comment, selected } = row;
+      // 존재하면 UPDATE, 없으면 INSERT
+      await conn.query(`
+        INSERT INTO bankbalance (row_index, category, item, amount, comment, selected)
+        VALUES (?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+          category = VALUES(category),
+          item = VALUES(item),
+          amount = VALUES(amount),
+          comment = VALUES(comment),
+          selected = VALUES(selected)
+      `, [row_index, category, item, amount, comment, selected]);
     }
 
-    res.json({ success: true });
+    await conn.commit();
+    res.sendStatus(200);
   } catch (err) {
-    console.error('🔴 bankbalance 저장 오류:', err);
+    await conn.rollback();
+    console.error('저장 실패:', err);
     res.status(500).json({ error: '저장 실패' });
+  } finally {
+    conn.release();
   }
 });
+
 
 // ✅ POST: PDF 보기 (선택된 항목만)
 router.post('/pdf', async (req, res) => {
