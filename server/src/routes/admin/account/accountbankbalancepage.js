@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
 
 
 router.post('/save', async (req, res) => {
-  const data = req.body; // [{row_index, category, item, amount, comment, selected}]
+  const data = req.body.records;  // [{row_index, category, item, amount, comment, selected}]
   const conn = await db.getConnection();
   try {
     await conn.beginTransaction();
