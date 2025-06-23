@@ -9,6 +9,7 @@ import AccountCcItemPage from '../../pages/admin/account/AccountCcItemPage';
 import AccountCcHolderPage from '../../pages/admin/account/AccountCcHolderPage';
 import AccountPettyMoneyPage from '../../pages/admin/account/AccountPettyMoneyPage';
 import AccountPettyMoneySubmitPage from '../../pages/admin/account/AccountPettyMoneySubmitPage';
+import AccountApArPage from '../../pages/admin/account/AccountApArPage';
 
 
 const adminAccountRoutes = [
@@ -23,7 +24,7 @@ const adminAccountRoutes = [
     }
   />,
 
-    <Route
+  <Route
     key="creditcard"
     path="account/ccsummary"
     element={
@@ -63,7 +64,7 @@ const adminAccountRoutes = [
       </PrivateRoute>
     }
   />,
-    
+
 
   <Route
     key="pettymoneyledger"
@@ -84,7 +85,18 @@ const adminAccountRoutes = [
       </PrivateRoute>
     }
   />,
-  
+
+  <Route
+    key="ApAr"
+    path="account/apar"
+    element={
+      <PrivateRoute role="admin">
+        <AccountApArPage />
+      </PrivateRoute>
+    }
+  />,
+
+
 ];
 
 export default adminAccountRoutes;

@@ -444,3 +444,21 @@ CREATE TABLE IF NOT EXISTS bankbalance (
 ==========================================================
 
 
+CREATE TABLE IF NOT EXISTS apar_preparation (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  po_no VARCHAR(50) NOT NULL,
+  po_date DATE DEFAULT NULL,
+  po_amount_usd DECIMAL(12,2) DEFAULT 0.00,
+  dp_date DATE DEFAULT NULL,
+  dp_amount_usd DECIMAL(12,2) DEFAULT 0.00,
+  bp_date DATE DEFAULT NULL,
+  bp_amount_usd DECIMAL(12,2) DEFAULT 0.00,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_po_no (po_no)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+
+==========================================================
+
+

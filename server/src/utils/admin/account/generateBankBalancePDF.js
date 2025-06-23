@@ -58,8 +58,8 @@ const generateBankBalancePDF = async (res, rows) => {
     const boxWidth = 100;
     const boxHeight = 18;
 
-    doc.rect(boxX, boxY, boxWidth, boxHeight).stroke();
     doc.lineWidth(0.5);  // 기본값은 1 → 0.5로 줄이면 가늘어집니다.
+    doc.rect(boxX, boxY, boxWidth, boxHeight).stroke();
     doc.fontSize(11).text(cat, boxX, boxY + 0, { width: boxWidth, align: 'center' }); // ✅ Group box 안 글자 살짝 위로 boxY + 2 -> boxY + 0
     y = boxY + boxHeight + 6;
 

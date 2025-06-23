@@ -1,0 +1,53 @@
+/* 📁 client/src/pages/admin/account/AccountApArPage.module.css */
+.page {
+  padding: 20px;
+  background-color: #fdfdfd;
+  font-size: 14px;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.small input,
+.small select,
+.small button {
+  font-size: 14px;
+  padding: 5px 8px;
+  height: 30px;
+}
+
+.list {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+.compactTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background-color: white;
+}
+
+.compactTable th,
+.compactTable td {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.compactTable th {
+  background-color: #f2f2f2;
+}
+
+.lightPink {
+  background-color: #ffc0cb;
+  border: none;
+  padding: 5px 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
