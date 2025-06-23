@@ -1,3 +1,5 @@
+/* 📁 client/src/pages/admin/account/AccountApPage.module.css */
+
 .page {
   background: #f5f7fa;
   color: #333;
@@ -6,48 +8,149 @@
   font-size: 12px;
 }
 
+/* 제목 스타일 (h2) */
+.page h2 {
+  margin: 0.5rem 0;
+  color: #003366;
+  font-size: 1.1rem;
+  border-left: 4px solid #3f8efc;
+  padding-left: 0.5rem;
+}
+
+/* 공통 formRow */
 .formRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 12px;
+  overflow-x: auto; /* 좁아질 때 스크롤 가능 */
 }
 
-.formRow input,
-.formRow select {
-  height: 2rem;
-  font-size: 12px;
-  padding: 0 0.5rem;
+/* 작은 컴팩트 formRow (AR 페이지의 .formRow.small 참고) */
+.formRow.small {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  font-size: 11px;
+  gap: 0.3rem;
+  padding: 0.5rem 0; /* 위아래 여백 약간 */
+}
+
+/* input/select 기본 */
+.formRow.small input,
+.formRow.small select {
+  flex: 0 0 auto;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.3rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  background: #fff;
 }
 
-.formRow button {
-  height: 2rem;
-  font-size: 12px;
-  padding: 0 0.8rem;
-  background: lightpink;
-  border: 1px solid #d88a9a;
+/* 버튼 기본 */
+.formRow.small button {
+  flex: 0 0 auto;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.5rem;
   border-radius: 4px;
   cursor: pointer;
 }
 
+/* lightPink 버튼: 중요 액션 */
+.formRow.small button.lightPink {
+  background-color: lightpink;
+  border: 1px solid #d88a9a;
+  color: #000;
+}
+.formRow.small button.lightPink:hover {
+  background-color: #f1a1b0;
+}
+
+/* lightBlue 버튼: 보조 액션 */
+.formRow.small button.lightBlue {
+  background-color: #b2d9ff;
+  border: 1px solid #66a6e3;
+  color: #000;
+}
+.formRow.small button.lightBlue:hover {
+  background-color: #9ac2f0;
+}
+
+/* optional: secondary 버튼 스타일 (필요 시) */
+.formRow.small button.secondary {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  color: #333;
+}
+.formRow.small button.secondary:hover {
+  background-color: #e0e0e0;
+}
+
+/* 테이블 래퍼: AR 페이지 .list 스타일 참고 */
+.list {
+  overflow-x: auto;
+  max-height: 700px; /* 필요 시 조정 */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+}
+
+/* 테이블 스타일: AR 페이지의 .compactTable과 유사 */
 .compactTable {
   width: 100%;
   border-collapse: collapse;
+  font-size: 12px;
   background-color: white;
-}
-
-.compactTable th,
-.compactTable td {
-  border: 1px solid #ccc;
-  padding: 6px 8px;
-  text-align: center;
+  min-width: 600px; /* 좁아질 때 스크롤 */
 }
 
 .compactTable th {
   background-color: #d0ebff;
   color: #003366;
   font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0.3rem 0.5rem;
+  text-align: center;
+}
+
+.compactTable td {
+  padding: 0.3rem 0.5rem;
+  text-align: center;
+}
+
+/* 월(Month) 열 왼쪽 정렬 */
+.leftAlign {
+  text-align: left;
+}
+
+/* hover row 효과 (필요 시) */
+.compactTable tr:hover {
+  background-color: #fff8dc;
+}
+
+/* 반응형: 화면 폭 좁아질 때 */
+@media (max-width: 600px) {
+  .formRow.small {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .compactTable {
+    min-width: unset;
+  }
+}
+
+.fixedWidth8 {
+  width: 8rem;
+  /* 필요시 최소/최대 너비도 함께 지정 가능
+  min-width: 8rem;
+  max-width: 8rem;
+  */
+  box-sizing: border-box; /* padding/border 포함 너비 계산 */
 }
