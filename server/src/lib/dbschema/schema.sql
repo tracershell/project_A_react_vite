@@ -461,4 +461,26 @@ CREATE TABLE IF NOT EXISTS apar_preparation (
 
 ==========================================================
 
+CREATE TABLE IF NOT EXISTS ap_beginning (
+  id INT PRIMARY KEY DEFAULT 1,
+  beginning_amount DECIMAL(12,2) NOT NULL DEFAULT 0.00
+);
+
+
+CREATE TABLE IF NOT EXISTS ap_purchase_temp (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pur_date DATE NOT NULL,
+  pur_amount DECIMAL(12,2) NOT NULL DEFAULT 0.00
+);
+
+CREATE TABLE IF NOT EXISTS ap_payment_temp (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pay_date DATE NOT NULL,
+  pay_amount DECIMAL(12,2) NOT NULL DEFAULT 0.00
+);
+
+
+
+==========================================================
+
 

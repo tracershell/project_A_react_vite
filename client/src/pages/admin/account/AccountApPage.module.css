@@ -1,0 +1,53 @@
+.page {
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-size: 12px;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 12px;
+}
+
+.formRow input,
+.formRow select {
+  height: 2rem;
+  font-size: 12px;
+  padding: 0 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.formRow button {
+  height: 2rem;
+  font-size: 12px;
+  padding: 0 0.8rem;
+  background: lightpink;
+  border: 1px solid #d88a9a;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.compactTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.compactTable th,
+.compactTable td {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.compactTable th {
+  background-color: #d0ebff;
+  color: #003366;
+  font-weight: bold;
+}

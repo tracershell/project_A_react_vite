@@ -10,7 +10,8 @@ import AccountCcHolderPage from '../../pages/admin/account/AccountCcHolderPage';
 import AccountPettyMoneyPage from '../../pages/admin/account/AccountPettyMoneyPage';
 import AccountPettyMoneySubmitPage from '../../pages/admin/account/AccountPettyMoneySubmitPage';
 import AccountApArPage from '../../pages/admin/account/AccountApArPage';
-
+import AccountApPage from '../../pages/admin/account/AccountApPage';
+// import AccountArPage from '../../pages/admin/account/AccountArPage';
 
 const adminAccountRoutes = [
 
@@ -95,6 +96,26 @@ const adminAccountRoutes = [
       </PrivateRoute>
     }
   />,
+
+  <Route
+    key="Ap"
+    path="account/ap"
+    element={
+      <PrivateRoute role="admin">
+        <AccountApPage />
+      </PrivateRoute>
+    }
+  />,
+
+//  <Route
+//    key="Ar"
+//    path="account/ar"
+//    element={
+//      <PrivateRoute role="admin">
+//        <AccountArPage />
+//      </PrivateRoute>
+//    }
+ // />,
 
 
 ];

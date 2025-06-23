@@ -30,7 +30,7 @@ const generatePoHistoryPDF = async (res, records) => {
 
   let y = doc.y + 5;
   let x = startX;
-  doc.fontSize(9).lineWidth(0.4);
+  doc.fontSize(9).lineWidth(0.2); // table 선 굵기 조절
   headers.forEach((header, i) => {
     doc.rect(x, y, colWidths[i], rowHeight).stroke();
     doc.text(header, x + 2, y + 5, { width: colWidths[i] - 4, align: 'center' });

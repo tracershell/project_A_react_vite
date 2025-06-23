@@ -11,6 +11,14 @@ const AccountApArPage = () => {
   const [user, setUser] = useState(null); // 로그인 사용자 정보
   const navigate = useNavigate();
 
+  const handleGoAp = () => {
+    navigate('/admin/account/ap');  // 기존 창 내에서 AP 페이지로 이동
+  };
+
+  const handleGoAr = () => {
+    navigate('/admin/account/ar');  // 기존 창 내에서 AR 페이지로 이동
+  };
+
   // 오늘 날짜의 월 첫째/마지막 날짜 계산 (YYYY-MM-DD)
   const getThisMonthRange = () => {
     const now = new Date();
@@ -98,50 +106,25 @@ const AccountApArPage = () => {
       <h2>Pay History for AP / AR</h2>
 
       {/* 검색 폼: start, end, AP Page, AR Page */}
-      <form className={`${styles.formRow} ${styles.small}`} onSubmit={handleSearch}>
-        <input
-          type="date"
-          value={start}
-          onChange={(e) => setStart(e.target.value)}
-        />
-        <input
-          type="date"
-          value={end}
-          onChange={(e) => setEnd(e.target.value)}
-        />
-        <button type="submit">검색</button>
-
-        {/* ✅ PDF 보기 버튼 */}
-        <button
-          type="button"
-          className={styles.lightBlue} // 필요 시 CSS 스타일 지정
-          onClick={() => {
-            if (!start || !end) {
-              alert('시작일과 종료일을 모두 선택해주세요.');
-              return;
-            }
-            const url = `/api/admin/account/apar/pdf?start=${start}&end=${end}`;
-            window.open(url, '_blank');
-          }}
-        >
-          PDF 보기
-        </button>
-
-        <button
-          type="button"
-          className={styles.lightPink}
-          onClick={goToAPPage}
-        >
-          AP Page
-        </button>
-        <button
-          type="button"
-          className={styles.lightPink}
-          onClick={goToARPage}
-        >
-          AR Page
-        </button>
-      </form>
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+      <form className={`${styles.formRow} ${styles.small}`} onSubmit={handleSearch} style={{ width: '50%' }}>
+  <input type="date" value={start} onChange={(e) => setStart(e.target.value)} />
+  <input type="date" value={end} onChange={(e) => setEnd(e.target.value)} />
+  <button type="submit">검색</button>
+  <button type="button" className={styles.lightBlue} onClick={() => {
+    if (!start || !end) {
+      alert('시작일과 종료일을 모두 선택해주세요.');
+      return;
+    }
+    const url = `/api/admin/account/apar/pdf?start=${start}&end=${end}`;
+    window.open(url, '_blank');
+  }}>
+    PDF 보기
+  </button>
+  <button type="button" className={styles.lightPink} onClick={handleGoAp}>AP Page</button>
+  <button type="button" className={styles.lightPink} onClick={handleGoAr}>AR Page</button>
+</form>
+</div>
 
 
       {/* 결과 테이블 */}
