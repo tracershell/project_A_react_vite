@@ -110,6 +110,23 @@ const AccountApArPage = () => {
           onChange={(e) => setEnd(e.target.value)}
         />
         <button type="submit">검색</button>
+
+        {/* ✅ PDF 보기 버튼 */}
+        <button
+          type="button"
+          className={styles.lightBlue} // 필요 시 CSS 스타일 지정
+          onClick={() => {
+            if (!start || !end) {
+              alert('시작일과 종료일을 모두 선택해주세요.');
+              return;
+            }
+            const url = `/api/admin/account/apar/pdf?start=${start}&end=${end}`;
+            window.open(url, '_blank');
+          }}
+        >
+          PDF 보기
+        </button>
+
         <button
           type="button"
           className={styles.lightPink}
@@ -125,6 +142,7 @@ const AccountApArPage = () => {
           AR Page
         </button>
       </form>
+
 
       {/* 결과 테이블 */}
       <div className={styles.list}>

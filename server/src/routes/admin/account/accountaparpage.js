@@ -2,6 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db'); // MySQL2 Promise Pool
+const generatePoHistoryPDF = require('../../../utils/admin/account/generatePoHistoryPDF');
 
 /**
  * AP/AR 데이터 조회 및 apar_preparation 테이블에 bulk INSERT/UPDATE
@@ -130,5 +131,46 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch or update AP/AR data' });
   }
 });
+
+router.get('/pdf', async (req, res) => {
+  const { start, end } = req.query;
+  if (!start || !end) {
+    return res.status(400).send('start, end 날짜가 필요합니다.');
+  }
+
+  const selectSQL = `
+    SELECT 
+      p.po_no,
+      p.po_date,
+      IFNULL(d.dp_amount_usd, 0) AS dp_amount_usd,
+      d.dp_date,
+      IFNULL(b.bp_amount_usd, 0) AS bp_amount_usd,
+      b.bp_date,
+      ROUND(IFNULL(d.dp_amount_usd, 0) + IFNULL(b.bp_amount_usd, 0), 2) AS po_amount_usd
+    FROM import_po_list p
+    LEFT JOIN (
+      SELECT po_no, MAX(dp_date) AS dp_date, SUM(dp_amount_usd) AS dp_amount_usd
+      FROM import_deposit_list
+      GROUP BY po_no
+    ) d ON p.po_no = d.po_no
+    LEFT JOIN (
+      SELECT po_no, MAX(bp_date) AS bp_date, SUM(bp_amount_usd) AS bp_amount_usd
+      FROM import_balance_list
+      GROUP BY po_no
+    ) b ON p.po_no = b.po_no
+    WHERE DATE(p.po_date) BETWEEN ? AND ?
+    ORDER BY p.po_date DESC, p.po_no ASC
+  `;
+
+  try {
+    const [rows] = await db.query(selectSQL, [start, end]);
+    if (!rows.length) return res.status(404).send('검색된 데이터가 없습니다.');
+    await generatePoHistoryPDF(res, rows); // PDF 생성
+  } catch (err) {
+    console.error('PDF 생성 실패:', err);
+    res.status(500).send('PDF 생성 중 오류 발생');
+  }
+});
+
 
 module.exports = router;
