@@ -154,12 +154,12 @@ const AccountApArPage = () => {
                   <tr key={i}>
                     <td>{r.po_no}</td>
                     <td>{r.po_date?.slice(0, 10) || '-'}</td>
-                    <td>{poAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td className={styles.amountCell}>{poAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                     <td>{r.dp_date?.slice(0, 10) || '-'}</td>
-                    <td>{dpAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td className={styles.amountCell}>{dpAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                     <td>{r.bp_date?.slice(0, 10) || '-'}</td>
-                    <td>{bpAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                    <td style={{ color: 'lightblue' }}>
+                    <td className={styles.amountCell}>{bpAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td  className={styles.amountCell} style={{ color: 'lightblue' }}>
                       {remainAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
                   </tr>

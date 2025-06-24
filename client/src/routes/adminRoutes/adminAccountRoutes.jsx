@@ -11,7 +11,7 @@ import AccountPettyMoneyPage from '../../pages/admin/account/AccountPettyMoneyPa
 import AccountPettyMoneySubmitPage from '../../pages/admin/account/AccountPettyMoneySubmitPage';
 import AccountApArPage from '../../pages/admin/account/AccountApArPage';
 import AccountApPage from '../../pages/admin/account/AccountApPage';
-// import AccountArPage from '../../pages/admin/account/AccountArPage';
+import AccountArPage from '../../pages/admin/account/AccountArPage';
 
 const adminAccountRoutes = [
 
@@ -107,15 +107,15 @@ const adminAccountRoutes = [
     }
   />,
 
-//  <Route
-//    key="Ar"
-//    path="account/ar"
-//    element={
-//      <PrivateRoute role="admin">
-//        <AccountArPage />
-//      </PrivateRoute>
-//    }
- // />,
+  <Route
+    key="Ar"
+    path="account/ar"
+    element={
+      <PrivateRoute role="admin">
+        <AccountArPage />
+      </PrivateRoute>
+    }
+ />,
 
 
 ];

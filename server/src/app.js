@@ -96,6 +96,7 @@ app.use('/api/admin/account/accountccitempage', require('./routes/admin/account/
 app.use('/api/admin/account/accountccholderpage', require('./routes/admin/account/accountccholderpage'));
 app.use('/api/admin/account/apar', require('./routes/admin/account/accountaparpage'));
 app.use('/api/admin/account/ap', require('./routes/admin/account/accountappage'));
+app.use('/api/admin/account/ar', require('./routes/admin/account/accountarpage'));
 
 app.use('/api/admin/general/generalenvelopeinput', require('./routes/admin/general/generalenvelopeinputpage'));
 app.use('/api/admin/general/generalenvelope', require('./routes/admin/general/generalenvelopepage'));

@@ -46,7 +46,7 @@ const generateApReportPDF = async (res, options) => {
   doc.pipe(res);
 
   // 제목
-  doc.fontSize(16).text(`AP Report - ${year}년`, { align: 'center' });
+  doc.fontSize(15).text(`AP Report - ${year}년`, { align: 'center' });
   doc.moveDown(0.5);
 
   // 시작잔액 표시

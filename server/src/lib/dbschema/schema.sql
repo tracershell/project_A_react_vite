@@ -483,4 +483,17 @@ CREATE TABLE IF NOT EXISTS ap_payment_temp (
 
 ==========================================================
 
+CREATE TABLE IF NOT EXISTS ar_data (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  ar_date DATE NOT NULL,          -- 기준 월 (예: '2025-06-01')
+  hq_sales DECIMAL(14,2) DEFAULT 0,     -- 본사 매출
+  sr_sales DECIMAL(14,2) DEFAULT 0,     -- 쇼룸 매출
+  ar_report DECIMAL(14,2) DEFAULT 0,    -- AR 보고 금액
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+==========================================================
+
+
 

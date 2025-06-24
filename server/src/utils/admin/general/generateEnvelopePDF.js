@@ -41,7 +41,7 @@ const generateEnvelopePDF = async (res, { sender, receivers }) => {
       const baseY = 280;
       const baseWidth = 200;
 
-      doc.fontSize(12)
+      doc.fontSize(13)
         .text(receiver.rname, baseX, baseY, { width: baseWidth, align: 'center' })
         .text(receiver.ratt, baseX, baseY + 18, { width: baseWidth, align: 'center' })
         .text(receiver.rstreet, baseX, baseY + 36, { width: baseWidth, align: 'center' })
