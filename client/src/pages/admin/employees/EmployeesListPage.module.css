@@ -127,3 +127,34 @@ input {
 .compactTable td:nth-child(19) { width: 60px; }    /* Zip */
 .compactTable th:nth-child(20),
 .compactTable td:nth-child(20) { width: 150px; }   /* Remark */
+
+
+.formContainer {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.formRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.formRow label {
+  width: 100px;
+  text-align: right;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.formRow input {
+  flex: 1;
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 24px;
+}

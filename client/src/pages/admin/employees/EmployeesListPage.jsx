@@ -141,26 +141,31 @@ const EmployeesListPage = () => {
           <h2>Input, Search, Edit, Delete</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          {[
-            'status', 'eid', 'name', 'ss', 'birth', 'email', 'phone', 'jcode', 'jtitle',
-            'sdate', 'edate', 'sick', 'vac', 'workl', 'address', 'city', 'state', 'zip', 'remark'
-          ].map((field) => (
-            <input
-              key={field}
-              name={field}
-              type={
-                field.includes('date') ? 'date' :
-                  field === 'email' ? 'email' :
-                    field === 'sick' || field === 'vac' ? 'number' : 'text'
-              }
-              value={form[field] || ''}
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              onChange={handleChange}
-              style={{ flex: '1 1 auto' }}
-            />
-          ))}
-        </form>
+        <form onSubmit={handleSubmit} className={styles.formContainer}>
+  {[
+    'status', 'eid', 'name', 'ss', 'birth', 'email', 'phone', 'jcode', 'jtitle',
+    'sdate', 'edate', 'sick', 'vac', 'workl', 'address', 'city', 'state', 'zip', 'remark'
+  ].map((field) => (
+    <div className={styles.formRow} key={field}>
+      <label htmlFor={field}>
+        {field.toUpperCase()}
+      </label>
+      <input
+        id={field}
+        name={field}
+        type={
+          field.includes('date') || field === 'birth' ? 'date' :
+          field === 'email' ? 'email' :
+          field === 'sick' || field === 'vac' ? 'number' :
+          'text'
+        }
+        value={form[field] || ''}
+        onChange={handleChange}
+      />
+    </div>
+  ))}
+</form>
+
 
         <div className={styles.buttonGroup}>
           <button type="button" onClick={clearForm}>🧹 입력초기화</button>
