@@ -1,13 +1,25 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import PrivateRoute from './PrivateRoute';
+import PrivateRoute from '../PrivateRoute';
 
-import EmployeesListPage from '../pages/admin/employees/EmployeesListPage';
-import EmployeesPrintPage from '../pages/admin/employees/EmployeesPrintPage';
-import EmployeesDataPage from '../pages/admin/employees/EmployeesDataPage';
-import EmployeesPhotoPage from '../pages/admin/employees/EmployeesPhotoPage';
+import EmployeesPage from '../../pages/admin/employees/EmployeesPage';
+import EmployeesListPage from '../../pages/admin/employees/EmployeesListPage';
+import EmployeesPrintPage from '../../pages/admin/employees/EmployeesPrintPage';
+import EmployeesDataPage from '../../pages/admin/employees/EmployeesDataPage';
+import EmployeesPhotoPage from '../../pages/admin/employees/EmployeesPhotoPage';
 
 const adminEmployeesRoutes = [
+
+  <Route
+    key="admin-employees"
+    path="employees/main"
+    element={
+      <PrivateRoute role="admin">
+        <EmployeesPage />
+      </PrivateRoute>
+    }
+  />,
+
   <Route
     key="admin-employees-list"
     path="employees/employees"
@@ -17,6 +29,7 @@ const adminEmployeesRoutes = [
       </PrivateRoute>
     }
   />,
+
   <Route
     key="admin-employees-print"
     path="employees/employeesprintpage/print/:eid"
@@ -26,6 +39,7 @@ const adminEmployeesRoutes = [
       </PrivateRoute>
     }
   />,
+
   <Route
     key="admin-employees-data"
     path="employees/employeesdata"
@@ -35,6 +49,7 @@ const adminEmployeesRoutes = [
       </PrivateRoute>
     }
   />,
+  
   <Route
     key="admin-employees-photo"
     path="employees/employeesphoto"

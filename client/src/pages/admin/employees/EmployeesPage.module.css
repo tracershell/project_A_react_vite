@@ -1,0 +1,88 @@
+/* 📁 client/src/pages/admin/employees/EmployeesPage.module.css */
+.page {
+  margin: 0;
+  padding: 1rem;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  font-size: 12px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #003366;
+  border-left: 4px solid #3f8efc;
+  padding-left: 0.5rem;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.buttonGroup input[type="text"] {
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 24px;
+  width: 100px;
+}
+
+.buttonGroup button {
+  padding: 4px 12px;
+  font-size: 12px;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.buttonGroup button:hover {
+  background-color: #e0f0ff;
+}
+
+.bottomSection {
+  max-height: 460px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.compactTable {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.compactTable th,
+.compactTable td {
+  border: 1px solid #ccc;
+  padding: 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.compactTable th {
+  background-color: #f0f8ff;
+  position: sticky;
+  top: 0;
+}
+
+.compactTable tbody tr:hover {
+  background-color: #e9f5ff;
+}
+
+.selectedRow {
+  background-color: #fceabb !important;
+}

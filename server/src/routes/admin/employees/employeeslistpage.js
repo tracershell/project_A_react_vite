@@ -1,7 +1,9 @@
+// server/src/routes/admin/employees/employeeslistpage.js
+
 const express = require('express');
 const router = express.Router();
 const db = require('../../../lib/db');
-const generateEmployeesPDF = require('../../../utils/generateEmployeesPDF');
+const generateEmployeesPDF = require('../../../utils/admin/employees/generateEmployeesPDF');
 
 const safeDate = (val) => {
   return val && val !== 'Invalid Date' ? val : null;

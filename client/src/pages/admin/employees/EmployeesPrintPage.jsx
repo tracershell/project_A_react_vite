@@ -9,6 +9,7 @@ const EmployeesPrintPage = () => {
   const [employee, setEmployee] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [documents, setDocuments] = useState([]);
+  const [showZoom, setShowZoom] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,10 +75,11 @@ const EmployeesPrintPage = () => {
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '2rem', marginBottom: '1rem' }}>
           {photo && (
             <img
-              src={`/uploads/ep_uploads/${photo}`}
-              alt="employee"
-              style={{ height: '100px', borderRadius: '6px', border: '1px solid #ccc' }}
-            />
+  src={`/uploads/employees/eimg_upload/${photo}`}
+  alt="employee"
+  style={{ height: '100px', borderRadius: '6px', border: '1px solid #ccc', cursor: 'pointer' }}
+  onClick={() => setShowZoom(true)}
+/>
           )}
           <div>
             <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>EID: {employee.eid}</div>
@@ -109,6 +111,36 @@ const EmployeesPrintPage = () => {
             </table>
           </div>
         ))}
+
+        {showZoom && (
+  <div
+    onClick={() => setShowZoom(false)}
+    style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(0,0,0,0.7)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 9999,
+      cursor: 'zoom-out'
+    }}
+  >
+    <img
+  src={`/uploads/employees/eimg_upload/${photo}`}
+  alt="zoomed"
+  style={{
+    width: '400px',
+    height: 'auto',
+    borderRadius: '8px',
+    boxShadow: '0 0 10px rgba(0,0,0,0.5)'
+  }}
+/>
+  </div>
+)}
       </div>
 
       <div className={styles.bottomSection}>

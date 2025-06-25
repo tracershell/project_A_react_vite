@@ -1,3 +1,5 @@
+// server/src/utils/admin/employees/generateEmployeesPDF.js
+
 const PDFDocument = require('pdfkit');
 const path = require('path');
 const fs = require('fs');
@@ -5,7 +7,7 @@ const fs = require('fs');
 const generateEmployeesPDF = async (res, records, title) => {
 
 
-  const fontPath = path.join(__dirname, '../../public/fonts/NotoSansKR-Regular.ttf');
+  const fontPath = path.join(__dirname, '../../../../public/fonts/NotoSansKR-Regular.ttf');
   if (!fs.existsSync(fontPath)) {
     return res.status(500).send('폰트 파일이 존재하지 않습니다.');
   }

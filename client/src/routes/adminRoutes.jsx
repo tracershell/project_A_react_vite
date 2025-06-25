@@ -5,7 +5,7 @@ import PrivateRoute from './PrivateRoute';
 import AdminPage from '../pages/admin/AdminPage';
 import adminMainRoutes from './adminMainRoutes';
 import adminAccountRoutes from './adminRoutes/adminAccountRoutes';
-import adminEmployeesRoutes from './adminEmployeesRoutes';
+import adminEmployeesRoutes from './adminRoutes/adminEmployeesRoutes';
 import adminImportRoutes from './adminImportRoutes';
 import adminGeneralRoutes from './adminRoutes/adminGeneralRoutes';
 import adminPayrollRoutes from './adminRoutes/adminPayrollRoutes';
