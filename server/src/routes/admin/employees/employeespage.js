@@ -32,7 +32,7 @@ router.get('/pdf/all', async (req, res) => {
 // ✅ 직원 리스트 전체 조회 (EmployeesPage에서 테이블 표시용)
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM employees ORDER BY id ASC');
+    const [rows] = await db.query('SELECT * FROM employees WHERE status = "active" ORDER BY id ASC');
     res.json(rows);
   } catch (err) {
     console.error('직원 목록 조회 오류:', err);

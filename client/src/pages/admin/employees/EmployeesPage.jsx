@@ -14,9 +14,9 @@ const EmployeesPage = () => {
   }, []);
 
   const fetchEmployees = async () => {
-    const { data } = await axios.get('/api/admin/employees/employeeslistpage');
-    setEmployees(data);
-  };
+  const { data } = await axios.get('/api/admin/employees/employeespage'); // ✅ URL 수정
+  setEmployees(data);
+};
 
   const handleViewIndividual = () => {
     if (!selectedEid) return alert('EID를 입력하세요.');

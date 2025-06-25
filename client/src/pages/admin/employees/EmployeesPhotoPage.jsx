@@ -8,6 +8,7 @@ const EmployeesPhotoPage = () => {
   const [photos, setPhotos] = useState([]);
   const [form, setForm] = useState({ eid: '', comment: '' });
   const [fileInput, setFileInput] = useState(null);
+  const [zoomedImage, setZoomedImage] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -104,7 +105,15 @@ const EmployeesPhotoPage = () => {
                 photos.map(f => (
                   <tr key={f.id}>
                     <td>{f.name} ({f.eid})</td>
-                    <td><img src={`/uploads/employees/eimg_upload/${f.filename}`} alt="employee" height="60" /></td>
+                    <td>
+  <img
+    src={`/uploads/employees/eimg_upload/${f.filename}`}
+    alt="employee"
+    height="60"
+    style={{ cursor: 'pointer', borderRadius: '4px' }}
+    onClick={() => setZoomedImage(`/uploads/employees/eimg_upload/${f.filename}`)}
+  />
+</td>
                     <td>{f.comment}</td>
                     <td>{f.upload_date.split('T')[0]}</td>
                     <td><button type="button" onClick={() => handleDelete(f.id)}>Delete</button></td>
@@ -117,7 +126,40 @@ const EmployeesPhotoPage = () => {
           </table>
         </div>
       </div>
+      {zoomedImage && (
+  <div
+    onClick={() => setZoomedImage(null)}
+    style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 9999,
+      cursor: 'pointer'
+    }}
+  >
+    <img
+      src={zoomedImage}
+      alt="Zoomed"
+      style={{
+        width: '400px',
+    height: 'auto',
+    borderRadius: '8px',
+    boxShadow: '0 0 10px rgba(0,0,0,0.5)'
+      }}
+    />
+  </div>
+)}
+
     </div>
+    
+
+
   );
 };
 
