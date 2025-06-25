@@ -1,0 +1,111 @@
+/* 📁 client/src/pages/admin/account/AccountBankRecordPage.module.css */
+.page {
+  background: #f5f7fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+  padding: 1rem;
+  font-size: 12px;
+}
+
+.page h2 {
+  margin: 0.5rem 0;
+  color: #003366;
+  font-size: 1.1rem;
+  border-left: 4px solid #3f8efc;
+  padding-left: 0.5rem;
+}
+
+.formRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.formRow.small {
+  flex-wrap: nowrap;
+  align-items: baseline;
+  font-size: 11px;
+  gap: 0.3rem;
+  padding: 0.5rem 0;
+}
+
+.formRow.small input,
+.formRow.small select {
+  flex: 0 0 auto;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.formRow.small button {
+  flex: 0 0 auto;
+  height: 1.6rem;
+  line-height: 1.6rem;
+  font-size: 11px;
+  padding: 0 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.formRow.small button.lightPink {
+  background-color: lightpink;
+  border: 1px solid #d88a9a;
+  color: #000;
+}
+
+.formRow.small button.lightPink:hover {
+  background-color: #f1a1b0;
+}
+
+.formRow.small button.lightBlue {
+  background-color: #b2d9ff;
+  border: 1px solid #66a6e3;
+  color: #000;
+}
+
+.formRow.small button.lightBlue:hover {
+  background-color: #9ac2f0;
+}
+
+.list {
+  overflow-x: auto;
+  max-height: 700px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.compactTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  background-color: white;
+  min-width: 600px;
+}
+
+.compactTable th {
+  background-color: #d0ebff;
+  color: #003366;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0.3rem 0.5rem;
+  text-align: center;
+}
+
+.compactTable td {
+  padding: 0.3rem 0.5rem;
+  text-align: center;
+}
+
+.compactTable tr:hover {
+  background-color: #fff8dc;
+}

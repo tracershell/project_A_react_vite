@@ -12,6 +12,9 @@ import AccountPettyMoneySubmitPage from '../../pages/admin/account/AccountPettyM
 import AccountApArPage from '../../pages/admin/account/AccountApArPage';
 import AccountApPage from '../../pages/admin/account/AccountApPage';
 import AccountArPage from '../../pages/admin/account/AccountArPage';
+import AccountBankRecordPage from '../../pages/admin/account/AccountBankRecordPage';
+
+
 
 const adminAccountRoutes = [
 
@@ -113,6 +116,16 @@ const adminAccountRoutes = [
     element={
       <PrivateRoute role="admin">
         <AccountArPage />
+      </PrivateRoute>
+    }
+ />,
+
+ <Route
+    key="Bankrecord"
+    path="account/bankrecord"
+    element={
+      <PrivateRoute role="admin">
+        <AccountBankRecordPage />
       </PrivateRoute>
     }
  />,

@@ -7,7 +7,7 @@ const AccountMenu = () => {
     { label: 'Credit Card', link: '/admin/account/ccsummary' },
     { label: 'Petty Money', link: '/admin/account/pettymoneyledger' },
     { label: 'AP AR', link: '/admin/account/apar' },
-    { label: 'H', link: '/admin' },
+    { label: 'Bank Record', link: '/admin/account/bankrecord' },
     { label: 'I', link: '/admin' },
   ];
 

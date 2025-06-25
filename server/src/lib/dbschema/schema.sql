@@ -495,5 +495,18 @@ CREATE TABLE IF NOT EXISTS ar_data (
 
 ==========================================================
 
+CREATE TABLE IF NOT EXISTS bankrecord_data (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  date DATE NOT NULL,                    -- 기록 날짜
+  rtype VARCHAR(100) NOT NULL,           -- 기록 유형 (예: 입금, 출금, 이체 등)
+  amount DECIMAL(12,2) NOT NULL,         -- 금액 (천 단위 ',' 표시는 클라이언트에서 처리)
+  comment VARCHAR(255) DEFAULT '',       -- 코멘트 또는 설명
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+==========================================================
+
 
 
