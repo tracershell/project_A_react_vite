@@ -79,7 +79,7 @@ export default function PersonalPhotoPage() {
               <tr key={p.id}>
                 <td className={styles.thumbnailCol}>
                   <a href={`/uploads/personal/photo_upload/${p.original}`} target="_blank" rel="noopener">
-                    <img src={`/uploads/personal/photo_upload/thumbnails/${p.thumbnail}`} width="66" alt="" />
+                    <img src={`/uploads/personal/photo_upload/${p.original}`} width="66" alt="" />
                   </a>
                 </td>
                 <td className={styles.dateCol}>{fd}</td>
