@@ -520,7 +520,18 @@ CREATE TABLE personal_photo (
 ) CHARACTER SET utf8mb4;
 
 
+CREATE TABLE IF NOT EXISTS personal_music (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  original VARCHAR(255) NOT NULL,         -- 음악 파일명
+  textfile VARCHAR(255),                  -- 텍스트 파일명 (.txt)
+  date DATE NOT NULL,                     -- 등록일
+  comment VARCHAR(255) NOT NULL,          -- 설명
+  keyword VARCHAR(100) NOT NULL,          -- 검색용 키워드
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+==========================================================
 
 
 

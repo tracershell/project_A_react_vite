@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 import PrivateRoute from '../PrivateRoute';
 
 import PersonalPhotoPage from '../../pages/admin/personal/PersonalPhotoPage';
-
+import PersonalMusicPage from '../../pages/admin/personal/PersonalMusicPage';
 
 
 const adminAccountRoutes = [
@@ -18,6 +18,15 @@ const adminAccountRoutes = [
     }
   />,
 
+    <Route
+    key="personal music"
+    path="personal/music"
+    element={
+      <PrivateRoute role="admin">
+        <PersonalMusicPage/>
+      </PrivateRoute>
+    }
+  />,
   
 
 ];
