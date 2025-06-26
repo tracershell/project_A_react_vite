@@ -1,14 +1,11 @@
-// 📁 server/routes/admin/personal/personalphotopage.js
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const db = require('../../../lib/db'); // MySQL pool
+const db = require('../../../lib/db');
 
 const UPLOAD_DIR = path.join(__dirname, '../../../../public/uploads/personal/photo_upload');
-
-// 디렉토리 생성
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 // Multer 설정
@@ -30,11 +27,13 @@ const upload = multer({
   }
 });
 
-// GET 모든 사진
+// ✅ GET 전체 목록
 router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query(
-      'SELECT id, original, thumbnail, date, comment, place, created_at FROM personal_photo ORDER BY created_at DESC'
+      `SELECT id, original, thumbnail, date, code, comment, place, created_at 
+       FROM personal_photo 
+       ORDER BY created_at DESC`
     );
     res.json({ photos: rows });
   } catch (err) {
@@ -43,20 +42,28 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST 업로드 (썸네일 없이 원본만 저장)
+// ✅ POST 업로드
 router.post('/upload', (req, res) => {
   upload.single('photo')(req, res, async (err) => {
-    if (err || !req.file) return res.status(400).json({ error: '업로드 실패', details: err?.message || '파일 없음' });
+    if (err || !req.file) {
+      return res.status(400).json({ error: '업로드 실패', details: err?.message || '파일 없음' });
+    }
 
-    const { date, comment, place } = req.body;
-    if (!date || !comment || !place) return res.status(400).json({ error: '모든 필드를 입력해주세요.' });
+    const { date, code = '', comment, place } = req.body;
+    if (!date || !comment || !place) {
+      const filePath = path.join(UPLOAD_DIR, req.file.filename);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      return res.status(400).json({ error: '모든 필드를 입력해주세요.' });
+    }
 
     const original = req.file.filename;
 
     try {
       const [result] = await db.query(
-        'INSERT INTO personal_photo (original, thumbnail, date, comment, place) VALUES (?, ?, ?, ?, ?)',
-        [original, original, date, comment, place]
+        `INSERT INTO personal_photo 
+         (original, thumbnail, date, code, comment, place) 
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [original, original, date, code, comment, place]
       );
 
       res.json({ success: true, id: result.insertId });
@@ -69,7 +76,46 @@ router.post('/upload', (req, res) => {
   });
 });
 
-// DELETE 사진
+// ✅ PUT 수정
+router.put('/:id', (req, res) => {
+  upload.single('photo')(req, res, async (err) => {
+    if (err) return res.status(400).json({ error: '수정 중 업로드 실패', details: err.message });
+
+    const id = req.params.id;
+    const { date, code = '', comment, place } = req.body;
+    if (!date || !comment || !place) {
+      return res.status(400).json({ error: '모든 필드를 입력하세요.' });
+    }
+
+    try {
+      const [rows] = await db.query('SELECT original FROM personal_photo WHERE id = ?', [id]);
+      if (rows.length === 0) return res.status(404).json({ error: '기존 사진 없음' });
+
+      let original = rows[0].original;
+      let newFile = original;
+
+      if (req.file) {
+        const oldPath = path.join(UPLOAD_DIR, original);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+        newFile = req.file.filename;
+      }
+
+      await db.query(
+        `UPDATE personal_photo 
+         SET original = ?, thumbnail = ?, date = ?, code = ?, comment = ?, place = ? 
+         WHERE id = ?`,
+        [newFile, newFile, date, code, comment, place, id]
+      );
+
+      res.json({ success: true });
+    } catch (updateErr) {
+      console.error('수정 오류:', updateErr);
+      res.status(500).json({ error: '수정 실패', details: updateErr.message });
+    }
+  });
+});
+
+// ✅ DELETE 사진
 router.delete('/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -88,12 +134,28 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// GET 다운로드
+// ✅ 다운로드
 router.get('/download/:filename', (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(UPLOAD_DIR, filename);
   if (!fs.existsSync(filePath)) return res.status(404).json({ error: '파일이 존재하지 않습니다.' });
   res.download(filePath);
+});
+
+// ✅ 코드 목록 반환
+router.get('/codes', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT DISTINCT code 
+       FROM personal_photo 
+       WHERE code IS NOT NULL AND code != '' 
+       ORDER BY code ASC`
+    );
+    res.json({ codes: rows.map(r => r.code) });
+  } catch (err) {
+    console.error('코드 목록 조회 오류:', err);
+    res.status(500).json({ error: '코드 목록 조회 실패', details: err.message });
+  }
 });
 
 module.exports = router;

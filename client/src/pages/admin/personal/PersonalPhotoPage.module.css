@@ -1,14 +1,15 @@
 /* 📁 client/src/pages/admin/personal/PersonalPhotoPage.module.css */
 
 .page {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
   font-family: Arial, sans-serif;
   background-color: #f5f7fa;
   color: #333;
   font-size: 12px;
   box-sizing: border-box;
-  width: 100vw;
-  overflow-x: hidden;
+  padding: 0;
+  min-height: auto; /* 기존: 100vh */
 }
 
 .header {
@@ -33,6 +34,7 @@
   gap: 0.5rem;
   align-items: baseline;
   padding: 1rem;
+  flex-shrink: 0;
 }
 
 .uploadForm input[type="file"],
@@ -61,29 +63,33 @@
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  margin-top: 1rem;
 }
 
 .table th,
 .table td {
   border: 1px solid #ccc;
-  padding: 4px;
+  padding: 0.1px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+
 .table th {
   background-color: #f0f8ff;
-  position: sticky;
-  top: 0;
 }
 
 .table tr:hover {
   background-color: #e9f5ff;
 }
 
+
+.tableWrapper {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
 .thumbnailCol {
   width: 80px;
 }
@@ -114,4 +120,52 @@ button {
   border-radius: 4px;
   background-color: #fff;
   cursor: pointer;
+}
+
+.searchBox {
+  padding: 0 1rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.searchBox input {
+  width: 10%;
+  min-width: 100px;
+  font-size: 12px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.thumbnailCol {
+  width: 80px;
+}
+
+.dateCol {
+  width: 60px;
+}
+
+.codeCol {
+  width: 100px;
+}
+
+.commentCol {
+  width: 200px;
+}
+
+.placeCol {
+  width: 100px;
+}
+
+.actionsCol {
+  width: 200px;
+}
+
+.codeFilterBox {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* label과 select 사이 간격 */
+  margin: 0.2rem 1rem;
+  font-size: 12px;
+  white-space: nowrap;
 }

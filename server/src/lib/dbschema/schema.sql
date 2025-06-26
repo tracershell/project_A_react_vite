@@ -513,12 +513,11 @@ CREATE TABLE personal_photo (
   original VARCHAR(255) NOT NULL,
   thumbnail VARCHAR(255) NOT NULL,
   date DATE NOT NULL,
+  code VARCHAR(100),
   comment TEXT NOT NULL,
   place VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) CHARACTER SET utf8mb4;
-
-
 
 
 
