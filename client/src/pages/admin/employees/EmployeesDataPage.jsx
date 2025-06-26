@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import styles from './EmployeesDataPage.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const EmployeesDataPage = () => {
   const [employees, setEmployees] = useState([]);
@@ -10,6 +11,7 @@ const EmployeesDataPage = () => {
   const [form, setForm] = useState({ eid: '', comment: '' });
   const [fileInput, setFileInput] = useState(null);
   const [filterEid, setFilterEid] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -89,6 +91,9 @@ const EmployeesDataPage = () => {
             onChange={handleChange}
           />
           <button type="submit">Upload</button>
+          <button type="button" onClick={() => navigate(-1)} style={{ marginLeft: '0.5rem' }}>
+  ↩ 되돌아가기
+</button>
         </form>
       </div>
 

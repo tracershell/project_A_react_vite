@@ -140,6 +140,10 @@ const EmployeesListPage = () => {
         <div className={styles.tableHeader}>
           <h2>Input, Search, Edit, Delete</h2>
         </div>
+        <div style={{ margin: '0.5rem 0' }}>
+  <button type="button" onClick={() => navigate(-1)}>↩ 되돌아가기</button>
+</div>
+
 
         <form onSubmit={handleSubmit} className={styles.formContainer}>
   {[

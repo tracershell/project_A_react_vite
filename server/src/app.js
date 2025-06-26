@@ -111,6 +111,8 @@ app.use('/api/admin/account/accountpettymoneysubmit', require('./routes/admin/ac
 
 app.use('/api/admin/general/companydoc', require('./routes/admin/general/generalcompanydocpage'));
 
+// Personal Page
+app.use('/api/admin/personal/photo', require('./routes/admin/personal/personalphotopage'));
 
 // ✔️ fpage 확인용
 console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');

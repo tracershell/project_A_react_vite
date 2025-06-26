@@ -49,8 +49,8 @@ h2 {
 }
 
 .bottomSection {
-  max-height: 460px;
-  overflow-y: auto;
+  overflow-y: visible;  /* 스크롤 제거 */
+  max-height: none;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
@@ -86,3 +86,46 @@ h2 {
 .selectedRow {
   background-color: #fceabb !important;
 }
+
+/* 아래 CSS를 compactTable 밑에 추가해 주세요 */
+
+.compactTable th:nth-child(1),
+.compactTable td:nth-child(1) { width: 30px; }     /* ID */
+.compactTable th:nth-child(2),
+.compactTable td:nth-child(2) { width: 50px; }     /* Status */
+.compactTable th:nth-child(3),
+.compactTable td:nth-child(3) { width: 50px; }     /* EID */
+.compactTable th:nth-child(4),
+.compactTable td:nth-child(4) { width: 120px; }    /* Name */
+.compactTable th:nth-child(5),
+.compactTable td:nth-child(5) { width: 70px; }     /* SS No */
+.compactTable th:nth-child(6),
+.compactTable td:nth-child(6) { width: 70px; }     /* Birthday */
+.compactTable th:nth-child(7),
+.compactTable td:nth-child(7) { width: 150px; }    /* Email */
+.compactTable th:nth-child(8),
+.compactTable td:nth-child(8) { width: 90px; }     /* Phone */
+.compactTable th:nth-child(9),
+.compactTable td:nth-child(9) { width: 50px; }     /* Job Code */
+.compactTable th:nth-child(10),
+.compactTable td:nth-child(10) { width: 120px; }   /* Job Title */
+.compactTable th:nth-child(11),
+.compactTable td:nth-child(11) { width: 70px; }    /* Start */
+.compactTable th:nth-child(12),
+.compactTable td:nth-child(12) { width: 70px; }    /* End */
+.compactTable th:nth-child(13),
+.compactTable td:nth-child(13) { width: 40px; }    /* Sick */
+.compactTable th:nth-child(14),
+.compactTable td:nth-child(14) { width: 40px; }    /* Vac */
+.compactTable th:nth-child(15),
+.compactTable td:nth-child(15) { width: 40px; }    /* Work */
+.compactTable th:nth-child(16),
+.compactTable td:nth-child(16) { width: 150px; }   /* Address */
+.compactTable th:nth-child(17),
+.compactTable td:nth-child(17) { width: 80px; }    /* City */
+.compactTable th:nth-child(18),
+.compactTable td:nth-child(18) { width: 40px; }    /* State */
+.compactTable th:nth-child(19),
+.compactTable td:nth-child(19) { width: 60px; }    /* Zip */
+.compactTable th:nth-child(20),
+.compactTable td:nth-child(20) { width: 150px; }   /* Remark */

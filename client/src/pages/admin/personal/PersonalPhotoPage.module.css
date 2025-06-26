@@ -1,0 +1,68 @@
+/* 📁 client/src/pages/admin/personal/PersonalPhotoPage.module.css */
+.page {
+  padding: 1rem;
+  font-family: Arial, sans-serif;
+  background: #f5f7fa;
+  color: #333;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.backBtn {
+  border: 1px solid #066da5;
+  background: #fff;
+  padding: 4px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.uploadForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.uploadForm input,
+.uploadForm button {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.uploadForm button {
+  background: #fff;
+  border-color: #066da5;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.thumbnailCol { width: 80px; }
+.dateCol      { width: 100px; }
+.placeCol     { width: 120px; }
+.actionsCol   { width: 180px; }
+
+.table th {
+  background: #e0f0ff;
+  position: sticky;
+  top: 0;
+}

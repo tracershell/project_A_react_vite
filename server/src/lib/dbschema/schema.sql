@@ -508,5 +508,21 @@ CREATE TABLE IF NOT EXISTS bankrecord_data (
 
 ==========================================================
 
+CREATE TABLE personal_photo (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  original VARCHAR(255) NOT NULL,
+  thumbnail VARCHAR(255) NOT NULL,
+  date DATE NOT NULL,
+  comment TEXT NOT NULL,
+  place VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4;
+
+
+
+
+
+
+
 
 
