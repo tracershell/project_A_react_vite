@@ -114,6 +114,7 @@ app.use('/api/admin/general/companydoc', require('./routes/admin/general/general
 // Personal Page
 app.use('/api/admin/personal/photo', require('./routes/admin/personal/personalphotopage'));
 app.use('/api/admin/personal/music', require('./routes/admin/personal/personalmusicpage'));
+app.use('/api/admin/personal/movie', require('./routes/admin/personal/personalmoviepage'));
 
 // ✔️ fpage 확인용
 console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');

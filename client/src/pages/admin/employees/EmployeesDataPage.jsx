@@ -74,7 +74,13 @@ const EmployeesDataPage = () => {
       <div className={styles.topSection}>
         <h2>Employee Document Manager</h2>
         <form onSubmit={handleUpload} className={styles.uploadForm}>
-          <select name="eid" value={form.eid} onChange={handleChange} required>
+          <select
+  name="eid"
+  value={form.eid}
+  onChange={handleChange}
+  required
+  className={styles.selectBox}
+>
             <option value="">:: 직원 선택 ::</option>
             {employees.map(emp => (
               <option key={emp.eid} value={emp.eid}>
@@ -82,7 +88,15 @@ const EmployeesDataPage = () => {
               </option>
             ))}
           </select>
-          <input type="file" onChange={handleFileChange} required />
+          <div className={styles.fileRow}>
+  <label className={styles.fileLabel}>
+    📄 Choose File
+    <input type="file" onChange={handleFileChange} hidden />
+  </label>
+  <span className={styles.fileNameBox}>
+    {fileInput?.name || 'No file selected'}
+  </span>
+</div>
           <input
             name="comment"
             type="text"

@@ -530,6 +530,16 @@ CREATE TABLE IF NOT EXISTS personal_music (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS personal_movie (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  original VARCHAR(255),
+  thumbnail VARCHAR(255),
+  date DATE,
+  comment TEXT,
+  keyword VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
 
 ==========================================================
 

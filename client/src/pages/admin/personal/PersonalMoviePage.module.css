@@ -1,0 +1,150 @@
+/* 📁 client/src/pages/admin/personal/PersonalMoviePage.module.css */
+
+.page {
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  font-size: 12px;
+  padding: 1rem;
+  box-sizing: border-box;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+}
+
+.backBtn {
+  padding: 4px 12px;
+  font-size: 12px;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.uploadForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.uploadForm input[type="file"],
+.uploadForm input[type="text"],
+.uploadForm input[type="date"] {
+  width: 200px;
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 28px;
+}
+
+.uploadForm button {
+  padding: 4px 12px;
+  font-size: 12px;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.fileLabel {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 12px;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background-color: #f0f8ff;
+  color: #333;
+  cursor: pointer;
+}
+
+.fileNameBox {
+  min-width: 180px;
+  font-size: 12px;
+  color: #555;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.searchBox {
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.searchBox select {
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 120px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.table th {
+  background-color: #f0f8ff;
+}
+
+.table tr:hover {
+  background-color: #e9f5ff;
+}
+
+.thumbnailImg {
+  height: 60px;
+  object-fit: contain;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.thumbnailCol {
+  width: 80px;
+}
+
+.dateCol {
+  width: 80px;
+}
+
+.commentCol {
+  width: 200px;
+}
+
+.keywordCol {
+  width: 120px;
+}
+
+.actionsCol {
+  width: 200px;
+}

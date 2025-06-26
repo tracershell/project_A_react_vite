@@ -5,7 +5,7 @@ const PersonalMenu = () => {
   const adminItems = [
     { label: 'Photo', link: '/admin/personal/photo' },
     { label: 'Music', link: '/admin/personal/music' },
-    { label: 'c', link: '/admin/reports' },
+    { label: 'Movie', link: '/admin/personal/movie' },
     { label: 'd', link: '/admin/settings' },
     { label: 'e', link: '/admin/logs' },
   ];

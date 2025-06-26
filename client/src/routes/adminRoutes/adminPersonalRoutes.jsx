@@ -4,7 +4,7 @@ import PrivateRoute from '../PrivateRoute';
 
 import PersonalPhotoPage from '../../pages/admin/personal/PersonalPhotoPage';
 import PersonalMusicPage from '../../pages/admin/personal/PersonalMusicPage';
-
+import PersonalMoviePage from '../../pages/admin/personal/PersonalMoviePage';
 
 const adminAccountRoutes = [
 
@@ -28,6 +28,16 @@ const adminAccountRoutes = [
     }
   />,
   
+
+    <Route
+    key="personal movie"
+    path="personal/movie"
+    element={
+      <PrivateRoute role="admin">
+        <PersonalMoviePage/>
+      </PrivateRoute>
+    }
+  />,
 
 ];
 

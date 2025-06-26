@@ -276,15 +276,22 @@ const PayrollDocPage = () => {
         </div>
 
         <div className={styles.formRow} style={{ width: '50%' }}>
-          <label>Choose File:</label>
-          <input
-            type="file"
-            onChange={e => setChildspFile(e.target.files[0])}
-            style={{ width: '16rem' }}
-          />
-          <button type="button" onClick={handleChildspUpload}>Upload</button>
-          {childspFilename && <span>{childspFilename}</span>}
-          <button type="button" onClick={handleChildspDelete}>Delete</button>
+          <div className={styles.fileRow}>
+  <label className={styles.fileLabel}>
+    📄 Choose File
+    <input
+      type="file"
+      onChange={e => setChildspFile(e.target.files[0])}
+      hidden
+    />
+  </label>
+  <span className={styles.fileNameBox}>
+    {childspFile?.name || childspFilename || 'No file selected'}
+  </span>
+</div>
+<button type="button" onClick={handleChildspUpload}>Upload</button>
+<button type="button" onClick={handleChildspDelete}>Delete</button>
+
 
         </div>
       </div>
@@ -328,15 +335,22 @@ const PayrollDocPage = () => {
         </div>
 
         <div className={styles.formRow} style={{ width: '50%' }}>
-          <label>Choose File:</label>
-          <input
-            type="file"
-            onChange={e => setDeductionFile(e.target.files[0])}
-            style={{ width: '16rem' }}
-          />
-          <button type="button" onClick={handleDeductionUpload}>Upload</button>
-          {deductionFilename && <span>{deductionFilename}</span>}
-          <button type="button" onClick={handleDeductionDelete}>Delete</button>
+          <div className={styles.fileRow}>
+  <label className={styles.fileLabel}>
+    📄 Choose File
+    <input
+      type="file"
+      onChange={e => setDeductionFile(e.target.files[0])}
+      hidden
+    />
+  </label>
+  <span className={styles.fileNameBox}>
+    {deductionFile?.name || deductionFilename || 'No file selected'}
+  </span>
+</div>
+<button type="button" onClick={handleDeductionUpload}>Upload</button>
+<button type="button" onClick={handleDeductionDelete}>Delete</button>
+
         </div>
       </div>
 

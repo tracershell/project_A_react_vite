@@ -101,7 +101,15 @@ const GeneralCompanyDocPage = () => {
     <div className={styles.page}>
       <h2>Company Document Upload</h2>
       <form onSubmit={handleUpload} className={styles.uploadForm} ref={formRef} >
-        <input type="file" onChange={handleFileChange} required />
+        <div className={styles.fileRow}>
+  <label className={styles.fileLabel}>
+    📄 Choose File
+    <input type="file" onChange={handleFileChange} hidden />
+  </label>
+  <span className={styles.fileNameBox}>
+    {fileInput?.name || (selectedId ? list.find(f => f.id === selectedId)?.originalname : 'No file selected')}
+  </span>
+</div>
         <input
           name="cid"
           value={form.cid}
@@ -129,7 +137,8 @@ const GeneralCompanyDocPage = () => {
       </form>
 
       <div className={styles.filter}>
-        <select
+       <select
+  className={styles.selectBox}
   value={filterCid}
   onChange={e => setFilterCid(e.target.value)}
 >

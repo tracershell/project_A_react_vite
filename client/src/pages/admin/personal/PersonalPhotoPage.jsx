@@ -83,7 +83,15 @@ export default function PersonalPhotoPage() {
       </div>
 
       <form className={styles.uploadForm} onSubmit={handleUpload}>
-        <input type="file" onChange={handleFile} accept="image/*" />
+        <div className={styles.fileRow}>
+  <label className={styles.fileLabel}>
+    📷 Choose Photo File
+    <input type="file" accept="image/*" onChange={handleFile} hidden />
+  </label>
+  <span className={styles.fileNameBox}>
+    {file?.name || (editId ? photos.find(i => i.id === editId)?.original : 'No file selected')}
+  </span>
+</div>
         <input type="date" name="date" value={form.date} onChange={handleChange} />
         <input name="code" value={form.code} onChange={handleChange} placeholder="Code" />
         <input name="comment" value={form.comment} onChange={handleChange} placeholder="Comment" />
@@ -95,7 +103,11 @@ export default function PersonalPhotoPage() {
         <h2>Photo List</h2>
         <div className={styles.codeFilterBox}>
           <label>Filter by Code:</label>
-          <select value={searchCode} onChange={e => setSearchCode(e.target.value)}>
+          <select
+  className={styles.searchSelect}
+  value={searchCode}
+  onChange={e => setSearchCode(e.target.value)}
+>
             <option value=''>All</option>
             {codeList.map(c => <option key={c} value={c}>{c}</option>)}
           </select>

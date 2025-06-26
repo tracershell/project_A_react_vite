@@ -111,3 +111,44 @@ button {
   background-color: #fff;
   cursor: pointer;
 }
+
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.fileLabel {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 12px;
+  border: 1px solid #066da5;
+  border-radius: 4px;
+  background-color: #f0f8ff;
+  color: #333;
+  cursor: pointer;
+}
+
+.fileNameBox {
+  min-width: 180px;
+  font-size: 12px;
+  color: #555;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 4px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectBox {
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 28px;
+  min-width: 120px;
+}
