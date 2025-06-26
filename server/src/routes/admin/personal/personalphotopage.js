@@ -2,103 +2,98 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { Image } = require('@napi-rs/image');
 const path = require('path');
 const fs = require('fs');
 const db = require('../../../lib/db'); // MySQL pool
 
-// 업로드·썸네일 디렉토리 설정
 const UPLOAD_DIR = path.join(__dirname, '../../../../public/uploads/personal/photo_upload');
-const THUMB_DIR  = path.join(UPLOAD_DIR, 'thumbnails');
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-fs.mkdirSync(THUMB_DIR,  { recursive: true });
+
+// 디렉토리 생성
+if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 // Multer 설정
 const storage = multer.diskStorage({
-  destination: (_, __, cb) => cb(null, UPLOAD_DIR),
-  filename: (_, file, cb) => {
-    const filename = `${Date.now()}${path.extname(file.originalname)}`;
+  destination: (req, file, cb) => cb(null, UPLOAD_DIR),
+  filename: (req, file, cb) => {
+    const filename = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}${path.extname(file.originalname)}`;
     cb(null, filename);
   }
 });
-const upload = multer({ storage });
 
-/**
- * GET /api/admin/personal/photo
- *   모든 사진 목록 반환
- */
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /jpeg|jpg|png|gif/;
+    const isValid = allowed.test(file.mimetype) && allowed.test(path.extname(file.originalname).toLowerCase());
+    isValid ? cb(null, true) : cb(new Error('이미지 파일만 업로드 가능합니다.'));
+  }
+});
+
+// GET 모든 사진
 router.get('/', async (req, res) => {
   try {
     const [rows] = await db.query(
-      'SELECT id, original, thumbnail, date, comment, place FROM personal_photo ORDER BY created_at DESC'
+      'SELECT id, original, thumbnail, date, comment, place, created_at FROM personal_photo ORDER BY created_at DESC'
     );
     res.json({ photos: rows });
   } catch (err) {
-    console.error('Fetch Error:', err);
-    res.status(500).json({ error: '사진 목록 로드 실패' });
+    console.error('사진 목록 오류:', err);
+    res.status(500).json({ error: '사진 목록 로드 실패', details: err.message });
   }
 });
 
-/**
- * POST /api/admin/personal/photo/upload
- *   formData: { photo: File, date, comment, place }
- */
-router.post('/upload', upload.single('photo'), async (req, res) => {
-  try {
+// POST 업로드 (썸네일 없이 원본만 저장)
+router.post('/upload', (req, res) => {
+  upload.single('photo')(req, res, async (err) => {
+    if (err || !req.file) return res.status(400).json({ error: '업로드 실패', details: err?.message || '파일 없음' });
+
     const { date, comment, place } = req.body;
+    if (!date || !comment || !place) return res.status(400).json({ error: '모든 필드를 입력해주세요.' });
+
     const original = req.file.filename;
-    const thumbnail = `thumb_${original}`;
 
-    // 썸네일 생성
-    const inputPath  = path.join(UPLOAD_DIR, original);
-    const outputPath = path.join(THUMB_DIR, thumbnail);
+    try {
+      const [result] = await db.query(
+        'INSERT INTO personal_photo (original, thumbnail, date, comment, place) VALUES (?, ?, ?, ?, ?)',
+        [original, original, date, comment, place]
+      );
 
-    const buffer = fs.readFileSync(inputPath);
-    const img    = Image.fromBufferSync(buffer);
-    img.resize(200);          // 너비 200px, 자동 비율 유지
-    img.save(outputPath);     // 동기 저장
-
-    // DB에 저장
-    await db.query(
-      'INSERT INTO personal_photo (original, thumbnail, date, comment, place) VALUES (?, ?, ?, ?, ?)',
-      [original, thumbnail, date, comment, place]
-    );
-
-    res.json({ success: true });
-  } catch (err) {
-    console.error('Upload Error:', err);
-    res.status(500).json({ error: '사진 업로드 실패' });
-  }
+      res.json({ success: true, id: result.insertId });
+    } catch (dbErr) {
+      console.error('DB 저장 오류:', dbErr);
+      const filePath = path.join(UPLOAD_DIR, original);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      res.status(500).json({ error: 'DB 저장 실패', details: dbErr.message });
+    }
+  });
 });
 
-/**
- * DELETE /api/admin/personal/photo/:id
- *   사진 및 썸네일 삭제, DB 레코드 삭제
- */
+// DELETE 사진
 router.delete('/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    const [[row]] = await db.query(
-      'SELECT original, thumbnail FROM personal_photo WHERE id = ?',
-      [id]
-    );
-    if (!row) return res.status(404).json({ error: '사진을 찾을 수 없습니다.' });
+    const [rows] = await db.query('SELECT original FROM personal_photo WHERE id = ?', [id]);
+    if (rows.length === 0) return res.status(404).json({ error: '사진을 찾을 수 없습니다.' });
 
-    // 파일 시스템에서 삭제
-    [row.original, row.thumbnail].forEach(name => {
-      const filePath = name.startsWith('thumb_')
-        ? path.join(THUMB_DIR, name)
-        : path.join(UPLOAD_DIR, name);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    });
+    const { original } = rows[0];
+    const filePath = path.join(UPLOAD_DIR, original);
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
-    // DB 레코드 삭제
     await db.query('DELETE FROM personal_photo WHERE id = ?', [id]);
     res.json({ success: true });
   } catch (err) {
-    console.error('Delete Error:', err);
-    res.status(500).json({ error: '사진 삭제 실패' });
+    console.error('삭제 오류:', err);
+    res.status(500).json({ error: '삭제 실패', details: err.message });
   }
+});
+
+// GET 다운로드
+router.get('/download/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(UPLOAD_DIR, filename);
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: '파일이 존재하지 않습니다.' });
+  res.download(filePath);
 });
 
 module.exports = router;
