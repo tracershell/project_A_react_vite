@@ -1,0 +1,68 @@
+/* 📁 client/src/pages/family/alexis/AlexisPhotoPage.module.css */
+
+.page {
+  padding: 1rem;
+  background-color: #f5f7fa;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+}
+
+.filterRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+select {
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: flex-start;
+}
+
+.photoBox {
+  width: 120px;
+  text-align: center;
+}
+
+.photoBox img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  cursor: pointer;
+  object-fit: cover;
+}
+
+.comment {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #333;
+  word-break: break-word;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.fullImage {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  background-color: #fff;
+}

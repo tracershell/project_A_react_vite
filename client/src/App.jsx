@@ -1,3 +1,5 @@
+// client/src/App.jsx
+
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // import { HashRouter as Router, Routes, Route } from 'react-router-dom'; // HashRouter 사용
@@ -11,6 +13,8 @@ import { AuthProvider } from './context/AuthContext';
 // 중첩 라우트 컴포넌트
 import AdminRoutes from './routes/adminRoutes';
 import UserRoutes from './routes/userRoutes';
+import PersonalRoutes from './routes/personalRoutes';
+import FamilyRoutes from './routes/familyRoutes';
 
 console.log('✅ App.jsx loaded');
 
@@ -35,6 +39,12 @@ function App() {
 
             {/* user 하위 모든 경로 → UserRoutes */}
             <Route path="user/*" element={<UserRoutes />} />
+
+            {/* personal 하위 모든 경로 → PersonalRoutes */}
+
+            <Route path="personal/*" element={<PersonalRoutes />} />
+
+            <Route path="family/*" element={<FamilyRoutes />} />
 
             {/* catch-all */}
             <Route path="*" element={<NotFoundPage />} />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import PrivateRoute from '../PrivateRoute';
+import PrivateRoute from '../privateRoutes';
 
 import EmployeesPage from '../../pages/admin/employees/EmployeesPage';
 import EmployeesListPage from '../../pages/admin/employees/EmployeesListPage';

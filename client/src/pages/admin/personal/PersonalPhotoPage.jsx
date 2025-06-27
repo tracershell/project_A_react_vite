@@ -58,19 +58,16 @@ export default function PersonalPhotoPage() {
   };
 
   const handleEdit = photo => {
-    setEditId(photo.id);
-    setForm({ date: photo.date, code: photo.code, comment: photo.comment, place: photo.place });
-  };
+  setEditId(photo.id);
 
-  const handleDelete = async id => {
-    if (!window.confirm('정말 삭제하시겠습니까?')) return;
-    try {
-      await axios.delete(`/api/admin/personal/photo/${id}`);
-      fetchPhotos();
-    } catch (err) {
-      alert('삭제 실패');
-    }
-  };
+  const formattedDate = photo.date?.split('T')?.[0] || ''; // ← 날짜 잘라서 yyyy-MM-dd로
+  setForm({
+    date: formattedDate,
+    code: photo.code,
+    comment: photo.comment,
+    place: photo.place
+  });
+};
 
   const handleDownload = filename => {
     window.open(`/api/admin/personal/photo/download/${filename}`, '_blank');

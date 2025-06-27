@@ -1,3 +1,7 @@
+// server/scripts/user-seed.js
+// (node /home/tslinux0201/project-A-react-vite/server/scripts/user-seed.js)
+
+
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 

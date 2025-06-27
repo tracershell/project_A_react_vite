@@ -2,11 +2,9 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import PrivateRoute from './privateRoutes';
 
-// Admin 전용 페이지
-import AdminPage from '../pages/admin/AdminPage';
+import PersonalPage from '../pages/personal/PersonalPage';
 
-// admin menu 페이지
-import adminMainRoutes from './adminMainRoutes';
+// import adminMainRoutes from './adminMainRoutes';
 import adminAccountRoutes from './adminRoutes/adminAccountRoutes';
 import adminEmployeesRoutes from './adminRoutes/adminEmployeesRoutes';
 import adminImportRoutes from './adminImportRoutes';
@@ -16,41 +14,22 @@ import adminPayrollRoutes from './adminRoutes/adminPayrollRoutes';
 import adminPersonalRoutes from './adminRoutes/adminPersonalRoutes';
 
 
-console.log('✅ adminMainRoutes import 확인'); // ← 이건 찍히는지 먼저 확인
+console.log('✅ PersonalMainRoutes import 확인'); // ← 이건 찍히는지 먼저 확인
 
-export default function AdminRoutes() {
+export default function personalRoutes() {
   return (
     <Routes>
-      {/* /admin */}
+      {/* /personal */}
       <Route
         index
         element={
-          <PrivateRoute role="admin">
-            <AdminPage />
+          <PrivateRoute role="personal">
+            <PersonalPage />
           </PrivateRoute>
         }
       />
 
-      {/* /admin/main/... */}
-      {adminMainRoutes}
-
-       {/* /admin/main/... */}
-      {adminAccountRoutes}
-
-      {/* /admin/employees/... */}
-      {adminEmployeesRoutes}
-
-      {/* /admin/import/... */}
-      {adminImportRoutes}
-
-      {/* /admin/payroll/... */}
-      {adminPayrollRoutes}
-
-      {/* /admin/general/... (비어 있어도 괜찮습니다) */}
-      {adminGeneralRoutes}
-
-      {/* /admin/personal/... */}
-      {adminPersonalRoutes}
+      {/* /pull down menu router 를 위한 공간 */}
 
 
       {/* catch-all */}
@@ -58,7 +37,7 @@ export default function AdminRoutes() {
         path="*"
         element={
           <div style={{ padding: 20 }}>
-            <h2>Admin Page Not Found</h2>
+            <h2>Personal Page Not Found</h2>
           </div>
         }
       />

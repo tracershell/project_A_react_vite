@@ -22,6 +22,10 @@ const LoginPage = () => {
         navigate('/admin');
       } else if (loggedInUser.role === 'user') {
         navigate('/user');
+      } else if (loggedInUser.role === 'personal') {
+        navigate('/personal');  
+      } else if (loggedInUser.role === 'family') {
+        navigate('/family');  
       } else {
         navigate('/');
       }

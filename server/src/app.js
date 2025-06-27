@@ -116,6 +116,9 @@ app.use('/api/admin/personal/photo', require('./routes/admin/personal/personalph
 app.use('/api/admin/personal/music', require('./routes/admin/personal/personalmusicpage'));
 app.use('/api/admin/personal/movie', require('./routes/admin/personal/personalmoviepage'));
 
+// Family Page
+app.use('/api/family/alexis/photo', require('./routes/family/alexis/alexisphotopage'));
+
 // ✔️ fpage 확인용
 console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');
 

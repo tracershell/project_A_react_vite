@@ -15,6 +15,8 @@ import PayrollMenu from './adminmenu/PayrollMenu';
 import PersonalMenu from './adminmenu/PersonalMenu';
 // import UserMenu
 import UserMenu from './usermenu/UserMenu';
+// import FamilyMenu
+import AlexisMenu from './familymenu/AlexisMenu';
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -48,6 +50,7 @@ const Header = () => {
             </>
           )}
           {user?.role === 'user' && <UserMenu />}
+          {user?.role === 'family' && <AlexisMenu />}
         </div>
 
         <div className={styles.authButtons}>

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
   email VARCHAR(100),                                    
   name VARCHAR(100),                                    
   role ENUM('admin', 'user') DEFAULT 'user',            
-  status ENUM('active', 'inactive', 'private') DEFAULT 'active',    
+  status ENUM('active', 'inactive', 'personal', 'family') DEFAULT 'active',    
   last_login DATETIME,                                   
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,       
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
