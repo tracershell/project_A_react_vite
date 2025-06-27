@@ -39,7 +39,7 @@ const generateEnvelopePDF = async (res, { sender, receivers }) => {
       // 전체 주소 블럭 중앙에 출력
       const baseX = 350;
       const baseY = 280;
-      const baseWidth = 200;
+      const baseWidth = 300; // 수신자 주소 블럭 너비 조정 (글씨가 겹칠 때)
 
       doc.fontSize(13)
         .text(receiver.rname, baseX, baseY, { width: baseWidth, align: 'center' })
