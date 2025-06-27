@@ -1,8 +1,8 @@
-// 📁 client/src/pages/admin/personal/PersonalMoviePage.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './PersonalMoviePage.module.css';
 import { useNavigate } from 'react-router-dom';
+import VideoModal from '../../../components/video_modal/VideoModal';
 
 export default function PersonalMoviePage() {
   const [list, setList] = useState([]);
@@ -12,6 +12,8 @@ export default function PersonalMoviePage() {
   const [editId, setEditId] = useState(null);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [keywordList, setKeywordList] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [selectedVideo, setSelectedVideo] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +45,7 @@ export default function PersonalMoviePage() {
 
   const handleUpload = async e => {
     e.preventDefault();
+    setUploadProgress(0);
     if (!form.date || !form.comment || !form.keyword) return alert('모든 필수 입력값을 입력하세요.');
     if (!movieFile && !editId) return alert('Movie 파일을 선택하세요.');
 
@@ -52,18 +55,27 @@ export default function PersonalMoviePage() {
     Object.entries(form).forEach(([k, v]) => fd.append(k, v));
 
     try {
+      const config = {
+        onUploadProgress: e => {
+          const percent = Math.round((e.loaded * 100) / e.total);
+          setUploadProgress(percent);
+        }
+      };
       if (editId) {
-        await axios.put(`/api/admin/personal/movie/${editId}`, fd);
+        await axios.put(`/api/admin/personal/movie/${editId}`, fd, config);
         setEditId(null);
       } else {
-        await axios.post('/api/admin/personal/movie/upload', fd);
+        await axios.post('/api/admin/personal/movie/upload', fd, config);
       }
+
       setForm({ date: '', comment: '', keyword: '' });
       setMovieFile(null);
       setThumbFile(null);
+      setUploadProgress(0);
       fetchList();
     } catch (err) {
       alert('업로드 실패: ' + (err.response?.data?.error || err.message));
+      setUploadProgress(0);
     }
   };
 
@@ -134,6 +146,19 @@ export default function PersonalMoviePage() {
         )}
       </form>
 
+      {/* ⏳ 업로드 진행률 표시 */}
+      {uploadProgress > 0 && (
+        <div style={{ width: '100%', marginTop: '8px' }}>
+          <div style={{
+            height: '6px',
+            width: `${uploadProgress}%`,
+            backgroundColor: '#3399ff',
+            transition: 'width 0.3s'
+          }} />
+          <div style={{ fontSize: '10px', color: '#333' }}>{uploadProgress}%</div>
+        </div>
+      )}
+
       <h2>🎞 Movie List</h2>
       <div className={styles.searchBox}>
         <label>Search Keyword:</label>
@@ -165,6 +190,7 @@ export default function PersonalMoviePage() {
                   src={`/uploads/personal/movie-thumbnail_upload/${movie.thumbnail}`}
                   alt="thumb"
                   className={styles.thumbnailImg}
+                  onClick={() => setSelectedVideo(`/uploads/personal/movie_upload/${movie.original}`)}
                 />
               </td>
               <td>{movie.date}</td>
@@ -179,6 +205,9 @@ export default function PersonalMoviePage() {
           ))}
         </tbody>
       </table>
+
+      {/* 🎥 Video 재생 모달 */}
+      {selectedVideo && <VideoModal videoSrc={selectedVideo} onClose={() => setSelectedVideo(null)} />}
     </div>
   );
 }
