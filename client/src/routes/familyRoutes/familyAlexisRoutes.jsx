@@ -5,7 +5,7 @@ import { Route } from 'react-router-dom';
 import PrivateRoute from '../privateRoutes';
 
 import AlexisPhotoPage from '../../pages/family/alexis/AlexisPhotoPage';
-
+import AlexisMoviePage from '../../pages/family/alexis/AlexisMoviePage';
 
 
 
@@ -17,6 +17,16 @@ const familyAlexisRoutes = [
     element={
       <PrivateRoute role="family">
         <AlexisPhotoPage />
+      </PrivateRoute>
+    }
+  />,
+
+  <Route
+    key="alexis movie"
+    path="alexis/movie"
+    element={
+      <PrivateRoute role="family">
+        <AlexisMoviePage />
       </PrivateRoute>
     }
   />,

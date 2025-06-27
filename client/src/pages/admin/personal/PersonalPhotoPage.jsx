@@ -12,6 +12,7 @@ export default function PersonalPhotoPage() {
   const [codeList, setCodeList] = useState([]);
   const [editId, setEditId] = useState(null);
   const navigate = useNavigate();
+  const [modalImage, setModalImage] = useState(null); 
 
   useEffect(() => {
     fetchPhotos();
@@ -124,7 +125,13 @@ export default function PersonalPhotoPage() {
           <tbody>
             {photos.map(photo => (
               <tr key={photo.id}>
-                <td><img src={`/uploads/personal/photo_upload/${photo.thumbnail}`} alt="thumb" /></td>
+                <td className={styles.thumbnailCol}>
+  <img
+    src={`/uploads/personal/photo_upload/${photo.original}`}
+    alt="thumb"
+    onClick={() => setModalImage(`/uploads/personal/photo_upload/${photo.original}`)}
+  />
+</td>
                 <td>{photo.date}</td>
                 <td>{photo.code}</td>
                 <td>{photo.comment}</td>
@@ -139,6 +146,12 @@ export default function PersonalPhotoPage() {
           </tbody>
         </table>
       </div>
+      {modalImage && (
+  <div className={styles.modal} onClick={() => setModalImage(null)}>
+    <img src={modalImage} className={styles.modalImg} />
+  </div>
+)}
+
     </div>
   );
 }

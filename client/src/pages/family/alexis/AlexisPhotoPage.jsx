@@ -41,7 +41,8 @@ export default function AlexisPhotoPage() {
   return (
     <div className={styles.page}>
       <h2>Alexis Photo</h2>
-      <div className={styles.filterRow}>
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+      <div className={styles.filterRow} style={{ width: '10%' }}>
         <select value={year} onChange={e => setYear(e.target.value)}>
           <option value=''>년도 선택</option>
           {yearList.map(y => <option key={y} value={y}>{y}</option>)}
@@ -51,21 +52,28 @@ export default function AlexisPhotoPage() {
           {monthList.map(m => <option key={m} value={m}>{m}</option>)}
         </select>
       </div>
+      </div>
       <div className={styles.gallery}>
         {photos.map(photo => (
           <div className={styles.photoBox} key={photo.id}>
             <img
-              src={`/uploads/personal/photo_upload/${photo.thumbnail}`}
-              alt={photo.comment}
-              onClick={() => setSelectedImage(photo.original)}
-            />
+         src={`/uploads/personal/photo_upload/${photo.thumbnail}`}
+         alt={photo.comment}
+         onClick={() =>
+           setSelectedImage(`/uploads/personal/photo_upload/${photo.original}`)
+         }
+       />
             <div className={styles.comment}>{photo.comment}</div>
           </div>
         ))}
       </div>
       {selectedImage && (
         <div className={styles.modal} onClick={() => setSelectedImage(null)}>
-          <img src={`/uploads/personal/photo_upload/${selectedImage}`} alt="Full" className={styles.fullImage} />
+              <img
+       src={selectedImage}
+       alt="Full"
+       className={styles.fullImage}
+     />
         </div>
       )}
     </div>
