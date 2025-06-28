@@ -2,16 +2,13 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import PrivateRoute from './privateRoutes';
 
+
+// personal 전용 페이지
 import PersonalPage from '../pages/personal/PersonalPage';
 
-// import adminMainRoutes from './adminMainRoutes';
-import adminAccountRoutes from './adminRoutes/adminAccountRoutes';
-import adminEmployeesRoutes from './adminRoutes/adminEmployeesRoutes';
-import adminImportRoutes from './adminImportRoutes';
-import adminGeneralRoutes from './adminRoutes/adminGeneralRoutes';
-import adminPayrollRoutes from './adminRoutes/adminPayrollRoutes';
-// --------------------------------------------------------------
-import adminPersonalRoutes from './adminRoutes/adminPersonalRoutes';
+// personal menu 페이지
+import personalStudyRoutes from './personalRoutes/personalStudyRoutes';
+
 
 
 console.log('✅ PersonalMainRoutes import 확인'); // ← 이건 찍히는지 먼저 확인
@@ -29,7 +26,8 @@ export default function personalRoutes() {
         }
       />
 
-      {/* /pull down menu router 를 위한 공간 */}
+      {/* /study/... */}
+      {personalStudyRoutes}
 
 
       {/* catch-all */}

@@ -111,7 +111,7 @@ app.use('/api/admin/account/accountpettymoneysubmit', require('./routes/admin/ac
 
 app.use('/api/admin/general/companydoc', require('./routes/admin/general/generalcompanydocpage'));
 
-// Personal Page
+// Admin - Personal Page
 app.use('/api/admin/personal/photo', require('./routes/admin/personal/personalphotopage'));
 app.use('/api/admin/personal/music', require('./routes/admin/personal/personalmusicpage'));
 app.use('/api/admin/personal/movie', require('./routes/admin/personal/personalmoviepage'));
@@ -119,6 +119,10 @@ app.use('/api/admin/personal/movie', require('./routes/admin/personal/personalmo
 // Family Page
 app.use('/api/family/alexis/photo', require('./routes/family/alexis/alexisphotopage'));
 app.use('/api/family/alexis/movie', require('./routes/family/alexis/alexismoviepage'));
+
+// Personal Page
+app.use('/api/personal/study/music', require('./routes/personal/study/studymusicpage'));
+
 
 // ✔️ fpage 확인용
 console.log('🔌 Mounting fpageview router at /api/admin/main/fpage');

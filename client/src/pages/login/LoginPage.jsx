@@ -23,9 +23,11 @@ const LoginPage = () => {
       } else if (loggedInUser.role === 'user') {
         navigate('/user');
       } else if (loggedInUser.role === 'personal') {
-        navigate('/personal');  
+        navigate('/personal');
       } else if (loggedInUser.role === 'family') {
-        navigate('/family');  
+        navigate('/family');
+      } else if (loggedInUser.role === 'personal') {
+        navigate('/personal');
       } else {
         navigate('/');
       }

@@ -12,19 +12,32 @@ export default function PersonalPhotoPage() {
   const [codeList, setCodeList] = useState([]);
   const [editId, setEditId] = useState(null);
   const navigate = useNavigate();
-  const [modalImage, setModalImage] = useState(null); 
+  const [modalImage, setModalImage] = useState(null);
+  const [searchYear, setSearchYear] = useState('');
+  const [yearList, setYearList] = useState([]);
 
   useEffect(() => {
     fetchPhotos();
     fetchCodes();
   }, [searchCode]);
 
+  useEffect(() => {
+    fetchYears();
+    fetchCodes();
+  }, []);
+
+  useEffect(() => {
+    if (searchYear || searchCode) fetchPhotos();
+  }, [searchYear, searchCode]);
+
+
   const fetchPhotos = async () => {
     const { data } = await axios.get('/api/admin/personal/photo', {
-      params: { code: searchCode }
+      params: { year: searchYear, code: searchCode }
     });
     setPhotos(data.photos);
   };
+
 
   const fetchCodes = async () => {
     const { data } = await axios.get('/api/admin/personal/photo/codes');
@@ -59,19 +72,24 @@ export default function PersonalPhotoPage() {
   };
 
   const handleEdit = photo => {
-  setEditId(photo.id);
+    setEditId(photo.id);
 
-  const formattedDate = photo.date?.split('T')?.[0] || ''; // ← 날짜 잘라서 yyyy-MM-dd로
-  setForm({
-    date: formattedDate,
-    code: photo.code,
-    comment: photo.comment,
-    place: photo.place
-  });
-};
+    const formattedDate = photo.date?.split('T')?.[0] || ''; // ← 날짜 잘라서 yyyy-MM-dd로
+    setForm({
+      date: formattedDate,
+      code: photo.code,
+      comment: photo.comment,
+      place: photo.place
+    });
+  };
 
   const handleDownload = filename => {
     window.open(`/api/admin/personal/photo/download/${filename}`, '_blank');
+  };
+
+  const fetchYears = async () => {
+    const { data } = await axios.get('/api/admin/personal/photo/years');
+    setYearList(data.years);
   };
 
   return (
@@ -82,14 +100,14 @@ export default function PersonalPhotoPage() {
 
       <form className={styles.uploadForm} onSubmit={handleUpload}>
         <div className={styles.fileRow}>
-  <label className={styles.fileLabel}>
-    📷 Choose Photo File
-    <input type="file" accept="image/*" onChange={handleFile} hidden />
-  </label>
-  <span className={styles.fileNameBox}>
-    {file?.name || (editId ? photos.find(i => i.id === editId)?.original : 'No file selected')}
-  </span>
-</div>
+          <label className={styles.fileLabel}>
+            📷 Choose Photo File
+            <input type="file" accept="image/*" onChange={handleFile} hidden />
+          </label>
+          <span className={styles.fileNameBox}>
+            {file?.name || (editId ? photos.find(i => i.id === editId)?.original : 'No file selected')}
+          </span>
+        </div>
         <input type="date" name="date" value={form.date} onChange={handleChange} />
         <input name="code" value={form.code} onChange={handleChange} placeholder="Code" />
         <input name="comment" value={form.comment} onChange={handleChange} placeholder="Comment" />
@@ -99,17 +117,21 @@ export default function PersonalPhotoPage() {
 
       <div className={styles.tableWrapper}>
         <h2>Photo List</h2>
-        <div className={styles.codeFilterBox}>
-          <label>Filter by Code:</label>
-          <select
-  className={styles.searchSelect}
-  value={searchCode}
-  onChange={e => setSearchCode(e.target.value)}
->
-            <option value=''>All</option>
-            {codeList.map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+          <div className={styles.codeFilterBox} style={{ width: '10%' }}>
+            <label>년도:</label>
+            <select value={searchYear} onChange={e => setSearchYear(e.target.value)}>
+              <option value=''>전체</option>
+              {yearList.map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+            <label>코드:</label>
+            <select value={searchCode} onChange={e => setSearchCode(e.target.value)}>
+              <option value=''>전체</option>
+              {codeList.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
         </div>
+
 
         <table className={styles.table}>
           <thead>
@@ -126,13 +148,13 @@ export default function PersonalPhotoPage() {
             {photos.map(photo => (
               <tr key={photo.id}>
                 <td className={styles.thumbnailCol}>
-  <img
-    src={`/uploads/personal/photo_upload/${photo.original}`}
-    alt="thumb"
-    onClick={() => setModalImage(`/uploads/personal/photo_upload/${photo.original}`)}
-  />
-</td>
-                <td>{photo.date}</td>
+                  <img
+                    src={`/uploads/personal/photo_upload/${photo.original}`}
+                    alt="thumb"
+                    onClick={() => setModalImage(`/uploads/personal/photo_upload/${photo.original}`)}
+                  />
+                </td>
+                <td>{photo.date?.split('T')[0]}</td>
                 <td>{photo.code}</td>
                 <td>{photo.comment}</td>
                 <td>{photo.place}</td>
@@ -147,10 +169,10 @@ export default function PersonalPhotoPage() {
         </table>
       </div>
       {modalImage && (
-  <div className={styles.modal} onClick={() => setModalImage(null)}>
-    <img src={modalImage} className={styles.modalImg} />
-  </div>
-)}
+        <div className={styles.modal} onClick={() => setModalImage(null)}>
+          <img src={modalImage} className={styles.modalImg} />
+        </div>
+      )}
 
     </div>
   );

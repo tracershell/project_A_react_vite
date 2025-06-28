@@ -74,15 +74,15 @@ const PersonalMusicPage = () => {
   };
 
   const handleEdit = m => {
-  setEditId(m.id);
-  setForm({
-    date: m.date ? m.date.split('T')[0] : '',
-    comment: m.comment,
-    keyword: m.keyword,
-  });
-  setMusicFile(null); // 기존 파일은 서버에 있음
-  setTextFile(null);
-};
+    setEditId(m.id);
+    setForm({
+      date: m.date ? m.date.split('T')[0] : '',
+      comment: m.comment,
+      keyword: m.keyword,
+    });
+    setMusicFile(null); // 기존 파일은 서버에 있음
+    setTextFile(null);
+  };
 
   const handleDelete = async id => {
     if (!window.confirm('삭제하시겠습니까?')) return;
@@ -111,37 +111,37 @@ const PersonalMusicPage = () => {
     <div className={styles.page}>
       <h2>Music Upload</h2>
       <form className={styles.uploadForm} onSubmit={handleUpload}>
-  <div className={styles.fileRow}>
-  <label className={styles.fileLabel}>
-    🎵 Select Music File
-    <input type="file" accept="audio/*" onChange={e => setMusicFile(e.target.files[0])} hidden />
-  </label>
-  <span className={styles.fileNameBox}>
-    {musicFile?.name || (editId ? list.find(i => i.id === editId)?.original : 'No file selected')}
-  </span>
-</div>
+        <div className={styles.fileRow}>
+          <label className={styles.fileLabel}>
+            🎵 Select Music File
+            <input type="file" accept="audio/*" onChange={e => setMusicFile(e.target.files[0])} hidden />
+          </label>
+          <span className={styles.fileNameBox}>
+            {musicFile?.name || (editId ? list.find(i => i.id === editId)?.original : 'No file selected')}
+          </span>
+        </div>
 
-<div className={styles.fileRow}>
-  <label className={styles.fileLabel}>
-    📄 Select Text File
-    <input type="file" accept=".txt" onChange={e => setTextFile(e.target.files[0])} hidden />
-  </label>
-  <span className={styles.fileNameBox}>
-    {textFile?.name || (editId ? list.find(i => i.id === editId)?.textfile : 'No file selected')}
-  </span>
-</div>
+        <div className={styles.fileRow}>
+          <label className={styles.fileLabel}>
+            📄 Select Text File
+            <input type="file" accept=".txt" onChange={e => setTextFile(e.target.files[0])} hidden />
+          </label>
+          <span className={styles.fileNameBox}>
+            {textFile?.name || (editId ? list.find(i => i.id === editId)?.textfile : 'No file selected')}
+          </span>
+        </div>
 
-  <input type="date" name="date" value={form.date} onChange={handleChange} />
-  <input type="text" name="comment" value={form.comment} placeholder="Comment" onChange={handleChange} />
-  <input type="text" name="keyword" value={form.keyword} placeholder="Keyword" onChange={handleChange} />
-  <button type="submit">{editId ? 'Save' : 'Upload'}</button>
-  {editId && (
-    <button type="button" onClick={() => {
-      setEditId(null);
-      setForm({ date: '', comment: '', keyword: '' });
-    }}>Cancel</button>
-  )}
-</form>
+        <input type="date" name="date" value={form.date} onChange={handleChange} />
+        <input type="text" name="comment" value={form.comment} placeholder="Comment" onChange={handleChange} />
+        <input type="text" name="keyword" value={form.keyword} placeholder="Keyword" onChange={handleChange} />
+        <button type="submit">{editId ? 'Save' : 'Upload'}</button>
+        {editId && (
+          <button type="button" onClick={() => {
+            setEditId(null);
+            setForm({ date: '', comment: '', keyword: '' });
+          }}>Cancel</button>
+        )}
+      </form>
 
       <h2>Music List</h2>
       <div className={styles.searchBox}>
@@ -188,11 +188,17 @@ const PersonalMusicPage = () => {
       </table>
 
       {audioSrc && (
-        <>
-          <audio src={audioSrc} controls autoPlay style={{ marginTop: '10px' }} />
-          {textContent && <pre className={styles.textPopup}>{textContent}</pre>}
-        </>
+        <div className={styles.modal} onClick={() => {
+          setAudioSrc(null);
+          setTextContent('');
+        }}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <audio src={audioSrc} controls autoPlay style={{ width: '100%' }} />
+            {textContent && <pre className={styles.textBox}>{textContent}</pre>}
+          </div>
+        </div>
       )}
+
     </div>
   );
 };

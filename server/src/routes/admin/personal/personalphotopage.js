@@ -30,17 +30,29 @@ const upload = multer({
 // ✅ GET 전체 목록
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await db.query(
-      `SELECT id, original, thumbnail, date, code, comment, place, created_at 
-       FROM personal_photo 
-       ORDER BY created_at DESC`
-    );
+    const { year, code } = req.query;
+    let sql = `SELECT id, original, thumbnail, date, code, comment, place FROM personal_photo WHERE 1=1`;
+    const params = [];
+
+    if (year) {
+      sql += ` AND YEAR(date) = ?`;
+      params.push(year);
+    }
+
+    if (code) {
+      sql += ` AND code = ?`;
+      params.push(code);
+    }
+
+    sql += ` ORDER BY created_at DESC`;
+    const [rows] = await db.query(sql, params);
     res.json({ photos: rows });
   } catch (err) {
     console.error('사진 목록 오류:', err);
-    res.status(500).json({ error: '사진 목록 로드 실패', details: err.message });
+    res.status(500).json({ error: '사진 목록 로드 실패' });
   }
 });
+
 
 // ✅ POST 업로드
 router.post('/upload', (req, res) => {
@@ -157,5 +169,19 @@ router.get('/codes', async (req, res) => {
     res.status(500).json({ error: '코드 목록 조회 실패', details: err.message });
   }
 });
+
+router.get('/years', async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT DISTINCT YEAR(date) as year FROM personal_photo ORDER BY year DESC`
+    );
+    res.json({ years: rows.map(r => r.year) });
+  } catch (err) {
+    console.error('년도 목록 조회 오류:', err);
+    res.status(500).json({ error: '년도 목록 조회 실패' });
+  }
+});
+
+
 
 module.exports = router;

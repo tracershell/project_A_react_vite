@@ -13,8 +13,8 @@ import { AuthProvider } from './context/AuthContext';
 // 중첩 라우트 컴포넌트
 import AdminRoutes from './routes/adminRoutes';
 import UserRoutes from './routes/userRoutes';
-import PersonalRoutes from './routes/personalRoutes';
 import FamilyRoutes from './routes/familyRoutes';
+import PersonalRoutes from './routes/personalRoutes';
 
 console.log('✅ App.jsx loaded');
 
@@ -45,6 +45,8 @@ function App() {
             <Route path="personal/*" element={<PersonalRoutes />} />
 
             <Route path="family/*" element={<FamilyRoutes />} />
+
+            <Route path="personal/*" element={<PersonalRoutes />} />
 
             {/* catch-all */}
             <Route path="*" element={<NotFoundPage />} />
